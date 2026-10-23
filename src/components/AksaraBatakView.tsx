@@ -3,6 +3,7 @@ import { Copy, Check, Sparkles, BookOpen, Volume2 } from 'lucide-react';
 import { latinToAksaraBatak, INA_NI_SURAT } from '../utils/aksaraBatak';
 import { Mascot } from './Mascot';
 import { speakBatakWord } from '../utils/audioSynthesizer';
+import { GorgaBorder } from './GorgaEmblem';
 
 export const AksaraBatakView: React.FC = () => {
   const [inputText, setInputText] = useState('horas ma di hita');
@@ -27,12 +28,13 @@ export const AksaraBatakView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-stone-900 via-stone-800 to-amber-900 rounded-3xl p-6 text-white mb-6 border-2 border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="bg-[#18181B] rounded-2xl p-6 text-white mb-6 border border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <GorgaBorder className="absolute top-0 left-0 right-0 h-2 opacity-80" />
         <div>
           <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full inline-block mb-2">
             Surat Batak Toba
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold font-['Fredoka',sans-serif]">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Konverter Aksara Batak
           </h1>
           <p className="text-stone-300 text-sm mt-1 max-w-lg">
@@ -119,7 +121,7 @@ export const AksaraBatakView: React.FC = () => {
       <div className="bg-white rounded-3xl border-2 border-stone-200 p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <BookOpen className="text-red-600" size={24} />
-          <h2 className="text-xl font-extrabold text-stone-900 font-['Fredoka',sans-serif]">
+          <h2 className="text-xl font-black text-stone-900 tracking-tight">
             Ina ni Surat (Induk Huruf Batak)
           </h2>
         </div>

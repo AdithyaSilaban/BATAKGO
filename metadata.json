@@ -2,5 +2,5 @@
   "name": "BATAKGO - Belajar Bahasa Batak Interaktif Bersama Sigale-gale",
   "description": "Platform belajar bahasa dan budaya Batak interaktif ala Duolingo bersama maskot Sigale-gale, lengkap dengan latihan pelafalan audio penutur asli, kosakata lokal, kuis bertingkat, dan sistem partuturan.",
   "requestFramePermissions": ["microphone"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

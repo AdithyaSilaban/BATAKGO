@@ -3,6 +3,7 @@ import { Search, Volume2, Mic, Filter, BookOpen } from 'lucide-react';
 import { VOCABULARY_LIST, VocabItem } from '../utils/batakData';
 import { AudioPronunciationButton } from './AudioPronunciationButton';
 import { Mascot } from './Mascot';
+import { GorgaBorder } from './GorgaEmblem';
 
 export const DictionaryView: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -33,12 +34,15 @@ export const DictionaryView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-red-700 via-stone-800 to-amber-700 rounded-3xl p-6 text-white mb-6 border-2 border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="bg-[#18181B] rounded-2xl p-6 text-white mb-6 border border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <GorgaBorder className="absolute top-0 left-0 right-0 h-2 opacity-80" />
+
+
         <div>
           <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full inline-block mb-2">
             Pustaka Kata Penutur Asli
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold font-['Fredoka',sans-serif]">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Kamus Saku Bahasa Batak
           </h1>
           <p className="text-stone-200 text-sm mt-1 max-w-lg">
@@ -95,7 +99,7 @@ export const DictionaryView: React.FC = () => {
             <div>
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div>
-                  <h3 className="text-xl font-extrabold text-stone-900 font-['Fredoka',sans-serif]">
+                  <h3 className="text-xl font-black text-stone-900 tracking-tight">
                     {item.batak}
                   </h3>
                   <p className="text-sm font-semibold text-stone-600">

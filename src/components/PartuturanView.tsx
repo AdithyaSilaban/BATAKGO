@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Users, Search, HelpCircle, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react';
+import { Users, Search, HelpCircle, HeartHandshake, ShieldCheck, Sparkles, Sun } from 'lucide-react';
+import { GorgaBorder } from './GorgaEmblem';
 import { PARTUTURAN_RULES, findPartuturan } from '../utils/partuturan';
 import { AudioPronunciationButton } from './AudioPronunciationButton';
 import { Mascot } from './Mascot';
@@ -16,12 +17,13 @@ export const PartuturanView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-stone-900 via-red-950 to-stone-900 rounded-3xl p-6 text-white mb-6 border-2 border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="bg-[#18181B] rounded-2xl p-6 text-white mb-6 border border-stone-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <GorgaBorder className="absolute top-0 left-0 right-0 h-2 opacity-80" />
         <div>
           <span className="text-xs font-bold uppercase tracking-wider bg-red-600/60 border border-red-400 px-3 py-1 rounded-full inline-block mb-2">
             Filsafat Adat & Kekerabatan
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold font-['Fredoka',sans-serif]">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Partuturan & Dalihan Na Tolu
           </h1>
           <p className="text-stone-300 text-sm mt-1 max-w-lg">
@@ -41,8 +43,8 @@ export const PartuturanView: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xl">☀️</span>
-            <h3 className="font-extrabold text-red-900 text-sm font-['Fredoka',sans-serif]">
+            <Sun size={18} className="text-red-700" />
+            <h3 className="font-extrabold text-red-900 text-sm">
               Somba Marhula-hula
             </h3>
           </div>
@@ -53,8 +55,8 @@ export const PartuturanView: React.FC = () => {
 
         <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xl">🌸</span>
-            <h3 className="font-extrabold text-amber-900 text-sm font-['Fredoka',sans-serif]">
+            <HeartHandshake size={18} className="text-amber-700" />
+            <h3 className="font-extrabold text-amber-900 text-sm">
               Elek Marboru
             </h3>
           </div>
@@ -65,8 +67,8 @@ export const PartuturanView: React.FC = () => {
 
         <div className="bg-stone-100 border-2 border-stone-300 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xl">🤝</span>
-            <h3 className="font-extrabold text-stone-900 text-sm font-['Fredoka',sans-serif]">
+            <Users size={18} className="text-stone-700" />
+            <h3 className="font-extrabold text-stone-900 text-sm">
               Manat Mardongan Tubu
             </h3>
           </div>
@@ -131,7 +133,7 @@ export const PartuturanView: React.FC = () => {
               </div>
 
               <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-black text-stone-900 font-['Fredoka',sans-serif]">
+                <h3 className="text-2xl font-black text-stone-900 tracking-tight">
                   {item.batakTerm}
                 </h3>
               </div>

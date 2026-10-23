@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { X, Heart, Volume2, Mic, CheckCircle2, XCircle, ArrowRight, Sparkles, Award } from 'lucide-react';
 import { Lesson, Question } from '../utils/batakData';
 import { Mascot, MascotMood } from './Mascot';
+import { GorgaShield } from './GorgaEmblem';
 import {
   speakBatakWord,
   playGordangBeat,
@@ -269,8 +270,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             />
           </div>
 
-          <h2 className="text-3xl font-extrabold text-stone-900 font-['Fredoka',sans-serif]">
-            Parsiajaran Sidung! 🎉
+          <h2 className="text-3xl font-black text-stone-900 tracking-tight">
+            Parsiajaran Sidung!
           </h2>
           <p className="text-stone-600 mt-1 font-medium">
             Hebat sekali! Pelajaran <span className="font-bold text-red-600">&ldquo;{lesson.title}&rdquo;</span> tuntas dipelajari.
@@ -280,19 +281,19 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           <div className="grid grid-cols-3 gap-3 my-6">
             <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3">
               <span className="text-xs font-bold text-amber-700 block">XP Diraih</span>
-              <span className="text-2xl font-black text-amber-600 font-['Fredoka',sans-serif]">
+              <span className="text-2xl font-black text-amber-600">
                 +{lesson.xpReward}
               </span>
             </div>
             <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-3">
               <span className="text-xs font-bold text-red-700 block">Sisa Tondi</span>
-              <span className="text-2xl font-black text-red-600 font-['Fredoka',sans-serif] flex items-center justify-center gap-1">
+              <span className="text-2xl font-black text-red-600 flex items-center justify-center gap-1">
                 <Heart size={20} className="fill-red-500 text-red-500" /> {hearts}
               </span>
             </div>
             <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-3">
               <span className="text-xs font-bold text-emerald-700 block">Akurasi</span>
-              <span className="text-2xl font-black text-emerald-600 font-['Fredoka',sans-serif]">
+              <span className="text-2xl font-black text-emerald-600">
                 {Math.round(((correctCount) / lesson.questions.length) * 100)}%
               </span>
             </div>
@@ -300,8 +301,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
 
           {/* Ulos Collection notification */}
           <div className="bg-stone-50 border-2 border-stone-300 rounded-2xl p-3.5 flex items-center gap-3 text-left mb-6">
-            <div className="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center text-xl shrink-0 shadow-inner">
-              🧣
+            <div className="w-12 h-12 rounded-xl bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm border border-stone-800">
+              <GorgaShield size={28} />
             </div>
             <div>
               <p className="text-xs font-bold text-stone-500 uppercase tracking-wide">Hadiah Budaya</p>
@@ -313,7 +314,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           <button
             type="button"
             onClick={() => onComplete({ xpEarned: lesson.xpReward, correctCount, heartsRemaining: hearts })}
-            className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-lg border-2 border-emerald-800 shadow-[0_5px_0_0_#065f46] active:translate-y-1 active:shadow-[0_1px_0_0_#065f46] transition-all cursor-pointer font-['Fredoka',sans-serif]"
+            className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-lg border-2 border-emerald-800 shadow-[0_4px_0_0_#065f46] active:translate-y-0.5 transition-all cursor-pointer"
           >
             Lanjutkan Perjalanan (Toruskon)
           </button>
@@ -334,8 +335,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               speech="Tondimu habis! Istirahat jolo sebentar."
             />
           </div>
-          <h2 className="text-2xl font-extrabold text-stone-900 font-['Fredoka',sans-serif]">
-            Tondi Sudah Habis 💔
+          <h2 className="text-2xl font-black text-stone-900 tracking-tight">
+            Tondi Sudah Habis
           </h2>
           <p className="text-stone-600 mt-2 text-sm">
             Jangan berkecil hati. Buka Kamus Batak untuk melatih kosakata atau tunggu pemulihan tondi.
@@ -388,7 +389,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         {/* Hearts Indicator */}
         <div className="flex items-center gap-1.5 font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full">
           <Heart size={20} className="fill-red-500 text-red-500 animate-pulse" />
-          <span className="text-base font-['Fredoka',sans-serif]">{hearts}</span>
+          <span className="text-base font-black text-stone-900">{hearts}</span>
         </div>
       </header>
 
@@ -411,7 +412,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 {currentQ.type === 'match_pairs' && 'Cocokkan Pasangan'}
                 {currentQ.type === 'pronunciation' && 'Latihan Pelafalan'}
               </span>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 mt-1 font-['Fredoka',sans-serif] leading-snug">
+              <h1 className="text-xl sm:text-2xl font-black text-stone-900 mt-1 tracking-tight leading-snug">
                 {currentQ.prompt}
               </h1>
 
@@ -427,7 +428,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <Volume2 size={22} />
                   </button>
                   <div>
-                    <span className="text-lg font-bold text-stone-900 block font-['Fredoka',sans-serif]">
+                    <span className="text-lg font-extrabold text-stone-900 block tracking-tight">
                       &ldquo;{currentQ.batakText}&rdquo;
                     </span>
                     {currentQ.phonetic && (
@@ -606,7 +607,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 <p className="text-stone-500 text-xs font-bold uppercase tracking-wider mb-2">
                   Target Pelafalan
                 </p>
-                <p className="text-3xl font-black text-stone-900 font-['Fredoka',sans-serif] text-red-600">
+                <p className="text-3xl font-black text-red-600 tracking-tight">
                   &ldquo;{currentQ.batakText}&rdquo;
                 </p>
                 {currentQ.syllables && (
@@ -665,7 +666,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   (currentQ.type === 'sentence_builder' && selectedWords.length === 0) ||
                   (currentQ.type === 'pronunciation' && recordedAccuracy === null)
                 }
-                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-extrabold text-base border-2 border-emerald-800 shadow-[0_4px_0_0_#065f46] active:translate-y-1 active:shadow-[0_1px_0_0_#065f46] transition-all cursor-pointer font-['Fredoka',sans-serif]"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-extrabold text-base border-2 border-emerald-800 shadow-[0_4px_0_0_#065f46] active:translate-y-0.5 transition-all cursor-pointer"
               >
                 Periksa Jawaban
               </button>
@@ -685,7 +686,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   <XCircle size={32} className="text-red-600 shrink-0 mt-0.5" />
                 )}
                 <div>
-                  <h3 className="text-lg font-extrabold font-['Fredoka',sans-serif]">
+                  <h3 className="text-lg font-black tracking-tight">
                     {isCorrect ? 'Luar Biasa! (Sintong)' : 'Kurang Tepat (Sala)'}
                   </h3>
                   {!isCorrect && (
@@ -709,7 +710,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               <button
                 type="button"
                 onClick={handleNext}
-                className={`w-full sm:w-auto px-8 py-3.5 rounded-2xl font-extrabold text-base border-2 text-white shadow-[0_4px_0_0_rgba(0,0,0,0.2)] active:translate-y-1 transition-all cursor-pointer font-['Fredoka',sans-serif] shrink-0 ${
+                className={`w-full sm:w-auto px-8 py-3.5 rounded-2xl font-extrabold text-base border-2 text-white shadow-md active:translate-y-0.5 transition-all cursor-pointer shrink-0 ${
                   isCorrect
                     ? 'bg-emerald-600 hover:bg-emerald-500 border-emerald-800'
                     : 'bg-red-600 hover:bg-red-500 border-red-800'

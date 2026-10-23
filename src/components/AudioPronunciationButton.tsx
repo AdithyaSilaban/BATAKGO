@@ -123,7 +123,7 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
             }`}
           >
             <Volume1 size={iconSizes[size]} className="text-amber-600" />
-            <span className="text-xs">🐢 Pelan</span>
+            <span className="text-xs">Pelan (0.6x)</span>
           </button>
         )}
 
@@ -179,7 +179,7 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
             )}
             <div>
               <p className="font-bold">
-                {speechResult.accuracy >= 75 ? 'Pelafalan Mantap! 🎉' : 'Bisa Diulang Lagi'}
+                {speechResult.accuracy >= 75 ? 'Pelafalan Tepat (Sintong)' : 'Bisa Diulang Lagi'}
               </p>
               <p className="text-[11px] text-stone-500">
                 Terdeteksi: &ldquo;{speechResult.transcript}&rdquo;

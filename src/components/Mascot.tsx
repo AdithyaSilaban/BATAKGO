@@ -129,7 +129,7 @@ export const Mascot: React.FC<MascotProps> = ({
       {/* Speech Bubble */}
       {speech && (
         <div className="relative bg-white border-2 border-stone-800 rounded-2xl p-3 shadow-md text-stone-800 max-w-xs animate-in fade-in zoom-in-95 duration-200">
-          <p className={`font-bold font-['Fredoka',sans-serif] leading-tight ${sizeConfig.bubbleText}`}>
+          <p className={`font-bold text-stone-900 tracking-tight leading-tight ${sizeConfig.bubbleText}`}>
             {speech}
           </p>
           {subSpeech && (
@@ -158,7 +158,7 @@ export const Mascot: React.FC<MascotProps> = ({
           <div
             className="w-full h-full"
             style={{
-              backgroundImage: `url('/assets/aistudio/WhatsApp_Image_2026-10-21_at_15.25.16_81cfe09c.jpeg')`,
+              backgroundImage: `url('/assets/mascot/sigale-gale.jpeg')`,
               backgroundSize: `${scaleX}% ${scaleY}%`,
               backgroundPosition: `${posX}% ${posY}%`,
               imageRendering: 'pixelated',
