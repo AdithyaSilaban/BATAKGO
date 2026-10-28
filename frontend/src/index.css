@@ -1,1 +1,230 @@
 @import "tailwindcss";
+
+:root {
+  /* Palet Warna Batak Toba (Papan Ukir & Kain Tenun) */
+  --kapur: #F4EDE0;
+  --kapur-muted: #E8DFC8;
+  --kapur-card: #FAF6EE;
+  --arang: #1E1A17;
+  --arang-muted: #433D38;
+  --arang-border: #2C2622;
+  --secang: #A62B1F;
+  --secang-dark: #7A1F16;
+  --secang-muted: #F5EAE8;
+  --indigo: #23365A;
+  --indigo-dark: #162238;
+  --kunyit: #D9A21B;
+  --kunyit-dark: #A67910;
+  --kunyit-muted: #F8F1DF;
+
+  /* Tipografi */
+  --font-heading: 'Zilla Slab', Georgia, serif;
+  --font-body: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+  --font-batak: 'Noto Sans Batak', serif;
+
+  /* Skala Ukuran Font Kustom */
+  --size-display: clamp(2rem, 4vw, 2.75rem);
+  --size-h1: clamp(1.5rem, 3vw, 2rem);
+  --size-h2: clamp(1.25rem, 2.5vw, 1.5rem);
+  --size-h3: 1.125rem;
+  --size-body: 1rem;
+  --size-caption: 0.875rem;
+  --size-micro: 0.75rem;
+}
+
+body {
+  background-color: var(--kapur);
+  color: var(--arang);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--arang);
+  letter-spacing: -0.01em;
+}
+
+/* Aksara Batak Murni (Regular, No Synthesis, Never Bold) */
+.font-batak, [data-font="batak"] {
+  font-family: var(--font-batak) !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  font-synthesis: none !important;
+  font-synthesis-weight: none !important;
+  font-synthesis-style: none !important;
+  letter-spacing: 0.05em;
+}
+
+/* Tombol Utama (Indigo, Teks Kapur, Radius 4px, Tepi Bawah 3px Lebih Gelap, Geser 3px saat Ditekan) */
+.btn-primary, .btn-indigo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--indigo);
+  color: var(--kapur);
+  border-radius: 4px;
+  border: 1.5px solid var(--indigo-dark);
+  border-bottom: 3px solid var(--indigo-dark);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.08s ease, border-bottom-width 0.08s ease, filter 0.1s ease;
+  user-select: none;
+}
+
+.btn-primary:hover, .btn-indigo:hover {
+  filter: brightness(1.08);
+}
+
+.btn-primary:active, .btn-indigo:active {
+  transform: translateY(3px);
+  border-bottom-width: 0px;
+  margin-bottom: 3px;
+}
+
+.btn-primary:disabled, .btn-indigo:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  border-bottom-width: 3px;
+  margin-bottom: 0;
+}
+
+/* Tombol Aksen Secang */
+.btn-secang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--secang);
+  color: var(--kapur);
+  border-radius: 4px;
+  border: 1.5px solid var(--secang-dark);
+  border-bottom: 3px solid var(--secang-dark);
+  font-family: var(--font-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.08s ease, border-bottom-width 0.08s ease;
+  user-select: none;
+}
+
+.btn-secang:hover {
+  filter: brightness(1.08);
+}
+
+.btn-secang:active {
+  transform: translateY(3px);
+  border-bottom-width: 0px;
+  margin-bottom: 3px;
+}
+
+/* Tombol Sekunder / Garis Arang */
+.btn-outline-arang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--kapur);
+  color: var(--arang);
+  border-radius: 4px;
+  border: 1.5px solid var(--arang);
+  border-bottom: 3px solid var(--arang);
+  font-family: var(--font-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.08s ease, border-bottom-width 0.08s ease, background-color 0.1s ease;
+}
+
+.btn-outline-arang:hover {
+  background-color: var(--kapur-muted);
+}
+
+.btn-outline-arang:active {
+  transform: translateY(3px);
+  border-bottom-width: 0px;
+  margin-bottom: 3px;
+}
+
+/* Kartu Kosakata & Panel Batak (Permukaan Datar, Tanpa Bayangan, Garis Arang 1.5px, Radius 4px) */
+.card-batak {
+  background-color: var(--kapur-card);
+  color: var(--arang);
+  border: 1.5px solid var(--arang);
+  border-radius: 4px;
+  box-shadow: none !important;
+}
+
+.card-batak-dark {
+  background-color: var(--arang);
+  color: var(--kapur);
+  border: 1.5px solid var(--arang-border);
+  border-radius: 4px;
+  box-shadow: none !important;
+}
+
+/* Pembatas Section: Pita 3 Garis (Arang, Secang, Kapur) setinggi 6px */
+.pembatas-tenun {
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(
+    to bottom,
+    var(--arang) 0px, var(--arang) 2px,
+    var(--secang) 2px, var(--secang) 4px,
+    var(--kapur) 4px, var(--kapur) 6px
+  );
+  border-top: 1px solid var(--arang);
+  border-bottom: 1px solid var(--arang);
+}
+
+/* Pembatas Tenun Ipon-ipon Vertikal / Horizontal Motif */
+.pita-tenun-strip {
+  width: 100%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--arang) 0px, var(--arang) 8px,
+    var(--secang) 8px, var(--secang) 16px,
+    var(--kapur) 16px, var(--kapur) 24px
+  );
+  border-top: 1px solid var(--arang);
+  border-bottom: 1px solid var(--arang);
+}
+
+/* Progress Bar Bermotif Garis Tenun (Bukan Gradasi) */
+.progress-tenun-container {
+  background-color: var(--kapur-muted);
+  border: 1.5px solid var(--arang);
+  border-radius: 2px;
+  overflow: hidden;
+  height: 12px;
+}
+
+.progress-tenun-bar {
+  height: 100%;
+  background-color: var(--secang);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--secang) 0,
+    var(--secang) 6px,
+    var(--secang-dark) 6px,
+    var(--secang-dark) 12px
+  );
+  transition: width 0.3s ease;
+}
+
+/* Aksesibilitas: Fokus Keyboard Jelas (Kontras Tinggi) */
+*:focus-visible {
+  outline: 2.5px solid var(--indigo) !important;
+  outline-offset: 2px !important;
+}
+
+/* Tautan */
+a {
+  color: var(--indigo);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--secang);
+}

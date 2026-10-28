@@ -16,11 +16,6 @@ interface MascotProps {
 }
 
 // Coordinate mapping in the 1408x768 image
-// SENANG: x: 70..510, y: 40..660 (width: 440, height: 620)
-// KESAL: x: 530..810, y: 320..710 (width: 280, height: 390)
-// SEDIH: x: 770..1060, y: 40..650 (width: 290, height: 610)
-// BERPIKIR: x: 1040..1350, y: 245..710 (width: 310, height: 465)
-
 const MOOD_CROPS: Record<MascotMood, {
   sx: number;
   sy: number;
@@ -105,8 +100,6 @@ export const Mascot: React.FC<MascotProps> = ({
   const imgWidth = 1408;
   const imgHeight = 768;
 
-  // Calculate background scale and offsets for CSS background-image
-  // scale = imgWidth / cropWidth
   const scaleX = (imgWidth / config.sWidth) * 100;
   const scaleY = (imgHeight / config.sHeight) * 100;
   const posX = (config.sx / (imgWidth - config.sWidth)) * 100;
@@ -128,18 +121,18 @@ export const Mascot: React.FC<MascotProps> = ({
     <div className={`relative flex items-center gap-3 select-none ${className}`}>
       {/* Speech Bubble */}
       {speech && (
-        <div className="relative bg-white border-2 border-stone-800 rounded-2xl p-3 shadow-md text-stone-800 max-w-xs animate-in fade-in zoom-in-95 duration-200">
-          <p className={`font-bold text-stone-900 tracking-tight leading-tight ${sizeConfig.bubbleText}`}>
+        <div className="relative bg-[#F4EDE0] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3 text-[#1E1A17] max-w-xs animate-in fade-in zoom-in-95 duration-150">
+          <p className={`font-heading font-bold text-[#1E1A17] tracking-tight leading-tight ${sizeConfig.bubbleText}`}>
             {speech}
           </p>
           {subSpeech && (
-            <p className="text-xs text-stone-500 mt-1 font-medium italic">
+            <p className="text-xs text-[#1E1A17]/75 mt-1 font-body italic">
               {subSpeech}
             </p>
           )}
           {/* Speech bubble tail pointing to mascot */}
-          <div className="absolute top-1/2 -right-2.5 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[10px] border-l-stone-800" />
-          <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-white" />
+          <div className="absolute top-1/2 -right-2.5 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[10px] border-l-[#1E1A17]" />
+          <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-[#F4EDE0]" />
         </div>
       )}
 
@@ -150,11 +143,11 @@ export const Mascot: React.FC<MascotProps> = ({
           onClick={interactive ? handleClick : undefined}
           title={`Sigale-gale (${config.label} - ${config.batakTerm})`}
           aria-label={`Sigale-gale (${config.label} - ${config.batakTerm})`}
-          className={`relative overflow-hidden rounded-2xl border-2 border-stone-800 bg-[#E8DDD0] shadow-[0_4px_0_0_#292524] transition-transform ${sizeConfig.container} ${
-            interactive ? 'cursor-pointer hover:scale-105 active:scale-95 active:shadow-[0_1px_0_0_#292524]' : ''
+          className={`relative overflow-hidden rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#EADBCE] border-b-[3px] border-b-[#1E1A17] transition-transform ${sizeConfig.container} ${
+            interactive ? 'cursor-pointer hover:scale-105 active:translate-y-[2px]' : ''
           } ${bounce ? 'animate-bounce' : ''}`}
         >
-          {/* Pixel-art sprite rendering of Sigale-gale wearing Ulos */}
+          {/* Pixel-art sprite rendering of Sigale-gale */}
           <div
             className="w-full h-full"
             style={{
@@ -190,10 +183,10 @@ export const Mascot: React.FC<MascotProps> = ({
         </button>
 
         {showStatusLabel && (
-          <div className="mt-1.5 flex items-center gap-1 text-[11px] font-bold text-stone-700 bg-stone-200/90 px-2 py-0.5 rounded-full border border-stone-300">
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] font-bold text-[#1E1A17] bg-[#EADBCE] px-2 py-0.5 rounded-[4px] border border-[#1E1A17]">
             <span>{config.label}</span>
-            <span className="text-stone-400">|</span>
-            <span className="text-red-700 italic">{config.batakTerm}</span>
+            <span className="text-[#1E1A17]/40">|</span>
+            <span className="text-[#A62B1F] italic">{config.batakTerm}</span>
           </div>
         )}
       </div>

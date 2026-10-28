@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Globe, Terminal, Code2, ArrowRight, CheckCircle2, Play, Copy, Check } from 'lucide-react';
+import { Globe, Terminal, Code2, CheckCircle2, Play, Copy, Check } from 'lucide-react';
 import { fetchOpenDictionary, calculatePartuturanApi, transliterateAksaraApi } from '../utils/apiClient';
+import { PitaTenun } from './GorgaEmblem';
 
 export const OpenApiShowcaseView: React.FC = () => {
   const [activeEndpoint, setActiveEndpoint] = useState<'dictionary' | 'partuturan' | 'aksara'>('dictionary');
@@ -46,15 +47,16 @@ export const OpenApiShowcaseView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-stone-900 via-stone-800 to-red-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-amber-800/40 mb-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 bg-red-600/40 border border-red-500/50 px-3 py-1 rounded-full text-xs font-bold text-amber-300 uppercase tracking-wider mb-3">
+      <div className="card-batak-dark bg-[#1E1A17] text-[#F4EDE0] p-6 sm:p-8 mb-8 relative overflow-hidden">
+        <PitaTenun />
+        <div className="relative z-10 mt-3">
+          <div className="inline-flex items-center gap-2 bg-[#A62B1F]/30 border border-[#A62B1F] px-3 py-1 rounded-[4px] text-xs font-bold text-[#D9A21B] uppercase tracking-wider mb-3">
             <Globe className="w-3.5 h-3.5" /> Interconnected Web Ecosystem
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-[#F4EDE0]">
             BATAKGO Open Cultural Knowledge API
           </h1>
-          <p className="text-stone-300 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+          <p className="text-[#F4EDE0]/80 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed font-body">
             Menjawab tema UINIC 8.0: <i>"Engineering Interconnected Web Solutions"</i>, BATAKGO tidak hanya menjadi platform edukasi, melainkan juga bertindak sebagai <b>Data Provider</b> budaya Batak pertama yang menyediakan RESTful API terbuka bagi ekosistem digital nasional.
           </p>
         </div>
@@ -68,10 +70,10 @@ export const OpenApiShowcaseView: React.FC = () => {
             setParamInput('horas');
             setApiResponse(null);
           }}
-          className={`px-5 py-3 rounded-2xl font-bold text-sm transition flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
             activeEndpoint === 'dictionary'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'bg-white text-stone-700 hover:bg-stone-100 border-2 border-stone-200'
+              ? 'btn-secang'
+              : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
           }`}
         >
           <Code2 className="w-4 h-4" />
@@ -84,10 +86,10 @@ export const OpenApiShowcaseView: React.FC = () => {
             setParamInput('saudara_laki_ibu');
             setApiResponse(null);
           }}
-          className={`px-5 py-3 rounded-2xl font-bold text-sm transition flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
             activeEndpoint === 'partuturan'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'bg-white text-stone-700 hover:bg-stone-100 border-2 border-stone-200'
+              ? 'btn-secang'
+              : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
           }`}
         >
           <Terminal className="w-4 h-4" />
@@ -100,10 +102,10 @@ export const OpenApiShowcaseView: React.FC = () => {
             setParamInput('horas');
             setApiResponse(null);
           }}
-          className={`px-5 py-3 rounded-2xl font-bold text-sm transition flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
             activeEndpoint === 'aksara'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'bg-white text-stone-700 hover:bg-stone-100 border-2 border-stone-200'
+              ? 'btn-secang'
+              : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
           }`}
         >
           <Globe className="w-4 h-4" />
@@ -112,25 +114,25 @@ export const OpenApiShowcaseView: React.FC = () => {
       </div>
 
       {/* API Console Box */}
-      <div className="bg-stone-900 rounded-3xl p-6 shadow-2xl border-4 border-stone-800 text-stone-200">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-stone-800">
-          <div className="flex items-center gap-2 font-mono text-sm bg-stone-950 px-4 py-2 rounded-xl border border-stone-700 text-emerald-400 w-full sm:w-auto overflow-x-auto">
-            <span className="text-amber-400 font-bold">GET</span>
-            <span className="text-stone-300">{currentUrl.replace('GET ', '')}</span>
+      <div className="card-batak-dark bg-[#1E1A17] p-6 text-[#F4EDE0]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-[#2A2420]">
+          <div className="flex items-center gap-2 font-mono text-sm bg-[#141210] px-4 py-2 rounded-[4px] border border-[#2A2420] text-[#D9A21B] w-full sm:w-auto overflow-x-auto">
+            <span className="text-[#A62B1F] font-bold">GET</span>
+            <span className="text-[#F4EDE0]/80">{currentUrl.replace('GET ', '')}</span>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={handleCopy}
-              className="px-3 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs font-bold transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-[4px] border border-[#F4EDE0]/30 hover:border-[#F4EDE0] text-xs font-bold transition flex items-center gap-1.5 cursor-pointer text-[#F4EDE0]"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-[#D9A21B]" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Tersalin' : 'Copy URL'}</span>
             </button>
             <button
               onClick={handleExecuteApi}
               disabled={loading}
-              className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer ml-auto sm:ml-0"
+              className="btn-indigo px-4 py-1.5 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ml-auto sm:ml-0 disabled:opacity-50"
             >
               <Play className="w-3.5 h-3.5" />
               <span>{loading ? 'Mengirim...' : 'Uji Endpoint'}</span>
@@ -139,8 +141,8 @@ export const OpenApiShowcaseView: React.FC = () => {
         </div>
 
         {/* Param Editor */}
-        <div className="py-4 border-b border-stone-800 flex items-center gap-3">
-          <label className="text-xs font-bold text-stone-400 uppercase tracking-wider shrink-0">
+        <div className="py-4 border-b border-[#2A2420] flex items-center gap-3">
+          <label className="text-xs font-bold text-[#F4EDE0]/70 uppercase tracking-wider shrink-0">
             Parameter Query:
           </label>
           <input
@@ -148,22 +150,22 @@ export const OpenApiShowcaseView: React.FC = () => {
             value={paramInput}
             onChange={e => setParamInput(e.target.value)}
             placeholder="Masukkan nilai query..."
-            className="flex-1 bg-stone-950 border border-stone-700 rounded-xl px-3 py-1.5 text-sm text-stone-100 font-mono focus:outline-none focus:border-red-500"
+            className="flex-1 bg-[#141210] border border-[#2A2420] rounded-[4px] px-3 py-1.5 text-sm text-[#F4EDE0] font-mono focus:outline-none focus:border-[#23365A]"
           />
         </div>
 
         {/* Response JSON Output */}
         <div className="pt-4">
-          <div className="flex items-center justify-between text-xs font-bold text-stone-400 mb-2">
+          <div className="flex items-center justify-between text-xs font-bold text-[#F4EDE0]/70 mb-2">
             <span>Response Payload (JSON)</span>
-            <span className="text-emerald-400 flex items-center gap-1">
+            <span className="text-[#D9A21B] flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> Status: 200 OK • Laravel 13 & MySQL
             </span>
           </div>
 
-          <pre className="bg-stone-950 p-4 rounded-2xl font-mono text-xs text-amber-200 overflow-x-auto max-h-72 border border-stone-800 leading-relaxed">
+          <pre className="bg-[#141210] p-4 rounded-[4px] font-mono text-xs text-[#D9A21B] overflow-x-auto max-h-72 border border-[#2A2420] leading-relaxed">
             {loading ? (
-              <span className="text-stone-400 animate-pulse">Menghubungi endpoint Laravel API...</span>
+              <span className="text-[#F4EDE0]/50 animate-pulse">Menghubungi endpoint Laravel API...</span>
             ) : apiResponse ? (
               JSON.stringify(apiResponse, null, 2)
             ) : (
@@ -175,4 +177,3 @@ export const OpenApiShowcaseView: React.FC = () => {
     </div>
   );
 };
-

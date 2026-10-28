@@ -81,36 +81,34 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
   };
 
   const btnSizes = {
-    sm: 'p-1.5 text-xs',
-    md: 'p-2.5 text-sm',
-    lg: 'p-3.5 text-base'
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-4 py-2 text-base'
   };
 
   const iconSizes = {
-    sm: 15,
-    md: 18,
-    lg: 22
+    sm: 14,
+    md: 16,
+    lg: 20
   };
 
   return (
-    <div className={`inline-flex flex-col gap-1.5 ${className}`}>
+    <div className={`inline-flex flex-col gap-1.5 font-body ${className}`}>
       <div className="inline-flex items-center gap-1.5">
-        {/* Normal Speed Audio */}
+        {/* Normal Speed Audio (Indigo: Radius 4px, Tepi Bawah 3px Lebih Gelap) */}
         <button
           type="button"
           onClick={() => handlePlay(1.0)}
           disabled={isPlaying}
           aria-label={`Dengarkan pelafalan ${text}`}
           title="Dengarkan pelafalan asli (Kecepatan Normal)"
-          className={`inline-flex items-center gap-1.5 font-bold rounded-xl border-2 border-amber-600 bg-amber-500 text-white shadow-[0_3px_0_0_#b45309] hover:bg-amber-400 active:translate-y-0.5 active:shadow-[0_1px_0_0_#b45309] transition-all cursor-pointer ${btnSizes[size]} ${
-            isPlaying && speed === 1.0 ? 'ring-2 ring-amber-300 animate-pulse' : ''
-          }`}
+          className={`btn-indigo ${btnSizes[size]}`}
         >
-          <Volume2 size={iconSizes[size]} className={isPlaying && speed === 1.0 ? 'animate-bounce' : ''} />
-          <span className="hidden sm:inline">Dengar</span>
+          <Volume2 size={iconSizes[size]} className="mr-1" />
+          <span>Dengar</span>
         </button>
 
-        {/* Slow Speed Audio (Duolingo Turtle style) */}
+        {/* Slow Speed Audio */}
         {showSlowOption && (
           <button
             type="button"
@@ -118,16 +116,14 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
             disabled={isPlaying}
             aria-label={`Dengarkan pelafalan pelan ${text}`}
             title="Dengarkan pelafalan lambat suku kata"
-            className={`inline-flex items-center gap-1 font-bold rounded-xl border-2 border-stone-300 bg-white text-stone-700 shadow-[0_3px_0_0_#d6d3d1] hover:bg-stone-50 active:translate-y-0.5 active:shadow-[0_1px_0_0_#d6d3d1] transition-all cursor-pointer ${btnSizes[size]} ${
-              isPlaying && speed === 0.6 ? 'ring-2 ring-stone-400 animate-pulse' : ''
-            }`}
+            className={`btn-outline-arang ${btnSizes[size]}`}
           >
-            <Volume1 size={iconSizes[size]} className="text-amber-600" />
-            <span className="text-xs">Pelan (0.6x)</span>
+            <Volume1 size={iconSizes[size]} className="text-[#A62B1F] mr-1" />
+            <span className="text-xs">0.6x</span>
           </button>
         )}
 
-        {/* Voice Practice */}
+        {/* Voice Practice (Secang) */}
         {allowPractice && (
           <button
             type="button"
@@ -135,13 +131,9 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
             disabled={isRecording}
             aria-label={`Latihan pelafalan suara ${text}`}
             title="Uji pelafalan suara Anda lewat mikrofon"
-            className={`inline-flex items-center gap-1 font-bold rounded-xl border-2 transition-all cursor-pointer ${btnSizes[size]} ${
-              isRecording
-                ? 'border-red-600 bg-red-500 text-white animate-pulse'
-                : 'border-emerald-600 bg-emerald-500 text-white shadow-[0_3px_0_0_#047857] hover:bg-emerald-400 active:translate-y-0.5 active:shadow-[0_1px_0_0_#047857]'
-            }`}
+            className={`btn-secang ${btnSizes[size]}`}
           >
-            <Mic size={iconSizes[size]} className={isRecording ? 'animate-spin' : ''} />
+            <Mic size={iconSizes[size]} className="mr-1" />
             <span className="text-xs">{isRecording ? 'Mendengarkan...' : 'Ucapkan'}</span>
           </button>
         )}
@@ -149,13 +141,13 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
 
       {/* Syllable Breakdown Guide */}
       {syllables && syllables.length > 0 && (
-        <div className="flex items-center gap-1 text-xs text-stone-600 font-medium">
-          <span className="text-stone-400">Pengejaan:</span>
+        <div className="flex items-center gap-1 text-xs text-[#433D38] font-medium">
+          <span className="text-[#433D38]">Pengejaan:</span>
           <div className="flex items-center gap-1">
             {syllables.map((syl, idx) => (
               <span
                 key={idx}
-                className="bg-stone-100 hover:bg-amber-100 text-stone-800 px-1.5 py-0.5 rounded border border-stone-200 transition-colors"
+                className="bg-[#E8DFC8] text-[#1E1A17] px-1.5 py-0.5 rounded-[2px] border border-[#1E1A17] font-semibold text-[11px]"
               >
                 {syl}
               </span>
@@ -164,29 +156,29 @@ export const AudioPronunciationButton: React.FC<AudioPronunciationButtonProps> =
         </div>
       )}
 
-      {/* Spoken result accuracy feedback */}
+      {/* Spoken result accuracy feedback (Selalu Ikon + Teks) */}
       {speechResult && (
-        <div className={`mt-1 p-2 rounded-xl border text-xs flex items-center justify-between gap-2 ${
+        <div className={`mt-1 p-2 rounded-[4px] border-[1.5px] text-xs flex items-center justify-between gap-2 ${
           speechResult.accuracy >= 75
-            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-            : 'bg-amber-50 border-amber-300 text-amber-800'
+            ? 'bg-[#FAF6EE] border-[#23365A] text-[#23365A]'
+            : 'bg-[#F5EAE8] border-[#A62B1F] text-[#A62B1F]'
         }`}>
           <div className="flex items-center gap-1.5">
             {speechResult.accuracy >= 75 ? (
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <CheckCircle2 size={16} className="text-[#23365A] shrink-0" />
             ) : (
-              <AlertCircle size={16} className="text-amber-600 shrink-0" />
+              <AlertCircle size={16} className="text-[#A62B1F] shrink-0" />
             )}
             <div>
               <p className="font-bold">
                 {speechResult.accuracy >= 75 ? 'Pelafalan Tepat (Sintong)' : 'Bisa Diulang Lagi'}
               </p>
-              <p className="text-[11px] text-stone-500">
+              <p className="text-[11px] text-[#433D38]">
                 Terdeteksi: &ldquo;{speechResult.transcript}&rdquo;
               </p>
             </div>
           </div>
-          <span className="font-extrabold text-sm px-2 py-0.5 rounded-lg bg-white/80 border">
+          <span className="font-bold text-xs px-2 py-0.5 rounded-[2px] bg-[#E8DFC8] border border-[#1E1A17]">
             {speechResult.accuracy}%
           </span>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, User as UserIcon, Mail, Lock, LogIn, UserPlus } from 'lucide-react';
 import { registerApi, loginApi, AuthUser } from '../utils/apiClient';
-import { GorgaShield, GorgaBorder } from './GorgaEmblem';
+import { GorgaShield, PitaTenun } from './GorgaEmblem';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -64,15 +64,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-stone-200 overflow-hidden relative">
-        <GorgaBorder />
+    <div className="fixed inset-0 z-50 bg-[#1E1A17]/70 flex items-center justify-center p-4 animate-in fade-in duration-150">
+      <div className="card-batak bg-[#F4EDE0] max-w-md w-full relative overflow-hidden">
+        <PitaTenun />
 
         {/* Modal Header */}
-        <div className="bg-[#18181B] p-6 text-white text-center relative border-b border-stone-800">
+        <div className="bg-[#1E1A17] p-6 text-[#F4EDE0] text-center relative border-b-[1.5px] border-[#1E1A17]">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 text-stone-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            aria-label="Tutup"
+            className="absolute top-4 right-4 text-[#F4EDE0]/70 hover:text-[#F4EDE0] p-1.5 rounded-[4px] border border-transparent hover:border-[#F4EDE0]/40 transition cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -81,10 +83,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
             <GorgaShield size={44} />
           </div>
 
-          <h2 className="text-xl font-extrabold tracking-tight">
+          <h2 className="text-xl font-heading font-bold tracking-tight text-[#F4EDE0]">
             {isRegister ? 'Daftar Akun BATAKGO' : 'Masuk ke BATAKGO'}
           </h2>
-          <p className="text-stone-400 text-xs mt-1">
+          <p className="text-[#F4EDE0]/75 text-xs mt-1 font-body">
             {isRegister
               ? 'Simpan progres belajar, raih Gordang XP, dan panjat papan juara!'
               : 'Lanjutkan perjalanan belajar bahasa Batak bersama Sigale-gale'}
@@ -94,7 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errorMsg && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl p-3">
+            <div className="bg-[#F5E2DF] border-[1.5px] border-[#A62B1F] text-[#A62B1F] text-xs font-semibold rounded-[4px] p-3">
               {errorMsg}
             </div>
           )}
@@ -102,30 +104,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           {isRegister && (
             <>
               <div>
-                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
                   Nama Lengkap
                 </label>
                 <div className="relative">
-                  <UserIcon size={15} className="text-stone-400 absolute left-3 top-3.5" />
+                  <UserIcon size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Contoh: Ucok Tampubolon"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-medium"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
                   Marga Batak
                 </label>
                 <select
                   value={marga}
                   onChange={e => setMarga(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-medium bg-white"
+                  className="w-full px-3 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
                 >
                   {POPULAR_MARGA.map(m => (
                     <option key={m} value={m}>{m}</option>
@@ -136,35 +138,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           )}
 
           <div>
-            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
               Email
             </label>
             <div className="relative">
-              <Mail size={15} className="text-stone-400 absolute left-3 top-3.5" />
+              <Mail size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-medium"
+                className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
               Kata Sandi
             </label>
             <div className="relative">
-              <Lock size={15} className="text-stone-400 absolute left-3 top-3.5" />
+              <Lock size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Minimal 6 karakter"
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-medium"
+                className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
               />
             </div>
           </div>
@@ -172,10 +174,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-2.5 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] text-white font-bold text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="btn-indigo w-full mt-2 py-3 text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
-              <span className="animate-spin text-sm">Sedang memproses...</span>
+              <span className="text-sm">Sedang memproses...</span>
             ) : isRegister ? (
               <>
                 <UserPlus size={16} />
@@ -196,7 +198,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
                 setIsRegister(!isRegister);
                 setErrorMsg(null);
               }}
-              className="text-xs text-[#991B1B] hover:text-[#7F1D1D] font-semibold hover:underline cursor-pointer"
+              className="text-xs text-[#23365A] hover:text-[#162238] font-bold underline cursor-pointer"
             >
               {isRegister
                 ? 'Sudah punya akun? Masuk di sini'

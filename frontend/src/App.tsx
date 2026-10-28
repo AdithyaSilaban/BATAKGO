@@ -15,7 +15,8 @@ import { LeaderboardView } from './components/LeaderboardView';
 import { UlosCollectionView } from './components/UlosCollectionView';
 import { OpenApiShowcaseView } from './components/OpenApiShowcaseView';
 import { AuthModal } from './components/AuthModal';
-import { GorgaShield } from './components/GorgaEmblem';
+import { LoginPage } from './components/LoginPage';
+import { GorgaShield, PitaTenun } from './components/GorgaEmblem';
 import { UNITS, Lesson } from './utils/batakData';
 import {
   UserProgress,
@@ -170,11 +171,20 @@ export default function App() {
     showToast('Sampai jumpa kembali! Sesi telah diakhiri.');
   };
 
+  // Tampilkan Halaman Login & Registrasi jika belum login
+  if (!currentUser) {
+    return (
+      <LoginPage
+        onAuthSuccess={handleAuthSuccess}
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#222222] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] relative">
+    <div className="min-h-screen bg-[#F4EDE0] text-[#1E1A17] flex flex-col font-body relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white px-5 py-3 rounded-2xl shadow-xl border-2 border-stone-700 font-bold text-sm animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[#1E1A17] text-[#F4EDE0] px-4 py-2.5 rounded-[4px] border-[1.5px] border-[#A62B1F] font-bold text-xs animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2">
           <span>{toastMessage}</span>
         </div>
       )}
@@ -238,13 +248,14 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="bg-[#18181B] text-stone-300 py-8 px-4 border-t-2 border-[#991B1B]">
+      <PitaTenun />
+      <footer className="bg-[#1E1A17] text-[#F4EDE0] py-8 px-4 border-t border-[#1E1A17]">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
             <GorgaShield size={36} />
             <div>
-              <p className="font-bold text-white text-base tracking-tight">
-                BATAK<span className="text-stone-300">GO</span> • Parsiajaran Hata Batak
+              <p className="font-heading font-bold text-[#F4EDE0] text-base tracking-tight">
+                BATAK<span className="text-[#A62B1F]">GO</span> • Parsiajaran Hata Batak
               </p>
               <p className="text-xs text-stone-400 mt-0.5">
                 Didukung arsitektur Laravel 13 RESTful API & basis data relasional MySQL (Laragon).

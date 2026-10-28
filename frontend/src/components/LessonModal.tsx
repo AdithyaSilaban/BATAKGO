@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { X, Heart, Volume2, Mic, CheckCircle2, XCircle, ArrowRight, Sparkles, Award } from 'lucide-react';
+import { X, Heart, Volume2, Mic, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { Lesson, Question } from '../utils/batakData';
 import { Mascot, MascotMood } from './Mascot';
-import { GorgaShield } from './GorgaEmblem';
+import { GorgaShield, PitaTenun } from './GorgaEmblem';
 import {
   speakBatakWord,
   playGordangBeat,
@@ -259,8 +259,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   // Lesson Finished Screen
   if (isFinished) {
     return (
-      <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-lg w-full border-4 border-stone-800 shadow-[0_12px_0_0_#292524] p-6 sm:p-8 text-center animate-in zoom-in-95 duration-200">
+      <div className="fixed inset-0 z-50 bg-[#1E1A17]/70 flex items-center justify-center p-4">
+        <div className="card-batak bg-[#F4EDE0] max-w-lg w-full p-6 sm:p-8 text-center animate-in zoom-in-95 duration-200">
           <div className="flex justify-center mb-4">
             <Mascot
               mood="happy"
@@ -270,51 +270,55 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             />
           </div>
 
-          <h2 className="text-3xl font-black text-stone-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-heading text-[#1E1A17] tracking-tight">
             Parsiajaran Sidung!
           </h2>
-          <p className="text-stone-600 mt-1 font-medium">
-            Hebat sekali! Pelajaran <span className="font-bold text-red-600">&ldquo;{lesson.title}&rdquo;</span> tuntas dipelajari.
+          <p className="text-[#1E1A17]/80 mt-1 font-body text-sm sm:text-base">
+            Pelajaran <span className="font-bold text-[#A62B1F]">&ldquo;{lesson.title}&rdquo;</span> tuntas dipelajari.
           </p>
+
+          <div className="my-4">
+            <PitaTenun />
+          </div>
 
           {/* Reward Badges */}
           <div className="grid grid-cols-3 gap-3 my-6">
-            <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3">
-              <span className="text-xs font-bold text-amber-700 block">XP Diraih</span>
-              <span className="text-2xl font-black text-amber-600">
+            <div className="bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3 text-center">
+              <span className="text-xs font-bold text-[#1E1A17]/70 block uppercase">XP Diraih</span>
+              <span className="text-xl sm:text-2xl font-heading font-bold text-[#D9A21B]">
                 +{lesson.xpReward}
               </span>
             </div>
-            <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-3">
-              <span className="text-xs font-bold text-red-700 block">Sisa Tondi</span>
-              <span className="text-2xl font-black text-red-600 flex items-center justify-center gap-1">
-                <Heart size={20} className="fill-red-500 text-red-500" /> {hearts}
+            <div className="bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3 text-center">
+              <span className="text-xs font-bold text-[#1E1A17]/70 block uppercase">Sisa Tondi</span>
+              <span className="text-xl sm:text-2xl font-heading font-bold text-[#A62B1F] flex items-center justify-center gap-1">
+                <Heart size={20} className="fill-[#A62B1F] text-[#A62B1F]" /> {hearts}
               </span>
             </div>
-            <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-3">
-              <span className="text-xs font-bold text-emerald-700 block">Akurasi</span>
-              <span className="text-2xl font-black text-emerald-600">
+            <div className="bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3 text-center">
+              <span className="text-xs font-bold text-[#1E1A17]/70 block uppercase">Akurasi</span>
+              <span className="text-xl sm:text-2xl font-heading font-bold text-[#23365A]">
                 {Math.round(((correctCount) / lesson.questions.length) * 100)}%
               </span>
             </div>
           </div>
 
-          {/* Ulos Collection notification */}
-          <div className="bg-stone-50 border-2 border-stone-300 rounded-2xl p-3.5 flex items-center gap-3 text-left mb-6">
-            <div className="w-12 h-12 rounded-xl bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm border border-stone-800">
+          {/* Cultural reward notification */}
+          <div className="bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3.5 flex items-center gap-3 text-left mb-6">
+            <div className="w-12 h-12 rounded-[4px] bg-[#1E1A17] text-[#D9A21B] flex items-center justify-center shrink-0 border border-[#1E1A17]">
               <GorgaShield size={28} />
             </div>
             <div>
-              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide">Hadiah Budaya</p>
-              <p className="font-bold text-stone-800 text-sm">Poin Tenun Ulos Ditambahkan!</p>
-              <p className="text-xs text-stone-600">Simbol berkah dan doa keselamatan dari Sigale-gale.</p>
+              <p className="text-xs font-bold text-[#A62B1F] uppercase tracking-wide">Hadiah Budaya</p>
+              <p className="font-heading font-bold text-[#1E1A17] text-sm">Poin Tenun Ulos Ditambahkan!</p>
+              <p className="text-xs text-[#1E1A17]/75">Simbol berkah dan doa keselamatan dari Sigale-gale.</p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={() => onComplete({ xpEarned: lesson.xpReward, correctCount, heartsRemaining: hearts })}
-            className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-lg border-2 border-emerald-800 shadow-[0_4px_0_0_#065f46] active:translate-y-0.5 transition-all cursor-pointer"
+            className="btn-indigo w-full py-3.5 text-base font-bold cursor-pointer"
           >
             Lanjutkan Perjalanan (Toruskon)
           </button>
@@ -326,8 +330,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   // Hearts Depleted Screen
   if (hearts <= 0) {
     return (
-      <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-md w-full border-4 border-stone-800 shadow-[0_12px_0_0_#292524] p-6 text-center animate-in zoom-in-95 duration-200">
+      <div className="fixed inset-0 z-50 bg-[#1E1A17]/70 flex items-center justify-center p-4">
+        <div className="card-batak bg-[#F4EDE0] max-w-md w-full p-6 text-center animate-in zoom-in-95 duration-200">
           <div className="flex justify-center mb-4">
             <Mascot
               mood="angry"
@@ -335,12 +339,17 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               speech="Tondimu habis! Istirahat jolo sebentar."
             />
           </div>
-          <h2 className="text-2xl font-black text-stone-900 tracking-tight">
+          <h2 className="text-2xl font-heading text-[#1E1A17] tracking-tight">
             Tondi Sudah Habis
           </h2>
-          <p className="text-stone-600 mt-2 text-sm">
+          <p className="text-[#1E1A17]/80 mt-2 text-sm font-body">
             Jangan berkecil hati. Buka Kamus Batak untuk melatih kosakata atau tunggu pemulihan tondi.
           </p>
+
+          <div className="my-4">
+            <PitaTenun />
+          </div>
+
           <div className="mt-6 flex flex-col gap-2.5">
             <button
               type="button"
@@ -348,14 +357,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 setHearts(3);
                 setCurrentIndex(0);
               }}
-              className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-white font-bold border-2 border-amber-700 shadow-[0_4px_0_0_#b45309] cursor-pointer"
+              className="btn-secang w-full py-3 text-sm font-bold cursor-pointer"
             >
-              🔄 Ulangi Pelajaran dari Awal
+              Ulangi Pelajaran dari Awal
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold border border-stone-300 cursor-pointer"
+              className="btn-outline-arang w-full py-2.5 text-sm font-bold cursor-pointer"
             >
               Kembali ke Beranda
             </button>
@@ -366,30 +375,39 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#F7F7F7] flex flex-col">
+    <div className="fixed inset-0 z-50 bg-[#F4EDE0] text-[#1E1A17] flex flex-col">
+      {/* Top Ribbon */}
+      <PitaTenun />
+
       {/* Top Header Bar */}
-      <header className="max-w-4xl w-full mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <header className="max-w-4xl w-full mx-auto px-4 py-3 flex items-center justify-between gap-4 border-b-[1.5px] border-[#1E1A17]">
         <button
           type="button"
           onClick={onClose}
           aria-label="Tutup Pelajaran"
-          className="p-2 rounded-xl text-stone-500 hover:bg-stone-200 hover:text-stone-800 transition-colors cursor-pointer"
+          className="p-1.5 rounded-[4px] border border-[#1E1A17] bg-[#EADBCE] text-[#1E1A17] hover:bg-[#D9CDBF] transition-colors cursor-pointer"
         >
-          <X size={26} />
+          <X size={22} />
         </button>
 
-        {/* Progress Bar */}
-        <div className="flex-1 bg-stone-200 h-4 rounded-full overflow-hidden border border-stone-300">
+        {/* Progress Bar Tenun */}
+        <div
+          className="flex-1 progress-tenun-container h-4"
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
           <div
-            className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+            className="progress-tenun-bar h-full transition-all duration-300"
             style={{ width: `${Math.max(8, progressPercent)}%` }}
           />
         </div>
 
         {/* Hearts Indicator */}
-        <div className="flex items-center gap-1.5 font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full">
-          <Heart size={20} className="fill-red-500 text-red-500 animate-pulse" />
-          <span className="text-base font-black text-stone-900">{hearts}</span>
+        <div className="flex items-center gap-1.5 font-bold text-[#A62B1F] bg-[#EADBCE] border-[1.5px] border-[#1E1A17] px-3 py-1 rounded-[4px]">
+          <Heart size={18} className="fill-[#A62B1F] text-[#A62B1F]" />
+          <span className="text-base font-heading font-bold text-[#1E1A17]">{hearts}</span>
         </div>
       </header>
 
@@ -405,35 +423,35 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               showStatusLabel={false}
             />
             <div className="flex-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-red-600 bg-red-100 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#A62B1F] bg-[#EADBCE] border border-[#1E1A17] px-2.5 py-0.5 rounded-[4px]">
                 {currentQ.type === 'multiple_choice' && 'Pilihan Ganda'}
                 {currentQ.type === 'listening' && 'Latihan Mendengar'}
                 {currentQ.type === 'sentence_builder' && 'Susun Kalimat'}
                 {currentQ.type === 'match_pairs' && 'Cocokkan Pasangan'}
                 {currentQ.type === 'pronunciation' && 'Latihan Pelafalan'}
               </span>
-              <h1 className="text-xl sm:text-2xl font-black text-stone-900 mt-1 tracking-tight leading-snug">
+              <h1 className="text-xl sm:text-2xl font-heading text-[#1E1A17] mt-2 tracking-tight leading-snug">
                 {currentQ.prompt}
               </h1>
 
               {/* Batak phrase card with audio trigger */}
               {currentQ.batakText && currentQ.type !== 'listening' && (
-                <div className="mt-3 inline-flex items-center gap-3 bg-white border-2 border-stone-200 rounded-2xl p-2.5 px-4 shadow-sm">
+                <div className="mt-3 inline-flex items-center gap-3 bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-2.5 px-4">
                   <button
                     type="button"
                     onClick={() => speakBatakWord(currentQ.batakText!)}
                     aria-label={`Dengarkan ${currentQ.batakText}`}
-                    className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center hover:bg-amber-400 active:scale-95 shadow-[0_3px_0_0_#b45309] transition-all cursor-pointer"
+                    className="btn-indigo w-9 h-9 rounded-[4px] flex items-center justify-center cursor-pointer"
                   >
-                    <Volume2 size={22} />
+                    <Volume2 size={20} />
                   </button>
                   <div>
-                    <span className="text-lg font-extrabold text-stone-900 block tracking-tight">
+                    <span className="text-lg font-heading font-bold text-[#1E1A17] block tracking-tight">
                       &ldquo;{currentQ.batakText}&rdquo;
                     </span>
                     {currentQ.phonetic && (
-                      <span className="text-xs text-stone-500 font-medium">
-                        Pelafalan: <span className="text-red-700 italic">{currentQ.phonetic}</span>
+                      <span className="text-xs text-[#1E1A17]/70 font-medium">
+                        Pelafalan: <span className="text-[#A62B1F] italic font-semibold">{currentQ.phonetic}</span>
                       </span>
                     )}
                   </div>
@@ -452,9 +470,9 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   <button
                     type="button"
                     onClick={() => speakBatakWord(currentQ.batakText!)}
-                    className="px-6 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-white font-extrabold text-lg flex items-center gap-3 border-2 border-amber-700 shadow-[0_5px_0_0_#b45309] active:translate-y-1 active:shadow-[0_1px_0_0_#b45309] transition-all cursor-pointer"
+                    className="btn-indigo px-6 py-3.5 text-base font-bold flex items-center gap-3 cursor-pointer"
                   >
-                    <Volume2 size={28} className="animate-pulse" /> Putar Audio Penutur Asli
+                    <Volume2 size={24} /> Putar Audio Penutur Asli
                   </button>
                 </div>
               )}
@@ -471,14 +489,18 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                         playHasapiPluck(480 + idx * 30);
                         setSelectedOption(option);
                       }}
-                      className={`p-4 rounded-2xl border-2 text-left font-bold transition-all text-base sm:text-lg flex items-center justify-between cursor-pointer ${
+                      className={`p-4 rounded-[4px] border-[1.5px] text-left font-bold transition-all text-base sm:text-lg flex items-center justify-between cursor-pointer ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_4px_0_0_#f59e0b]'
-                          : 'border-stone-300 bg-white text-stone-800 shadow-[0_4px_0_0_#e7e5e4] hover:bg-stone-50'
+                          ? 'border-[#162238] bg-[#23365A] text-[#F4EDE0] border-b-[3px] border-b-[#162238]'
+                          : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] border-b-[3px] border-b-[#1E1A17] hover:bg-[#EADBCE] active:translate-y-[2px]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-7 h-7 rounded-lg border border-stone-300 text-stone-500 flex items-center justify-center text-xs font-bold">
+                        <span className={`w-7 h-7 rounded-[4px] border flex items-center justify-center text-xs font-bold ${
+                          isSelected
+                            ? 'border-[#F4EDE0] text-[#F4EDE0]'
+                            : 'border-[#1E1A17] text-[#1E1A17]'
+                        }`}>
                           {idx + 1}
                         </span>
                         <span>{option}</span>
@@ -494,9 +516,9 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           {currentQ.type === 'sentence_builder' && (
             <div className="mt-4">
               {/* Answer Slot */}
-              <div className="min-h-20 p-4 border-b-2 border-stone-300 flex flex-wrap gap-2 items-center mb-6 bg-stone-100/60 rounded-xl">
+              <div className="min-h-20 p-4 border-[1.5px] border-[#1E1A17] rounded-[4px] flex flex-wrap gap-2 items-center mb-6 bg-[#EADBCE]/50">
                 {selectedWords.length === 0 ? (
-                  <span className="text-stone-400 italic text-sm">
+                  <span className="text-[#1E1A17]/60 italic text-sm">
                     Pilih kata di bawah ini untuk menyusun kalimat...
                   </span>
                 ) : (
@@ -510,7 +532,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                         setSelectedWords(prev => prev.filter((_, i) => i !== idx));
                         setAvailableWords(prev => [...prev, word]);
                       }}
-                      className="px-4 py-2.5 rounded-xl bg-white border-2 border-stone-400 font-bold text-stone-800 shadow-[0_3px_0_0_#a8a29e] hover:bg-stone-50 cursor-pointer active:translate-y-0.5 active:shadow-[0_1px_0_0_#a8a29e]"
+                      className="px-4 py-2 rounded-[4px] bg-[#23365A] text-[#F4EDE0] border-[1.5px] border-[#162238] border-b-[3px] border-b-[#162238] font-bold cursor-pointer active:translate-y-[2px]"
                     >
                       {word}
                     </button>
@@ -530,7 +552,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                       setAvailableWords(prev => prev.filter((_, i) => i !== idx));
                       setSelectedWords(prev => [...prev, word]);
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-white border-2 border-stone-300 font-bold text-stone-800 shadow-[0_3px_0_0_#d6d3d1] hover:border-amber-400 hover:bg-amber-50 cursor-pointer active:translate-y-0.5 active:shadow-[0_1px_0_0_#d6d3d1]"
+                    className="px-4 py-2 rounded-[4px] bg-[#F4EDE0] text-[#1E1A17] border-[1.5px] border-[#1E1A17] border-b-[3px] border-b-[#1E1A17] font-bold hover:bg-[#EADBCE] cursor-pointer active:translate-y-[2px]"
                   >
                     {word}
                   </button>
@@ -544,7 +566,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             <div className="mt-4 grid grid-cols-2 gap-4">
               {/* Batak Column */}
               <div className="flex flex-col gap-2.5">
-                <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
+                <span className="text-xs font-bold text-[#A62B1F] uppercase tracking-wide">
                   Bahasa Batak
                 </span>
                 {currentQ.pairs?.map((p, idx) => {
@@ -556,12 +578,12 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                       type="button"
                       disabled={isMatched}
                       onClick={() => handlePairClick('batak', p.batak)}
-                      className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
+                      className={`p-3.5 rounded-[4px] border-[1.5px] font-bold text-left transition-all ${
                         isMatched
-                          ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60'
+                          ? 'border-dashed border-[#1E1A17] bg-[#EADBCE] text-[#1E1A17] opacity-45'
                           : isSelected
-                          ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
-                          : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer'
+                          ? 'border-[#162238] bg-[#23365A] text-[#F4EDE0] border-b-[3px] border-b-[#162238]'
+                          : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] border-b-[3px] border-b-[#1E1A17] hover:bg-[#EADBCE] cursor-pointer active:translate-y-[2px]'
                       }`}
                     >
                       {p.batak}
@@ -572,7 +594,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
 
               {/* Indonesian Column */}
               <div className="flex flex-col gap-2.5">
-                <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
+                <span className="text-xs font-bold text-[#23365A] uppercase tracking-wide">
                   Bahasa Indonesia
                 </span>
                 {currentQ.pairs?.map((p, idx) => {
@@ -584,12 +606,12 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                       type="button"
                       disabled={isMatched}
                       onClick={() => handlePairClick('indo', p.indonesian)}
-                      className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
+                      className={`p-3.5 rounded-[4px] border-[1.5px] font-bold text-left transition-all ${
                         isMatched
-                          ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60'
+                          ? 'border-dashed border-[#1E1A17] bg-[#EADBCE] text-[#1E1A17] opacity-45'
                           : isSelected
-                          ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
-                          : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer'
+                          ? 'border-[#162238] bg-[#23365A] text-[#F4EDE0] border-b-[3px] border-b-[#162238]'
+                          : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] border-b-[3px] border-b-[#1E1A17] hover:bg-[#EADBCE] cursor-pointer active:translate-y-[2px]'
                       }`}
                     >
                       {p.indonesian}
@@ -603,11 +625,11 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           {/* 4. Pronunciation Practice */}
           {currentQ.type === 'pronunciation' && (
             <div className="mt-6 flex flex-col items-center text-center">
-              <div className="bg-white border-2 border-stone-300 rounded-3xl p-6 shadow-sm max-w-md w-full mb-6">
-                <p className="text-stone-500 text-xs font-bold uppercase tracking-wider mb-2">
+              <div className="card-batak bg-[#F4EDE0] p-6 max-w-md w-full mb-6 text-center">
+                <p className="text-[#A62B1F] text-xs font-bold uppercase tracking-wider mb-2">
                   Target Pelafalan
                 </p>
-                <p className="text-3xl font-black text-red-600 tracking-tight">
+                <p className="text-3xl font-heading font-bold text-[#1E1A17] tracking-tight">
                   &ldquo;{currentQ.batakText}&rdquo;
                 </p>
                 {currentQ.syllables && (
@@ -615,14 +637,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     {currentQ.syllables.map((s, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded bg-stone-100 text-stone-700 text-sm font-semibold border"
+                        className="px-2 py-0.5 rounded-[4px] bg-[#EADBCE] text-[#1E1A17] text-sm font-semibold border border-[#1E1A17]"
                       >
                         {s}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="text-stone-500 text-sm mt-3 italic">
+                <p className="text-[#1E1A17]/75 text-sm mt-3 italic font-body">
                   Artinya: &ldquo;{currentQ.translation}&rdquo;
                 </p>
               </div>
@@ -632,21 +654,21 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 type="button"
                 disabled={isRecording}
                 onClick={startVoiceRecording}
-                className={`w-24 h-24 rounded-full flex flex-col items-center justify-center text-white border-4 transition-all cursor-pointer shadow-lg ${
+                className={`w-20 h-20 rounded-[4px] flex flex-col items-center justify-center transition-all cursor-pointer ${
                   isRecording
-                    ? 'bg-red-600 border-red-800 animate-ping'
-                    : 'bg-emerald-500 hover:bg-emerald-400 border-emerald-700 shadow-[0_6px_0_0_#047857] active:translate-y-1'
+                    ? 'bg-[#A62B1F] text-[#F4EDE0] border-2 border-[#1E1A17] animate-pulse'
+                    : 'btn-secang text-[#F4EDE0]'
                 }`}
               >
-                <Mic size={36} />
+                <Mic size={32} />
               </button>
-              <p className="text-sm font-bold text-stone-600 mt-4">
+              <p className="text-sm font-bold text-[#1E1A17] mt-3">
                 {isRecording ? 'Mendengarkan suara Anda...' : 'Klik Mikrofon & Ucapkan'}
               </p>
 
               {recordedAccuracy !== null && (
-                <div className="mt-4 p-3 bg-stone-100 rounded-2xl border text-sm font-bold">
-                  Skor Akurasi: <span className="text-emerald-700 text-lg font-black">{recordedAccuracy}%</span>
+                <div className="mt-4 p-3 bg-[#EADBCE] rounded-[4px] border-[1.5px] border-[#1E1A17] text-sm font-bold text-[#1E1A17]">
+                  Skor Akurasi: <span className="text-[#23365A] text-lg font-heading font-bold">{recordedAccuracy}%</span>
                 </div>
               )}
             </div>
@@ -654,7 +676,11 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         </div>
 
         {/* Bottom Feedback / Check Bar */}
-        <div className="mt-8 pt-4 border-t border-stone-200">
+        <div className="mt-8 pt-4">
+          <div className="mb-4">
+            <PitaTenun />
+          </div>
+
           {!isChecked ? (
             <div className="flex justify-end">
               <button
@@ -666,33 +692,33 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   (currentQ.type === 'sentence_builder' && selectedWords.length === 0) ||
                   (currentQ.type === 'pronunciation' && recordedAccuracy === null)
                 }
-                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-extrabold text-base border-2 border-emerald-800 shadow-[0_4px_0_0_#065f46] active:translate-y-0.5 transition-all cursor-pointer"
+                className="btn-indigo w-full sm:w-auto px-8 py-3.5 text-base font-bold disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
               >
                 Periksa Jawaban
               </button>
             </div>
           ) : (
             <div
-              className={`p-4 sm:p-5 rounded-3xl border-2 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-4 duration-200 ${
+              className={`p-4 sm:p-5 rounded-[4px] border-[1.5px] flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-2 duration-150 ${
                 isCorrect
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-950'
-                  : 'bg-red-50 border-red-400 text-red-950'
+                  ? 'bg-[#EADBCE] border-[#23365A] text-[#1E1A17]'
+                  : 'bg-[#F5E2DF] border-[#A62B1F] text-[#1E1A17]'
               }`}
             >
               <div className="flex items-start gap-3 w-full sm:w-auto">
                 {isCorrect ? (
-                  <CheckCircle2 size={32} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 size={32} className="text-[#23365A] shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle size={32} className="text-red-600 shrink-0 mt-0.5" />
+                  <XCircle size={32} className="text-[#A62B1F] shrink-0 mt-0.5" />
                 )}
                 <div>
-                  <h3 className="text-lg font-black tracking-tight">
+                  <h3 className="text-lg font-heading font-bold tracking-tight">
                     {isCorrect ? 'Luar Biasa! (Sintong)' : 'Kurang Tepat (Sala)'}
                   </h3>
                   {!isCorrect && (
                     <div className="text-xs sm:text-sm mt-1">
-                      <span className="font-semibold text-stone-600">Jawaban yang tepat: </span>
-                      <span className="font-bold text-red-700">
+                      <span className="font-semibold text-[#1E1A17]/80">Jawaban yang tepat: </span>
+                      <span className="font-bold text-[#A62B1F]">
                         {Array.isArray(currentQ.correctAnswer)
                           ? currentQ.correctAnswer.join(' ')
                           : currentQ.correctAnswer}
@@ -700,8 +726,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     </div>
                   )}
                   {currentQ.culturalTip && (
-                    <p className="text-xs text-stone-600 mt-1 italic">
-                      💡 Tip Budaya: {currentQ.culturalTip}
+                    <p className="text-xs text-[#1E1A17]/80 mt-1 italic">
+                      Tip Budaya: {currentQ.culturalTip}
                     </p>
                   )}
                 </div>
@@ -710,10 +736,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               <button
                 type="button"
                 onClick={handleNext}
-                className={`w-full sm:w-auto px-8 py-3.5 rounded-2xl font-extrabold text-base border-2 text-white shadow-md active:translate-y-0.5 transition-all cursor-pointer shrink-0 ${
-                  isCorrect
-                    ? 'bg-emerald-600 hover:bg-emerald-500 border-emerald-800'
-                    : 'bg-red-600 hover:bg-red-500 border-red-800'
+                className={`w-full sm:w-auto px-8 py-3 text-base font-bold cursor-pointer shrink-0 ${
+                  isCorrect ? 'btn-indigo' : 'btn-secang'
                 }`}
               >
                 Lanjutkan <ArrowRight size={18} className="inline ml-1" />

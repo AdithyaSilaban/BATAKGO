@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User as UserIcon, LogIn, UserPlus, Sparkles, ShieldCheck, Heart, Zap, ArrowRight } from 'lucide-react';
+import {
+  Mail,
+  Lock,
+  User as UserIcon,
+  LogIn,
+  UserPlus,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  BookOpen,
+  Heart,
+  Users,
+  Languages
+} from 'lucide-react';
 import { registerApi, loginApi, AuthUser, setStoredUser } from '../utils/apiClient';
-import { GorgaShield, GorgaBorder } from './GorgaEmblem';
+import { GorgaShield, PitaTenun } from './GorgaEmblem';
 import { Mascot } from './Mascot';
 
 interface LoginPageProps {
@@ -11,7 +26,17 @@ interface LoginPageProps {
 const POPULAR_MARGA = [
   'Simanjuntak', 'Siregar', 'Hutabarat', 'Nainggolan', 'Sitorus',
   'Panjaitan', 'Sinaga', 'Pasaribu', 'Manurung', 'Nababan',
-  'Lumbantobing', 'Sitompul', 'Silalahi', 'Harahap', 'Ginting'
+  'Lumbantobing', 'Sitompul', 'Silalahi', 'Harahap', 'Ginting',
+  'Tampubolon', 'Pangaribuan', 'Simatupang', 'Situmeang', 'Marpaung'
+];
+
+const AVATAR_OPTIONS = [
+  { id: '🧒', label: 'Tigor' },
+  { id: '👧', label: 'Butet' },
+  { id: '🧑‍🎓', label: 'Parsiajar' },
+  { id: '👴', label: 'Ompung' },
+  { id: '🧣', label: 'Pardondon' },
+  { id: '👑', label: 'Raja Adat' },
 ];
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
@@ -19,14 +44,40 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [marga, setMarga] = useState(POPULAR_MARGA[0]);
+  const [customMarga, setCustomMarga] = useState('');
+  const [isCustomMarga, setIsCustomMarga] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState(AVATAR_OPTIONS[0].id);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const effectiveMarga = isCustomMarga ? customMarga.trim() : marga;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setErrorMsg(null);
+    setSuccessMsg(null);
+
+    // Validation
+    if (isRegister) {
+      if (name.trim().length < 2) {
+        setErrorMsg('Nama lengkap minimal 2 karakter.');
+        return;
+      }
+      if (password.length < 6) {
+        setErrorMsg('Kata sandi minimal 6 karakter demi keamanan akun.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setErrorMsg('Konfirmasi kata sandi tidak cocok. Harap periksa kembali.');
+        return;
+      }
+    }
+
+    setLoading(true);
 
     try {
       if (isRegister) {
@@ -34,14 +85,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           password,
-          marga,
-          avatar: name.trim().charAt(0).toUpperCase() || 'B',
+          marga: effectiveMarga || undefined,
+          avatar: selectedAvatar,
         });
 
         if (res && res.user) {
-          onAuthSuccess(res.user);
+          setSuccessMsg(`Pendaftaran berhasil! Horas, ${res.user.name}!`);
+          setTimeout(() => {
+            onAuthSuccess(res.user);
+          }, 800);
         } else {
-          setErrorMsg('Pendaftaran gagal. Periksa kembali email atau koneksi database MySQL.');
+          setErrorMsg(
+            'Pendaftaran gagal. Periksa kembali email atau pastikan backend Laravel aktif di port 8000.'
+          );
         }
       } else {
         const res = await loginApi({
@@ -50,9 +106,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
         });
 
         if (res && res.user) {
-          onAuthSuccess(res.user);
+          setSuccessMsg(`Login berhasil! Horas, ${res.user.name}!`);
+          setTimeout(() => {
+            onAuthSuccess(res.user);
+          }, 600);
         } else {
-          setErrorMsg('Email atau kata sandi tidak cocok. Anda juga dapat menggunakan Akun Demo di bawah.');
+          setErrorMsg(
+            'Email atau kata sandi tidak cocok. Silakan periksa kembali atau gunakan tombol "Isi Akun Demo".'
+          );
         }
       }
     } catch (err: any) {
@@ -77,7 +138,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
       name: 'Parsiajar Tamu',
       email: 'tamu@batakgo.id',
       marga: 'Siregar',
-      avatar: 'P',
+      avatar: '🧒',
       xp: 0,
       streak: 1,
       hearts: 5,
@@ -91,45 +152,39 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#18181B] text-stone-100 flex flex-col justify-between relative overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]">
-      {/* Top Sacred Cultural Ribbon */}
-      <GorgaBorder />
-
-      {/* Radiant Background Ambiance */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-900/25 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-amber-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-[#F4EDE0] text-[#1E1A17] flex flex-col justify-between font-body">
+      {/* Pembatas Section: Pita 3 Garis (Arang, Secang, Kapur) setinggi 6px */}
+      <PitaTenun />
 
       {/* Main Grid Wrapper */}
-      <div className="relative z-10 max-w-6xl w-full mx-auto px-4 py-8 sm:py-12 flex-1 flex items-center justify-center">
+      <div className="max-w-6xl w-full mx-auto px-4 py-8 sm:py-12 flex-1 flex items-center justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
           
-          {/* Left Hero & Cultural Welcome Branding (7 Cols) */}
+          {/* Left Hero (7 Cols) */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            {/* Branding Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/80 border border-red-700/50 text-red-300 text-xs font-black tracking-wide uppercase shadow-sm">
-              <Sparkles size={14} className="text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] text-xs font-bold uppercase tracking-wider">
               <span>Platform Edukasi Budaya Batak Toba</span>
             </div>
 
             {/* Title & Crest */}
             <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
-              <GorgaShield size={68} className="drop-shadow-[0_8px_16px_rgba(153,27,27,0.4)] shrink-0" />
+              <GorgaShield size={64} className="shrink-0" />
               <div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none">
-                  BATAK<span className="text-[#EF4444]">GO</span>
+                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1E1A17] leading-none">
+                  BATAK<span className="text-[#A62B1F]">GO</span>
                 </h1>
-                <p className="text-base sm:text-lg text-stone-300 font-bold mt-1.5">
-                  Parsiajaran Hata Batak Interaktif
+                <p className="text-base sm:text-lg text-[#433D38] font-bold mt-1.5 font-body">
+                  Parsiajaran Hata Batak Interaktif & Open Cultural API
                 </p>
               </div>
             </div>
 
-            <p className="text-stone-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-              Selamat datang di BATAKGO! Masuk atau daftar akun terlebih dahulu untuk menyimpan perolehan <strong className="text-amber-400 font-extrabold">Gordang XP</strong>, memelihara nyawa <strong className="text-red-400 font-extrabold">Tondi</strong>, dan menenun <strong className="text-stone-100 font-extrabold">Koleksi Ulos</strong> bersama maskot Sigale-gale.
+            <p className="text-[#1E1A17] text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+              Selamat datang di BATAKGO. Masuk ke akun Anda atau daftar sebagai pembelajar baru untuk mencatat perolehan poin Gordang XP, memelihara nyawa Tondi, dan mengumpulkan koleksi kain tenun Ulos.
             </p>
 
-            {/* Mascot Greeting Box */}
-            <div className="bg-stone-900/90 border-2 border-stone-800 rounded-3xl p-4 sm:p-5 flex items-center gap-4 max-w-lg mx-auto lg:mx-0 shadow-lg text-left">
+            {/* Mascot Greeting Box (Papan Datar Bergaris Arang) */}
+            <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-4 sm:p-5 flex items-center gap-4 max-w-lg mx-auto lg:mx-0 text-left">
               <Mascot
                 mood="happy"
                 size="md"
@@ -137,66 +192,67 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                 showStatusLabel={false}
               />
               <div className="flex-1">
-                <span className="text-xs font-black text-amber-400 uppercase tracking-wider block">
+                <span className="text-xs font-bold text-[#A62B1F] uppercase tracking-wider block">
                   Poda Ni Sigale-gale
                 </span>
-                <p className="text-xs sm:text-sm font-semibold text-stone-200 mt-0.5">
-                  &ldquo;Unang mandele, marsiajar ma hita marhite roha na las!&rdquo; (Jangan ragu, mari kita belajar dengan hati yang gembira!)
+                <p className="text-xs sm:text-sm font-semibold text-[#1E1A17] mt-0.5 leading-snug">
+                  &ldquo;Unang mandele, marsiajar ma hita marhite roha na las!&rdquo; (Jangan ragu, mari belajar dengan hati yang gembira!)
                 </p>
               </div>
             </div>
 
-            {/* Feature Highlights Grid */}
+            {/* Feature Highlights Grid (Permukaan Datar Garis Arang 1.5px, Tanpa Bayangan) */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-xl mx-auto lg:mx-0 pt-2 text-left">
-              <div className="bg-stone-900/70 border border-stone-800 p-2.5 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
-                  <Zap size={14} /> 5 Unit Belajar
+              <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] p-2.5 rounded-[4px]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1A17]">
+                  <BookOpen size={14} className="text-[#23365A]" /> 5 Unit Belajar
                 </div>
-                <span className="text-[11px] text-stone-400 block mt-0.5">Jalur Kuis Gamifikasi</span>
+                <span className="text-[11px] text-[#433D38] block mt-0.5">Jalur Kuis Interaktif</span>
               </div>
-              <div className="bg-stone-900/70 border border-stone-800 p-2.5 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-red-400">
-                  <Heart size={14} /> Nyawa Tondi
+              <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] p-2.5 rounded-[4px]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1A17]">
+                  <Heart size={14} className="text-[#A62B1F]" /> Nyawa Tondi
                 </div>
-                <span className="text-[11px] text-stone-400 block mt-0.5">Audio Ogung & Gordang</span>
+                <span className="text-[11px] text-[#433D38] block mt-0.5">Audio Ogung & Gordang</span>
               </div>
-              <div className="bg-stone-900/70 border border-stone-800 p-2.5 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400">
-                  <ShieldCheck size={14} /> Dalihan Na Tolu
+              <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] p-2.5 rounded-[4px]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1A17]">
+                  <Users size={14} className="text-[#23365A]" /> Partuturan
                 </div>
-                <span className="text-[11px] text-stone-400 block mt-0.5">Kalkulator Partuturan</span>
+                <span className="text-[11px] text-[#433D38] block mt-0.5">Dalihan Na Tolu</span>
               </div>
-              <div className="bg-stone-900/70 border border-stone-800 p-2.5 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
-                  <Sparkles size={14} /> Surat Batak
+              <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] p-2.5 rounded-[4px]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1A17]">
+                  <Languages size={14} className="text-[#A62B1F]" /> Surat Batak
                 </div>
-                <span className="text-[11px] text-stone-400 block mt-0.5">Unicode ISO 15924</span>
+                <span className="text-[11px] text-[#433D38] block mt-0.5">Transliterasi Unicode</span>
               </div>
             </div>
           </div>
 
           {/* Right Login / Register Card (5 Cols) */}
           <div className="lg:col-span-5 w-full max-w-md mx-auto">
-            <div className="bg-white text-stone-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-stone-800 relative overflow-hidden">
+            <div className="bg-[#FAF6EE] text-[#1E1A17] rounded-[4px] p-6 sm:p-8 border-[1.5px] border-[#1E1A17] relative">
               
-              {/* Card Top Border Ribbon */}
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#991B1B] via-[#F59E0B] to-[#18181B]"></div>
+              {/* Card Top Strip (Pita Tenun 3 Garis) */}
+              <div className="absolute top-0 left-0 right-0 h-[4px] bg-[#A62B1F]"></div>
 
               {/* Mode Toggle Tabs */}
-              <div className="flex bg-stone-100 p-1 rounded-2xl mb-6 border border-stone-200">
+              <div className="flex bg-[#E8DFC8] p-1 rounded-[4px] mb-6 border-[1.5px] border-[#1E1A17]">
                 <button
                   type="button"
                   onClick={() => {
                     setIsRegister(false);
                     setErrorMsg(null);
+                    setSuccessMsg(null);
                   }}
-                  className={`flex-1 py-2 rounded-xl font-extrabold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 rounded-[2px] font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
                     !isRegister
-                      ? 'bg-[#991B1B] text-white shadow-sm'
-                      : 'text-stone-600 hover:text-stone-900'
+                      ? 'bg-[#23365A] text-[#F4EDE0]'
+                      : 'text-[#1E1A17] hover:bg-[#F4EDE0]'
                   }`}
                 >
-                  <LogIn size={15} />
+                  <LogIn size={14} />
                   <span>Masuk Akun</span>
                 </button>
                 <button
@@ -204,34 +260,44 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                   onClick={() => {
                     setIsRegister(true);
                     setErrorMsg(null);
+                    setSuccessMsg(null);
                   }}
-                  className={`flex-1 py-2 rounded-xl font-extrabold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 rounded-[2px] font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
                     isRegister
-                      ? 'bg-[#991B1B] text-white shadow-sm'
-                      : 'text-stone-600 hover:text-stone-900'
+                      ? 'bg-[#23365A] text-[#F4EDE0]'
+                      : 'text-[#1E1A17] hover:bg-[#F4EDE0]'
                   }`}
                 >
-                  <UserPlus size={15} />
+                  <UserPlus size={14} />
                   <span>Daftar Baru</span>
                 </button>
               </div>
 
-              {/* Welcome text */}
+              {/* Heading */}
               <div className="mb-5">
-                <h2 className="text-xl font-black text-stone-900 tracking-tight">
-                  {isRegister ? 'Daftar Akun Parsiajar' : 'Selamat Datang Kembali'}
+                <h2 className="font-heading text-2xl font-bold text-[#1E1A17] tracking-tight">
+                  {isRegister ? 'Daftar Akun Parsiajar' : 'Masuk ke BATAKGO'}
                 </h2>
-                <p className="text-xs text-stone-500 mt-1 font-medium">
+                <p className="text-xs text-[#433D38] mt-1 font-semibold">
                   {isRegister
                     ? 'Buat akun untuk menyimpan kemajuan belajar dan membuka Ulos.'
                     : 'Masuk dengan email Anda untuk melanjutkan pembelajaran.'}
                 </p>
               </div>
 
-              {/* Error Message */}
+              {/* Error Message (Ikon + Teks) */}
               {errorMsg && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-300 text-red-800 text-xs font-bold rounded-xl animate-in fade-in duration-200">
-                  {errorMsg}
+                <div className="mb-4 p-3 bg-[#F5EAE8] border-[1.5px] border-[#A62B1F] text-[#A62B1F] text-xs font-bold rounded-[4px] flex items-start gap-2">
+                  <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              {/* Success Message (Ikon + Teks) */}
+              {successMsg && (
+                <div className="mb-4 p-3 bg-[#FAF6EE] border-[1.5px] border-[#23365A] text-[#23365A] text-xs font-bold rounded-[4px] flex items-start gap-2">
+                  <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
+                  <span>{successMsg}</span>
                 </div>
               )}
 
@@ -239,116 +305,195 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
               <form onSubmit={handleSubmit} className="space-y-3.5">
                 {isRegister && (
                   <>
+                    {/* Full Name */}
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                      <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
                         Nama Lengkap
                       </label>
                       <div className="relative">
-                        <UserIcon size={16} className="text-stone-400 absolute left-3.5 top-3" />
+                        <UserIcon size={16} className="text-[#433D38] absolute left-3 top-3" />
                         <input
                           type="text"
                           required
                           value={name}
                           onChange={e => setName(e.target.value)}
-                          placeholder="Contoh: Baringin Siregar"
-                          className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-semibold transition"
+                          placeholder="Contoh: Tigor Siregar"
+                          className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
                         />
                       </div>
                     </div>
 
+                    {/* Marga Selection */}
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                        Marga Batak
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider">
+                          Marga Batak
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setIsCustomMarga(!isCustomMarga)}
+                          className="text-[11px] font-bold text-[#23365A] hover:underline cursor-pointer"
+                        >
+                          {isCustomMarga ? 'Pilih dari Daftar' : '+ Marga Lainnya'}
+                        </button>
+                      </div>
+
+                      {isCustomMarga ? (
+                        <input
+                          type="text"
+                          value={customMarga}
+                          onChange={e => setCustomMarga(e.target.value)}
+                          placeholder="Ketik marga Anda"
+                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                        />
+                      ) : (
+                        <select
+                          value={marga}
+                          onChange={e => setMarga(e.target.value)}
+                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17] cursor-pointer"
+                        >
+                          {POPULAR_MARGA.map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+
+                    {/* Avatar Picker */}
+                    <div>
+                      <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1.5">
+                        Pilih Avatar Karakter
                       </label>
-                      <select
-                        value={marga}
-                        onChange={e => setMarga(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border-2 border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-semibold bg-white transition cursor-pointer"
-                      >
-                        {POPULAR_MARGA.map(m => (
-                          <option key={m} value={m}>{m}</option>
+                      <div className="grid grid-cols-6 gap-2">
+                        {AVATAR_OPTIONS.map(av => (
+                          <button
+                            key={av.id}
+                            type="button"
+                            onClick={() => setSelectedAvatar(av.id)}
+                            className={`p-1.5 rounded-[4px] text-lg flex flex-col items-center justify-center cursor-pointer border-[1.5px] ${
+                              selectedAvatar === av.id
+                                ? 'bg-[#E8DFC8] border-[#A62B1F]'
+                                : 'bg-[#F4EDE0] border-[#1E1A17] hover:bg-[#E8DFC8]'
+                            }`}
+                            title={av.label}
+                          >
+                            <span>{av.id}</span>
+                            <span className="text-[9px] font-bold text-[#1E1A17] mt-0.5 truncate w-full text-center">
+                              {av.label}
+                            </span>
+                          </button>
                         ))}
-                      </select>
+                      </div>
                     </div>
                   </>
                 )}
 
+                {/* Email Address */}
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
                     Alamat Email
                   </label>
                   <div className="relative">
-                    <Mail size={16} className="text-stone-400 absolute left-3.5 top-3" />
+                    <Mail size={16} className="text-[#433D38] absolute left-3 top-3" />
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="nama@email.com"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-semibold transition"
+                      className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
                     />
                   </div>
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
                     Kata Sandi
                   </label>
                   <div className="relative">
-                    <Lock size={16} className="text-stone-400 absolute left-3.5 top-3" />
+                    <Lock size={16} className="text-[#433D38] absolute left-3 top-3" />
                     <input
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      placeholder="Minimal 6 karakter"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-stone-300 focus:border-[#991B1B] focus:outline-none text-sm font-semibold transition"
+                      placeholder={isRegister ? 'Minimal 6 karakter' : 'Masukkan kata sandi'}
+                      className="w-full pl-9 pr-9 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-[#433D38] hover:text-[#1E1A17] cursor-pointer"
+                      title={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
                 </div>
 
-                {/* Submit Action */}
+                {/* Confirm Password (Register Only) */}
+                {isRegister && (
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1">
+                      Konfirmasi Kata Sandi
+                    </label>
+                    <div className="relative">
+                      <Lock size={16} className="text-[#433D38] absolute left-3 top-3" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        placeholder="Ketik ulang kata sandi"
+                        className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Action (Tombol Indigo: Radius 4px, Tepi Bawah 3px Lebih Gelap, Geser 3px saat Ditekan) */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-2 py-3 rounded-2xl bg-[#991B1B] hover:bg-[#7F1D1D] text-white font-extrabold text-sm shadow-[0_4px_0_0_#7F1D1D] active:translate-y-0.5 active:shadow-none transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="btn-indigo w-full mt-2 py-3 text-sm"
                 >
                   {loading ? (
-                    <span className="animate-spin text-sm">Sedang memproses...</span>
+                    <span>Menghubungkan ke server...</span>
                   ) : isRegister ? (
                     <>
-                      <UserPlus size={18} />
+                      <UserPlus size={16} className="mr-2" />
                       <span>Daftar & Mulai Belajar</span>
                     </>
                   ) : (
                     <>
-                      <LogIn size={18} />
+                      <LogIn size={16} className="mr-2" />
                       <span>Masuk ke BATAKGO</span>
                     </>
                   )}
                 </button>
               </form>
 
-              {/* Demo Account & Guest Fast-Track Buttons */}
-              <div className="mt-5 pt-4 border-t border-stone-200 space-y-2">
+              {/* Fast-Track Actions */}
+              <div className="mt-5 pt-4 border-t-[1.5px] border-[#1E1A17] space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-stone-500 font-semibold">Uji Coba Cepat:</span>
+                  <span className="text-[#433D38] font-bold">Uji Coba Cepat:</span>
                   <button
                     type="button"
                     onClick={fillDemoAccount}
-                    className="text-[#991B1B] hover:text-[#7F1D1D] font-extrabold hover:underline cursor-pointer flex items-center gap-1"
+                    className="text-[#23365A] hover:text-[#A62B1F] font-bold underline cursor-pointer"
                   >
-                    <span>Isi Akun Demo (Tigor)</span>
+                    Isi Akun Demo (Tigor)
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleGuestEntry}
-                  className="w-full py-2.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs border border-stone-300 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="btn-outline-arang w-full py-2 px-3 text-xs"
                 >
-                  <span>Mulai Langsung sebagai Tamu</span>
-                  <ArrowRight size={14} />
+                  <span>Mulai Langsung sebagai Tamu (Explore Mode)</span>
+                  <ArrowRight size={13} className="ml-1.5" />
                 </button>
               </div>
 
@@ -358,8 +503,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
         </div>
       </div>
 
-      {/* Clean Bottom Copyright Ribbon */}
-      <footer className="relative z-10 py-4 text-center text-xs text-stone-500 border-t border-stone-800/80 bg-stone-900/60 backdrop-blur-sm">
+      {/* Clean Bottom Bar */}
+      <footer className="py-4 text-center text-xs text-[#433D38] border-t-[1.5px] border-[#1E1A17] bg-[#E8DFC8]">
         <p className="font-semibold">
           BATAKGO • Web Development Competition UINIC 8.0 (2026) • HMPS Informatika UIN Sunan Kalijaga
         </p>

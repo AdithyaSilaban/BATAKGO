@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Flame, RefreshCw, Database, Award, UserCheck } from 'lucide-react';
+import { RefreshCw, Database } from 'lucide-react';
 import { LEADERBOARD_USERS } from '../utils/batakData';
 import { fetchLeaderboardApi, LeaderboardUser } from '../utils/apiClient';
 import { Mascot } from './Mascot';
-import { GorgaMedal, GorgaBorder } from './GorgaEmblem';
+import { GorgaMedal, PitaTenun } from './GorgaEmblem';
 
 interface LeaderboardViewProps {
   userXP: number;
@@ -47,28 +47,28 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userSt
   const top3 = liveUsers[2];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 font-body">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#18181B] via-[#27272A] to-[#7F1D1D] rounded-3xl text-white mb-8 border border-stone-800 shadow-xl overflow-hidden relative">
-        <GorgaBorder />
+      <div className="bg-[#1E1A17] rounded-[4px] text-[#F4EDE0] mb-8 border-[1.5px] border-[#1E1A17] relative overflow-hidden">
+        <PitaTenun />
 
         <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full text-stone-200">
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-[#2C2622] text-[#F4EDE0] border border-[#433D38] px-2.5 py-0.5 rounded-[2px]">
                 Liga Parsiajar Batak
               </span>
               {isFromDatabase && (
-                <span className="text-[11px] font-bold bg-emerald-900/60 border border-emerald-500/50 text-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <Database size={12} /> Live MySQL
+                <span className="text-[11px] font-bold bg-[#FAF6EE] text-[#1E1A17] border border-[#1E1A17] px-2 py-0.5 rounded-[2px] flex items-center gap-1">
+                  <Database size={11} /> Live MySQL
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#F4EDE0]">
               Papan Skor Juara Mingguan
             </h1>
-            <p className="text-stone-300 text-sm mt-1.5 max-w-md leading-relaxed">
-              Pertahankan posisi teratas dengan menyelesaikan babak pelajaran harian dan kumpulkan poin Gordang XP!
+            <p className="text-[#E8DFC8] text-sm mt-1.5 max-w-md leading-relaxed font-medium">
+              Selesaikan modul pelajaran untuk mengumpulkan poin Gordang XP dan mempertahankan posisi teratas!
             </p>
           </div>
           <Mascot
@@ -80,110 +80,108 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userSt
         </div>
       </div>
 
-      {/* Podium Top 3 */}
+      {/* Podium Top 3: Permukaan Datar Tanpa Bayangan */}
       {top1 && (
-        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-8 pt-4 items-end">
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8 pt-4 items-end">
           {/* Rank 2 */}
-          <div className="bg-white rounded-2xl border border-stone-200 p-4 sm:p-5 text-center flex flex-col items-center justify-end shadow-xs hover:border-stone-300 transition">
+          <div className="card-batak p-4 sm:p-5 text-center flex flex-col items-center justify-end">
             <GorgaMedal rank={2} size={36} />
-            <div className="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center font-bold text-stone-700 text-lg my-2 border border-stone-200">
+            <div className="w-11 h-11 rounded-[2px] bg-[#E8DFC8] flex items-center justify-center font-heading font-bold text-[#1E1A17] text-base my-2 border border-[#1E1A17]">
               {top2?.name ? top2.name.charAt(0) : '2'}
             </div>
-            <p className="font-bold text-stone-900 text-xs sm:text-sm truncate w-full">
+            <p className="font-bold text-[#1E1A17] text-xs sm:text-sm truncate w-full">
               {top2?.name || '-'}
             </p>
-            <span className="text-[#991B1B] font-extrabold text-sm sm:text-base mt-1">
-              {top2?.xp || 0} <span className="text-xs font-normal text-stone-500">XP</span>
+            <span className="text-[#A62B1F] font-bold text-sm mt-1">
+              {top2?.xp || 0} <span className="text-xs font-normal text-[#433D38]">XP</span>
             </span>
           </div>
 
           {/* Rank 1 */}
-          <div className="bg-gradient-to-b from-amber-50/50 to-white rounded-2xl border-2 border-[#D97706] p-5 sm:p-6 text-center flex flex-col items-center justify-end shadow-md -translate-y-2">
-            <GorgaMedal rank={1} size={44} />
-            <div className="w-14 h-14 rounded-2xl bg-amber-100/60 flex items-center justify-center font-black text-amber-900 text-xl my-2 border border-amber-300">
+          <div className="card-batak p-5 sm:p-6 text-center flex flex-col items-center justify-end border-[2px] border-[#D9A21B] -translate-y-2">
+            <GorgaMedal rank={1} size={42} />
+            <div className="w-12 h-12 rounded-[2px] bg-[#D9A21B] flex items-center justify-center font-heading font-bold text-[#1E1A17] text-lg my-2 border border-[#1E1A17]">
               {top1?.name ? top1.name.charAt(0) : '1'}
             </div>
-            <p className="font-extrabold text-stone-900 text-sm sm:text-base truncate w-full">
+            <p className="font-bold text-[#1E1A17] text-sm sm:text-base truncate w-full">
               {top1?.name || '-'}
             </p>
-            <span className="text-[#991B1B] font-black text-base sm:text-lg mt-1">
-              {top1?.xp || 0} <span className="text-xs font-semibold text-stone-500">XP</span>
+            <span className="text-[#A62B1F] font-bold text-base mt-1">
+              {top1?.xp || 0} <span className="text-xs font-semibold text-[#433D38]">XP</span>
             </span>
           </div>
 
           {/* Rank 3 */}
-          <div className="bg-white rounded-2xl border border-stone-200 p-4 sm:p-5 text-center flex flex-col items-center justify-end shadow-xs hover:border-stone-300 transition">
+          <div className="card-batak p-4 sm:p-5 text-center flex flex-col items-center justify-end">
             <GorgaMedal rank={3} size={36} />
-            <div className="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center font-bold text-stone-700 text-lg my-2 border border-stone-200">
+            <div className="w-11 h-11 rounded-[2px] bg-[#E8DFC8] flex items-center justify-center font-heading font-bold text-[#1E1A17] text-base my-2 border border-[#1E1A17]">
               {top3?.name ? top3.name.charAt(0) : '3'}
             </div>
-            <p className="font-bold text-stone-900 text-xs sm:text-sm truncate w-full">
+            <p className="font-bold text-[#1E1A17] text-xs sm:text-sm truncate w-full">
               {top3?.name || '-'}
             </p>
-            <span className="text-[#991B1B] font-extrabold text-sm sm:text-base mt-1">
-              {top3?.xp || 0} <span className="text-xs font-normal text-stone-500">XP</span>
+            <span className="text-[#A62B1F] font-bold text-sm mt-1">
+              {top3?.xp || 0} <span className="text-xs font-normal text-[#433D38]">XP</span>
             </span>
           </div>
         </div>
       )}
 
       {/* Leaderboard Table */}
-      <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
-        <div className="p-4 bg-stone-50/80 border-b border-stone-200 flex items-center justify-between text-xs font-bold text-stone-600">
-          <span className="uppercase tracking-wider">Daftar Peringkat Siswa</span>
+      <div className="card-batak overflow-hidden">
+        <div className="p-4 bg-[#E8DFC8] border-b-[1.5px] border-[#1E1A17] flex items-center justify-between">
+          <h2 className="font-heading text-base font-bold text-[#1E1A17]">
+            Daftar Peringkat Lengkap
+          </h2>
           <button
+            type="button"
             onClick={loadLeaderboard}
             disabled={loading}
-            className="flex items-center gap-1.5 text-[#991B1B] hover:text-[#7F1D1D] font-bold cursor-pointer transition"
+            className="btn-outline-arang px-2.5 py-1 text-xs"
           >
-            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-            <span>Perbarui Data</span>
+            <RefreshCw size={12} className={`mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>Segarkan</span>
           </button>
         </div>
 
-        <div className="divide-y divide-stone-100">
-          {liveUsers.map((u, idx) => {
-            const rank = idx + 1;
+        <div className="divide-y divide-[#1E1A17]/20">
+          {liveUsers.map(user => {
             return (
               <div
-                key={u.id || idx}
-                className={`flex items-center justify-between p-3.5 sm:p-4 px-4 sm:px-6 transition ${
-                  u.isCurrentUser
-                    ? 'bg-amber-50/70 border-l-4 border-l-[#D97706] font-bold'
-                    : 'hover:bg-stone-50/80'
+                key={user.id}
+                className={`flex items-center justify-between p-3.5 transition ${
+                  user.isCurrentUser
+                    ? 'bg-[#E8DFC8]/70 border-l-4 border-l-[#A62B1F]'
+                    : 'hover:bg-[#FAF6EE]'
                 }`}
               >
-                <div className="flex items-center gap-3.5 sm:gap-4">
-                  <span className={`w-6 text-center font-bold text-sm ${
-                    rank <= 3 ? 'text-[#991B1B]' : 'text-stone-400'
-                  }`}>
-                    {rank}
+                <div className="flex items-center gap-3">
+                  <span className="w-6 text-center font-bold text-xs text-[#433D38]">
+                    {user.rank}
                   </span>
-                  <div className="w-9 h-9 rounded-xl bg-stone-100 flex items-center justify-center font-bold text-stone-700 text-sm border border-stone-200 shrink-0">
-                    {u.name ? u.name.charAt(0) : 'U'}
+                  <div className="w-8 h-8 rounded-[2px] bg-[#FAF6EE] border border-[#1E1A17] flex items-center justify-center font-bold text-xs text-[#1E1A17]">
+                    {user.avatar || user.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-stone-900 text-sm">
-                        {u.name}
-                      </p>
-                      {u.isCurrentUser && (
-                        <span className="bg-amber-200 text-amber-900 text-[10px] font-extrabold px-1.5 py-0.2 rounded">
-                          ANDA
+                    <p className="font-bold text-sm text-[#1E1A17] flex items-center gap-1.5">
+                      <span>{user.name}</span>
+                      {user.isCurrentUser && (
+                        <span className="text-[10px] bg-[#23365A] text-[#F4EDE0] px-1.5 py-0.2 rounded-[2px] font-bold">
+                          Anda
                         </span>
                       )}
-                    </div>
+                    </p>
+                    <p className="text-[11px] text-[#433D38]">
+                      Streak: {user.streak || 1} hari
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-5 text-right">
-                  <div className="flex items-center gap-1 text-xs text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md font-medium">
-                    <Flame size={13} className="fill-amber-500 text-amber-500" />
-                    <span>{u.streak} hari</span>
-                  </div>
-                  <span className="font-bold text-stone-800 text-sm sm:text-base min-w-16">
-                    {u.xp} <span className="text-xs text-stone-400 font-normal">XP</span>
+                <div className="text-right">
+                  <span className="font-bold text-sm text-[#A62B1F]">
+                    {user.xp}
                   </span>
+                  <span className="text-xs text-[#433D38] ml-1">XP</span>
                 </div>
               </div>
             );
