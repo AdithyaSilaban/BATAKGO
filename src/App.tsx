@@ -15,6 +15,7 @@ import { LeaderboardView } from './components/LeaderboardView';
 import { UlosCollectionView } from './components/UlosCollectionView';
 import { OpenApiShowcaseView } from './components/OpenApiShowcaseView';
 import { AuthModal } from './components/AuthModal';
+import { LoginPage } from './components/LoginPage';
 import { GorgaShield } from './components/GorgaEmblem';
 import { UNITS, Lesson } from './utils/batakData';
 import {
@@ -31,6 +32,7 @@ import {
   logoutApi,
   syncProgressApi,
   refillHeartsApi,
+  normalizeCanonicalIds
 } from './utils/apiClient';
 import { playOgungGong, playGordangBeat } from './utils/audioSynthesizer';
 
@@ -47,7 +49,7 @@ export default function App() {
     saveUserProgress(progress);
   }, [progress]);
 
-  // Check login session on mount
+  // Check login session & restore authoritative server progress on mount
   useEffect(() => {
     fetchCurrentUserApi().then(user => {
       if (user) {
@@ -58,8 +60,12 @@ export default function App() {
           streak: user.streak || prev.streak,
           hearts: user.hearts !== undefined ? user.hearts : prev.hearts,
           maxHearts: user.max_hearts || prev.maxHearts,
-          completedLessons: user.completed_lessons || prev.completedLessons,
-          unlockedUnits: user.unlocked_units || prev.unlockedUnits,
+          completedLessons: user.completed_lessons && user.completed_lessons.length > 0
+            ? normalizeCanonicalIds(user.completed_lessons)
+            : prev.completedLessons,
+          unlockedUnits: user.unlocked_units && user.unlocked_units.length > 0
+            ? normalizeCanonicalIds(user.unlocked_units)
+            : prev.unlockedUnits,
         }));
       }
     });
@@ -92,6 +98,7 @@ export default function App() {
 
     let nextUnlockedUnitId: string | undefined = undefined;
 
+    // Optimistically update local state
     setProgress(prev => {
       const completedSet = new Set(prev.completedLessons);
       completedSet.add(activeLesson.id);
@@ -122,16 +129,50 @@ export default function App() {
       };
     });
 
-    // Sync to Laravel REST API + MySQL database
-    syncProgressApi({
+    // Close lesson modal
+    setActiveLesson(null);
+
+    // Authoritative Sync to Laravel REST API + MySQL database
+    const syncRes = await syncProgressApi({
       xpEarned: stats.xpEarned,
       lessonId: activeLesson.id,
       unlockedUnitId: nextUnlockedUnitId,
       heartsRemaining: Math.min(progress.maxHearts, Math.max(1, stats.heartsRemaining)),
     });
 
-    showToast(`🎉 Parsiajaran Sidung! +${stats.xpEarned} Gordang XP tersimpan ke database!`);
-    setActiveLesson(null);
+    if (syncRes && syncRes.data) {
+      const s = syncRes.data;
+      setProgress(prev => ({
+        ...prev,
+        xp: s.xp,
+        streak: s.streak,
+        hearts: s.hearts,
+        maxHearts: s.maxHearts,
+        completedLessons: normalizeCanonicalIds(s.completedLessons),
+        unlockedUnits: normalizeCanonicalIds(s.unlockedUnits),
+      }));
+
+      setCurrentUser(prevUser => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          xp: s.xp,
+          streak: s.streak,
+          hearts: s.hearts,
+          completed_lessons: normalizeCanonicalIds(s.completedLessons),
+          unlocked_units: normalizeCanonicalIds(s.unlockedUnits),
+          unlocked_ulos: normalizeCanonicalIds(s.unlockedUlos),
+        };
+      });
+
+      if (syncRes.is_first_completion) {
+        showToast(`🎉 Parsiajaran Sidung! +${syncRes.xp_awarded ?? stats.xpEarned} Gordang XP tersimpan ke database!`);
+      } else {
+        showToast('🎉 Pelajaran selesai! Progres tersinkronkan ke server.');
+      }
+    } else {
+      showToast(`🎉 Parsiajaran Sidung! +${stats.xpEarned} XP diraih.`);
+    }
   };
 
   const handleLoseHeart = () => {
@@ -157,9 +198,13 @@ export default function App() {
       ...prev,
       xp: user.xp || prev.xp,
       streak: user.streak || prev.streak,
-      hearts: user.hearts || prev.hearts,
-      completedLessons: user.completed_lessons || prev.completedLessons,
-      unlockedUnits: user.unlocked_units || prev.unlockedUnits,
+      hearts: user.hearts !== undefined ? user.hearts : prev.hearts,
+      completedLessons: user.completed_lessons && user.completed_lessons.length > 0
+        ? normalizeCanonicalIds(user.completed_lessons)
+        : prev.completedLessons,
+      unlockedUnits: user.unlocked_units && user.unlocked_units.length > 0
+        ? normalizeCanonicalIds(user.unlocked_units)
+        : prev.unlockedUnits,
     }));
     showToast(`Horas, ${user.name}! Akun berhasil disinkronkan ke MySQL.`);
   };
@@ -169,6 +214,15 @@ export default function App() {
     setCurrentUser(null);
     showToast('Sampai jumpa kembali! Sesi telah diakhiri.');
   };
+
+  // Masuk ke halaman login terlebih dahulu untuk memulai web
+  if (!currentUser) {
+    return (
+      <LoginPage
+        onAuthSuccess={handleAuthSuccess}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#222222] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] relative">
@@ -190,7 +244,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {/* Tab Views */}
+      {/* Main View Area */}
       <main className="flex-1 pb-16">
         {activeTab === 'learn' && (
           <PathTreeView
@@ -214,12 +268,16 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'ulos' && <UlosCollectionView />}
+        {activeTab === 'ulos' && (
+          <UlosCollectionView
+            collectedUlos={progress.collectedUlos}
+          />
+        )}
 
         {activeTab === 'openapi' && <OpenApiShowcaseView />}
       </main>
 
-      {/* Duolingo Interactive Lesson Modal */}
+      {/* Lesson Quiz Modal */}
       {activeLesson && (
         <LessonModal
           lesson={activeLesson}
@@ -230,7 +288,7 @@ export default function App() {
         />
       )}
 
-      {/* Auth Modal */}
+      {/* Authentication Modal */}
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
@@ -238,22 +296,25 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="bg-[#18181B] text-stone-300 py-8 px-4 border-t-2 border-[#991B1B]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div className="flex items-center gap-3">
-            <GorgaShield size={36} />
-            <div>
-              <p className="font-bold text-white text-base tracking-tight">
-                BATAK<span className="text-stone-300">GO</span> • Parsiajaran Hata Batak
-              </p>
-              <p className="text-xs text-stone-400 mt-0.5">
-                Didukung arsitektur Laravel 13 RESTful API & basis data relasional MySQL (Laragon).
-              </p>
+      <footer className="bg-stone-900 text-stone-400 py-8 px-4 text-center border-t border-stone-800 text-xs">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <GorgaShield size={28} />
+            <div className="text-left">
+              <span className="font-extrabold text-white text-sm">BATAKGO</span>
+              <p className="text-[10px] text-stone-500">Platform Pembelajaran Bahasa & Pelestarian Budaya Batak</p>
             </div>
           </div>
-          <p className="text-xs text-stone-500 font-medium">
-            Horas ma di hita saluhutna! &copy; 2026 BATAKGO • UINIC 8.0
+          <p className="text-stone-400">
+            Dibuat untuk <strong className="text-amber-400">Web Development Competition UINIC 8.0</strong> • UIN Sunan Kalijaga Yogyakarta
           </p>
+          <div className="flex items-center gap-3 text-stone-300">
+            <span>Laravel 13 REST API</span>
+            <span>•</span>
+            <span>MySQL 8.0</span>
+            <span>•</span>
+            <span>Open Cultural API</span>
+          </div>
         </div>
       </footer>
     </div>

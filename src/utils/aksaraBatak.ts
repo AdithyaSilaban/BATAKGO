@@ -1,10 +1,10 @@
 /**
  * Aksara Batak (Surat Batak - Surat Toba) Transliteration Engine
- * Unicode range: U+1BC0 to U+1BFF (Batak script)
+ * Compliant with Unicode Standard ISO 15924 (Range: U+1BC0 to U+1BFF)
  * 
  * Includes:
- * - Ina ni Surat (Induk Huruf)
- * - Anak ni Surat (Diakritik / Tanda Bunyi: Hatadingan, Haborotan, Siala Hanapi, Haminsaran, Pangolat)
+ * - Ina ni Surat (Root Consonants & Independent Vowels)
+ * - Anak ni Surat (Diacritics: Hatadingan, Ulu, Haborotan, Siala Hanapi, Haminsaran, Hajoringan, Pangolat)
  */
 
 export interface AksaraChar {
@@ -13,141 +13,172 @@ export interface AksaraChar {
   description: string;
 }
 
-// Ina ni Surat (Root Consonants and Standalone Vowels in Batak Toba)
+// 1. Ina ni Surat (Induk Huruf Batak Toba)
 export const INA_NI_SURAT: Record<string, string> = {
-  a: '\u1BC0',  // ᯀ A
-  ba: '\u1BD1', // ᯑ BA
-  ca: '\u1BD0', // ᯐ CA (rare, usually represented as sa or ja)
-  da: '\u1BD5', // ᯕ DA
-  e: '\u1BC2',  // ᯂ E
-  ga: '\u1BCB', // ᯋ GA
-  ha: '\u1BCA', // ᯊ HA / KA
-  ka: '\u1BCA', // ᯊ HA
-  i: '\u1BC3',  // ᯃ I
-  ja: '\u1BD8', // ᯘ JA
-  la: '\u1BD3', // ᯓ LA
-  ma: '\u1BD6', // ᯖ MA
-  na: '\u1BCC', // ᯌ NA
-  nga: '\u1BCF',// ᯏ NGA
-  nya: '\u1BCD',// ᯍ NYA
-  o: '\u1BC4',  // ᯄ O
-  pa: '\u1BCE', // ᯎ PA
-  ra: '\u1BD2', // ᯒ RA
-  sa: '\u1BD9', // ᯙ SA
-  ta: '\u1BD4', // ᯔ TA
-  u: '\u1BC1',  // ᯁ U
-  wa: '\u1BDA', // ᯚ WA
-  ya: '\u1BD7', // ᯗ YA
+  a: '\u1BC0',   // ᯀ A (Independent Vowel)
+  ha: '\u1BC2',  // ᯂ HA / KA
+  ka: '\u1BC2',  // ᯂ KA
+  ba: '\u1BC5',  // ᯅ BA
+  pa: '\u1BC7',  // ᯇ PA
+  na: '\u1BC9',  // ᯉ NA
+  wa: '\u1BCB',  // ᯋ WA
+  ga: '\u1BCE',  // ᯎ GA
+  ja: '\u1BD0',  // ᯐ JA
+  da: '\u1BD1',  // ᯑ DA
+  ra: '\u1BD2',  // ᯒ RA
+  ma: '\u1BD4',  // ᯔ MA
+  ta: '\u1BD6',  // ᯖ TA (Southern / Toba)
+  sa: '\u1BD8',  // ᯘ SA
+  ya: '\u1BDB',  // ᯛ YA
+  nga: '\u1BDD', // ᯝ NGA
+  la: '\u1BDE',  // ᯞ LA
+  nya: '\u1BE0', // ᯠ NYA
+  ca: '\u1BE1',  // ᯡ CA
+  i: '\u1BE4',   // ᯤ I (Independent Vowel)
+  u: '\u1BE5',   // ᯥ U (Independent Vowel)
 };
 
-// Anak ni Surat (Diacritics for Batak Toba)
+// 2. Anak ni Surat (Diakritik / Tanda Vokal & Konsonan Akhir Batak Toba)
 export const ANAK_NI_SURAT = {
-  e: '\u1BE7',    // ᯧ Hatadingan (-e)
-  i: '\u1BE8',    // ᯨ Haluan / Ulu (-i)
-  u: '\u1BE9',    // ᯩ Haborotan (-u)
-  o: '\u1BEA',    // ᯪ Siala Hanapi (-o)
-  ng: '\u1BEE',   // ᯮ Haminsaran (final -ng)
-  pangolat: '\u1BEF', // ᯯ Pangolat (virama / matikan vokal a)
-  binduGodang: '\u1BFA', // ᯺ Bindu Godang (tanda awal/akhir bab)
-  binduJudul: '\u1BFB',  // ᯻ Bindu Judul
+  e: '\u1BE7',        // ᯧ Hatadingan (vokal -e)
+  i: '\u1BEA',        // ᯪ Ulu (vokal -i)
+  o: '\u1BEC',        // ᯬ Siala Hanapi (vokal -o)
+  u: '\u1BEE',        // ᯮ Haborotan (vokal -u)
+  ng: '\u1BF0',       // ᯰ Haminsaran (konsonan akhir -ng)
+  h: '\u1BF2',        // ᯲ Hajoringan (konsonan akhir -h)
+  pangolat: '\u1BF3', // ᯳ Pangolat (matikan vokal inherent -a)
+  binduGodang: '\u1BFD', // ᯽ Bindu Na Pulung / Godang
+  binduMetder: '\u1BFC', // ᯼ Bindu Na Metder
+};
+
+// Consonant code mapping (prefix)
+const CONSONANT_MAP: Record<string, string> = {
+  ng: '\u1BDD',
+  ny: '\u1BE0',
+  h: '\u1BC2',
+  k: '\u1BC2',
+  b: '\u1BC5',
+  p: '\u1BC7',
+  n: '\u1BC9',
+  w: '\u1BCB',
+  g: '\u1BCE',
+  j: '\u1BD0',
+  d: '\u1BD1',
+  r: '\u1BD2',
+  m: '\u1BD4',
+  t: '\u1BD6',
+  s: '\u1BD8',
+  y: '\u1BDB',
+  l: '\u1BDE',
+  c: '\u1BE1',
+};
+
+// Vowel diacritic mapping
+const VOWEL_DIACRITICS: Record<string, string> = {
+  e: ANAK_NI_SURAT.e,
+  i: ANAK_NI_SURAT.i,
+  o: ANAK_NI_SURAT.o,
+  u: ANAK_NI_SURAT.u,
+};
+
+// Independent vowels at start of syllable or word
+const INDEPENDENT_VOWELS: Record<string, string> = {
+  a: INA_NI_SURAT.a,
+  i: INA_NI_SURAT.i,
+  u: INA_NI_SURAT.u,
+  e: INA_NI_SURAT.a + ANAK_NI_SURAT.e,
+  o: INA_NI_SURAT.a + ANAK_NI_SURAT.o,
 };
 
 /**
- * Converts Latin Batak text into authentic Unicode Surat Batak
+ * Converts Latin Batak word into authentic Unicode Surat Batak Toba
  */
-export function latinToAksaraBatak(text: string): string {
-  if (!text) return '';
-  const cleaned = text.toLowerCase().trim();
+export function transliterateWord(word: string): string {
+  if (!word) return '';
+  const lower = word.toLowerCase();
   let result = '';
   let i = 0;
+  const len = lower.length;
 
-  while (i < cleaned.length) {
-    const ch = cleaned[i];
+  while (i < len) {
+    const ch = lower[i];
 
-    // Handle spaces and punctuation
-    if (ch === ' ') {
-      result += ' ';
-      i++;
-      continue;
-    }
-    if (ch === '.' || ch === '!' || ch === '?') {
-      result += ' ' + ANAK_NI_SURAT.binduGodang + ' ';
-      i++;
-      continue;
-    }
-    if (ch === ',') {
-      result += ' \u1BF8 ';
+    // Non-alphabet passthrough (e.g. hyphen, digits)
+    if (!/[a-z]/.test(ch)) {
+      result += ch;
       i++;
       continue;
     }
 
-    // Check 3-letter combinations (e.g. 'nga', 'nya')
-    const three = cleaned.slice(i, i + 3);
-    const two = cleaned.slice(i, i + 2);
-
-    if (two === 'ng') {
-      // Is it followed by a vowel?
-      const nextVowel = cleaned[i + 2];
-      if (nextVowel && 'aeiou'.includes(nextVowel)) {
-        // syllabic 'nga', 'nge', 'ngi', 'ngo', 'ngu'
-        result += INA_NI_SURAT.nga;
-        if (nextVowel === 'e') result += ANAK_NI_SURAT.e;
-        else if (nextVowel === 'i') result += ANAK_NI_SURAT.i;
-        else if (nextVowel === 'u') result += ANAK_NI_SURAT.u;
-        else if (nextVowel === 'o') result += ANAK_NI_SURAT.o;
-        i += 3;
-        continue;
-      } else {
-        // final ng diacritic
-        result += ANAK_NI_SURAT.ng;
-        i += 2;
-        continue;
+    // 1. Check for 2-letter consonant clusters (ng, ny)
+    let consonant = '';
+    let consLen = 0;
+    if (i + 1 < len) {
+      const two = lower.slice(i, i + 2);
+      if (two === 'ng' || two === 'ny') {
+        consonant = two;
+        consLen = 2;
       }
     }
 
-    if (two === 'ny' && 'aeiou'.includes(cleaned[i + 2] || '')) {
-      const nextVowel = cleaned[i + 2];
-      result += INA_NI_SURAT.nya;
-      if (nextVowel === 'e') result += ANAK_NI_SURAT.e;
-      else if (nextVowel === 'i') result += ANAK_NI_SURAT.i;
-      else if (nextVowel === 'u') result += ANAK_NI_SURAT.u;
-      else if (nextVowel === 'o') result += ANAK_NI_SURAT.o;
-      i += 3;
-      continue;
+    // If not multi-letter, check single consonant
+    if (!consonant && CONSONANT_MAP[ch]) {
+      consonant = ch;
+      consLen = 1;
     }
 
-    // Standalone vowels at the beginning of a word or after another vowel
-    if ('aeiou'.includes(ch)) {
-      result += INA_NI_SURAT[ch] || ch;
-      i++;
-      continue;
-    }
+    if (consonant) {
+      // Consonant found
+      const baseChar = CONSONANT_MAP[consonant];
+      const afterCons = lower[i + consLen];
 
-    // Consonant + Vowel or Consonant alone
-    const nextChar = cleaned[i + 1];
-    const consonantKey = ch + 'a';
-    const baseChar = INA_NI_SURAT[consonantKey];
-
-    if (baseChar) {
-      if (nextChar && 'aeiou'.includes(nextChar)) {
+      if (afterCons && 'aeiou'.includes(afterCons)) {
+        // Consonant + Vowel
         result += baseChar;
-        if (nextChar === 'e') result += ANAK_NI_SURAT.e;
-        else if (nextChar === 'i') result += ANAK_NI_SURAT.i;
-        else if (nextChar === 'u') result += ANAK_NI_SURAT.u;
-        else if (nextChar === 'o') result += ANAK_NI_SURAT.o;
-        // if nextChar === 'a', baseChar inherently includes 'a' sound!
-        i += 2;
+        if (afterCons !== 'a') {
+          result += VOWEL_DIACRITICS[afterCons] || '';
+        }
+        i += consLen + 1;
       } else {
-        // Consonant with no vowel following (killed with pangolat)
-        result += baseChar + ANAK_NI_SURAT.pangolat;
-        i++;
+        // Consonant followed by another consonant or end of word (Dead Consonant)
+        if (consonant === 'ng') {
+          // Special Haminsaran diacritic for final -ng
+          result += ANAK_NI_SURAT.ng;
+        } else if (consonant === 'h') {
+          // Special Hajoringan diacritic for final -h
+          result += ANAK_NI_SURAT.h;
+        } else {
+          // Standalone consonant killed with Pangolat
+          result += baseChar + ANAK_NI_SURAT.pangolat;
+        }
+        i += consLen;
       }
+    } else if ('aeiou'.includes(ch)) {
+      // Standalone vowel (syllable initial)
+      result += INDEPENDENT_VOWELS[ch] || ch;
+      i++;
     } else {
-      // Unrecognized character
       result += ch;
       i++;
     }
   }
 
   return result;
+}
+
+/**
+ * Converts Latin Batak text into authentic Unicode Surat Batak Toba
+ */
+export function latinToAksaraBatak(text: string): string {
+  if (!text) return '';
+  const words = text.split(/(\s+|[.,!?;:])/);
+  return words
+    .map(w => {
+      if (!w) return '';
+      if (/^\s+$/.test(w)) return w;
+      if (w === '.' || w === '!' || w === '?') return ' ' + ANAK_NI_SURAT.binduGodang + ' ';
+      if (w === ',' || w === ';') return ' ' + ANAK_NI_SURAT.binduMetder + ' ';
+      return transliterateWord(w);
+    })
+    .join('');
 }

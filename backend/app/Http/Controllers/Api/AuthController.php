@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\CurriculumService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +32,7 @@ class AuthController extends Controller
             'hearts' => 5,
             'max_hearts' => 5,
             'completed_lessons' => [],
-            'unlocked_units' => ['unit_1'],
+            'unlocked_units' => ['unit-1'],
             'unlocked_ulos' => [],
         ]);
 
@@ -41,7 +42,7 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Pendaftaran akun BATAKGO berhasil!',
             'token' => $token,
-            'user' => $user,
+            'user' => $this->formatUser($user),
         ], 201);
     }
 
@@ -66,7 +67,7 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Horas! Selamat datang kembali di BATAKGO.',
             'token' => $token,
-            'user' => $user,
+            'user' => $this->formatUser($user),
         ]);
     }
 
@@ -74,7 +75,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'user' => $request->user(),
+            'user' => $this->formatUser($request->user()),
         ]);
     }
 
@@ -87,5 +88,31 @@ class AuthController extends Controller
             'message' => 'Berhasil keluar sesi.',
         ]);
     }
-}
 
+    /**
+     * Format user output with canonical kebab-case IDs.
+     */
+    private function formatUser(User $user): array
+    {
+        $unlockedUnits = CurriculumService::normalizeIds($user->unlocked_units ?? ['unit-1']);
+        if (empty($unlockedUnits)) {
+            $unlockedUnits = ['unit-1'];
+        }
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'marga' => $user->marga,
+            'avatar' => $user->avatar,
+            'xp' => (int) $user->xp,
+            'streak' => (int) $user->streak,
+            'hearts' => (int) $user->hearts,
+            'max_hearts' => (int) $user->max_hearts,
+            'completed_lessons' => CurriculumService::normalizeIds($user->completed_lessons ?? []),
+            'unlocked_units' => $unlockedUnits,
+            'unlocked_ulos' => CurriculumService::normalizeIds($user->unlocked_ulos ?? []),
+            'created_at' => $user->created_at?->toIso8601String(),
+        ];
+    }
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Flame,
   Heart,
@@ -11,11 +11,11 @@ import {
   Languages,
   Trophy,
   Layers,
-  Globe,
-  Plus
+  Plus,
+  Wifi
 } from 'lucide-react';
 import { UserProgress } from '../utils/gamification';
-import { AuthUser } from '../utils/apiClient';
+import { AuthUser, checkApiHealth } from '../utils/apiClient';
 import { GorgaShield, GorgaBorder } from './GorgaEmblem';
 
 interface HeaderProps {
@@ -35,7 +35,6 @@ const NAV_ITEMS = [
   { id: 'aksara', label: 'Aksara Batak', Icon: Languages },
   { id: 'leaderboard', label: 'Papan Skor', Icon: Trophy },
   { id: 'ulos', label: 'Koleksi Ulos', Icon: Layers },
-  { id: 'openapi', label: 'Open API', Icon: Globe },
 ];
 
 export const Header: React.FC<HeaderProps> = ({
@@ -47,6 +46,12 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onLogout,
 }) => {
+  const [apiOnline, setApiOnline] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    checkApiHealth().then(isHealthy => setApiOnline(isHealthy));
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
       {/* Authentic Cultural Ribbon at Top */}
@@ -101,6 +106,25 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* User HUD & Authentication */}
         <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Live API Status Pill */}
+          {apiOnline !== null && (
+            <div
+              title={apiOnline ? 'Laravel REST API & MySQL Online' : 'Mode Offline / Local Fallback'}
+              className={`hidden xl:flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[10px] font-bold ${
+                apiOnline
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : 'bg-stone-100 text-stone-600 border-stone-300'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  apiOnline ? 'bg-emerald-500 animate-pulse' : 'bg-stone-400'
+                }`}
+              />
+              <span>{apiOnline ? 'API Live' : 'Offline'}</span>
+            </div>
+          )}
+
           {/* Streak Indicator */}
           <div
             title="Pardalanan Ari (Streak Harian)"
@@ -155,17 +179,16 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onOpenAuth}
-              className="px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="bg-[#991B1B] hover:bg-[#7F1D1D] text-white px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-xs cursor-pointer transition"
             >
-              <UserIcon size={14} />
-              <span>Masuk</span>
+              Masuk
             </button>
           )}
         </div>
       </div>
 
-      {/* Mobile Bottom/Sub Navigation Bar */}
-      <div className="lg:hidden flex items-center justify-around border-t border-stone-200 bg-stone-50 px-2 py-1.5 overflow-x-auto gap-1">
+      {/* Mobile Sub-Navigation Bar */}
+      <div className="lg:hidden flex items-center justify-around border-t border-stone-200 py-1.5 bg-stone-50 overflow-x-auto scrollbar-none px-2">
         {NAV_ITEMS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
@@ -173,14 +196,12 @@ export const Header: React.FC<HeaderProps> = ({
               key={id}
               type="button"
               onClick={() => onTabChange(id)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold flex flex-col items-center gap-0.5 transition cursor-pointer shrink-0 ${
-                isActive
-                  ? 'text-[#991B1B] font-bold bg-white shadow-xs border border-stone-200'
-                  : 'text-stone-500 hover:text-stone-800'
+              className={`flex flex-col items-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition shrink-0 ${
+                isActive ? 'text-[#991B1B] font-bold' : 'text-stone-500'
               }`}
             >
               <Icon size={16} className={isActive ? 'text-[#991B1B]' : 'text-stone-400'} />
-              <span>{label}</span>
+              <span className="mt-0.5">{label}</span>
             </button>
           );
         })}

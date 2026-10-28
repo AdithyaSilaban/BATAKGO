@@ -9,8 +9,8 @@ export interface UserProgress {
   xp: number;
   streak: number; // days
   lastCompletedDate: string; // YYYY-MM-DD
-  completedLessons: string[]; // lesson ids
-  unlockedUnits: string[]; // unit ids
+  completedLessons: string[]; // lesson ids (canonical kebab-case)
+  unlockedUnits: string[]; // unit ids (canonical kebab-case)
   collectedUlos: {
     id: string;
     name: string;
@@ -46,13 +46,27 @@ export const INITIAL_PROGRESS: UserProgress = {
   ]
 };
 
+export function normalizeUserProgress(prog: UserProgress): UserProgress {
+  return {
+    ...prog,
+    completedLessons: Array.from(new Set((prog.completedLessons || []).map(id => id.replace(/_/g, '-')))),
+    unlockedUnits: Array.from(new Set(
+      ((prog.unlockedUnits && prog.unlockedUnits.length > 0) ? prog.unlockedUnits : ['unit-1']).map(id => id.replace(/_/g, '-'))
+    )),
+    collectedUlos: (prog.collectedUlos || []).map(u => ({
+      ...u,
+      id: u.id.replace(/_/g, '-')
+    }))
+  };
+}
+
 export function loadUserProgress(): UserProgress {
   if (typeof window === 'undefined') return INITIAL_PROGRESS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_PROGRESS;
     const parsed = JSON.parse(raw);
-    return { ...INITIAL_PROGRESS, ...parsed };
+    return normalizeUserProgress({ ...INITIAL_PROGRESS, ...parsed });
   } catch {
     return INITIAL_PROGRESS;
   }
@@ -61,7 +75,8 @@ export function loadUserProgress(): UserProgress {
 export function saveUserProgress(progress: UserProgress): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    const normalized = normalizeUserProgress(progress);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   } catch (err) {
     console.error('Failed to save progress to localStorage:', err);
   }

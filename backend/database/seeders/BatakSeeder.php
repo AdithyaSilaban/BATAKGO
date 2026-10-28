@@ -11,7 +11,7 @@ class BatakSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seed dummy leaderboard users in MySQL
+        // 1. Seed dummy leaderboard users in MySQL with canonical kebab-case IDs
         $users = [
             [
                 'name' => 'Tigor Simanjuntak',
@@ -22,9 +22,9 @@ class BatakSeeder extends Seeder
                 'xp' => 1450,
                 'streak' => 14,
                 'hearts' => 5,
-                'completed_lessons' => ['u1_l1', 'u1_l2', 'u1_l3', 'u2_l1'],
-                'unlocked_units' => ['unit_1', 'unit_2'],
-                'unlocked_ulos' => ['ulos_ragidup', 'ulos_ragi_hotang'],
+                'completed_lessons' => ['u1-l1', 'u1-l2', 'u2-l1'],
+                'unlocked_units' => ['unit-1', 'unit-2', 'unit-3'],
+                'unlocked_ulos' => ['ulos-ragidup', 'ulos-ragi-hotang'],
             ],
             [
                 'name' => 'Tiurma Siregar',
@@ -35,9 +35,9 @@ class BatakSeeder extends Seeder
                 'xp' => 1280,
                 'streak' => 9,
                 'hearts' => 4,
-                'completed_lessons' => ['u1_l1', 'u1_l2', 'u1_l3'],
-                'unlocked_units' => ['unit_1', 'unit_2'],
-                'unlocked_ulos' => ['ulos_ragi_hotang'],
+                'completed_lessons' => ['u1-l1', 'u1-l2'],
+                'unlocked_units' => ['unit-1', 'unit-2'],
+                'unlocked_ulos' => ['ulos-ragi-hotang'],
             ],
             [
                 'name' => 'Poltak Nainggolan',
@@ -48,9 +48,9 @@ class BatakSeeder extends Seeder
                 'xp' => 1120,
                 'streak' => 7,
                 'hearts' => 5,
-                'completed_lessons' => ['u1_l1', 'u1_l2'],
-                'unlocked_units' => ['unit_1'],
-                'unlocked_ulos' => ['ulos_mangiring'],
+                'completed_lessons' => ['u1-l1', 'u1-l2'],
+                'unlocked_units' => ['unit-1', 'unit-2'],
+                'unlocked_ulos' => ['ulos-mangiring'],
             ],
             [
                 'name' => 'Butet Hutabarat',
@@ -61,9 +61,9 @@ class BatakSeeder extends Seeder
                 'xp' => 950,
                 'streak' => 5,
                 'hearts' => 3,
-                'completed_lessons' => ['u1_l1'],
-                'unlocked_units' => ['unit_1'],
-                'unlocked_ulos' => ['ulos_mangiring'],
+                'completed_lessons' => ['u1-l1'],
+                'unlocked_units' => ['unit-1'],
+                'unlocked_ulos' => ['ulos-mangiring'],
             ],
             [
                 'name' => 'Bona Sitorus',
@@ -74,8 +74,8 @@ class BatakSeeder extends Seeder
                 'xp' => 780,
                 'streak' => 4,
                 'hearts' => 5,
-                'completed_lessons' => ['u1_l1'],
-                'unlocked_units' => ['unit_1'],
+                'completed_lessons' => ['u1-l1'],
+                'unlocked_units' => ['unit-1'],
                 'unlocked_ulos' => [],
             ],
         ];
@@ -87,8 +87,9 @@ class BatakSeeder extends Seeder
             );
         }
 
-        // 2. Seed Cultural Vocabulary
+        // 2. Comprehensive Cultural Vocabulary (Synchronized with frontend dictionary & curriculum)
         $vocabularies = [
+            // Sapaan & Salam
             [
                 'slug' => 'horas',
                 'batak' => 'Horas',
@@ -98,7 +99,7 @@ class BatakSeeder extends Seeder
                 'syllables' => ['Ho', 'ras'],
                 'example_batak' => 'Horas ma di hita saluhutna!',
                 'example_indonesian' => 'Salam sejahtera bagi kita sekalian!',
-                'audio_note' => 'Diucapkan dengan nada tegas dan hangat'
+                'audio_note' => 'Vokal o bulat penuh, r bergetar tegas.',
             ],
             [
                 'slug' => 'mauliate',
@@ -109,7 +110,7 @@ class BatakSeeder extends Seeder
                 'syllables' => ['Mau', 'li', 'a', 'te'],
                 'example_batak' => 'Mauliate godang, lae!',
                 'example_indonesian' => 'Terima kasih banyak, kawan!',
-                'audio_note' => 'Dapat ditambah godang untuk sangat berterima kasih'
+                'audio_note' => 'Ucapkan mengalir ramah dan hangat.',
             ],
             [
                 'slug' => 'songon_dia',
@@ -120,7 +121,7 @@ class BatakSeeder extends Seeder
                 'syllables' => ['So', 'ngon', 'di', 'a', 'ka', 'bar'],
                 'example_batak' => 'Songon dia kabar muna nuaeng?',
                 'example_indonesian' => 'Bagaimana kabar kalian sekarang?',
-                'audio_note' => 'Pertanyaan kabar santai sehari-hari'
+                'audio_note' => 'Intonasi tanya naik sedikit di akhir.',
             ],
             [
                 'slug' => 'hipas',
@@ -131,8 +132,10 @@ class BatakSeeder extends Seeder
                 'syllables' => ['Hi', 'pas', 'do', 'au'],
                 'example_batak' => 'Hipas do au, mauliate.',
                 'example_indonesian' => 'Aku sehat saja, terima kasih.',
-                'audio_note' => 'Jawaban standar saat ditanya kabar'
+                'audio_note' => 'Menandakan kondisi jasmani dan rohani bugar.',
             ],
+
+            // Keluarga & Partuturan
             [
                 'slug' => 'amang',
                 'batak' => 'Amang',
@@ -140,9 +143,9 @@ class BatakSeeder extends Seeder
                 'category' => 'keluarga',
                 'phonetic' => 'a-mang',
                 'syllables' => ['A', 'mang'],
-                'example_batak' => 'Nunga mulak amang sian ladang.',
-                'example_indonesian' => 'Ayah sudah pulang dari ladang.',
-                'audio_note' => 'Panggilan hormat untuk ayah kandung atau bapak tua/muda'
+                'example_batak' => 'Horas amang, naeng tudia ho?',
+                'example_indonesian' => 'Salam bapak, hendak ke mana?',
+                'audio_note' => 'Panggilan penuh takzim kepada ayah atau pria paruh baya.',
             ],
             [
                 'slug' => 'inang',
@@ -151,32 +154,56 @@ class BatakSeeder extends Seeder
                 'category' => 'keluarga',
                 'phonetic' => 'i-nang',
                 'syllables' => ['I', 'nang'],
-                'example_batak' => 'Inang parade sipanganon.',
-                'example_indonesian' => 'Ibu menyiapkan makanan.',
-                'audio_note' => 'Panggilan hormat penuh kasih sayang untuk ibu'
+                'example_batak' => 'Inang pangintubu na burju.',
+                'example_indonesian' => 'Ibu kandung yang berhati mulia.',
+                'audio_note' => 'Panggilan kasih sayang dan penghormatan pada ibu.',
             ],
             [
                 'slug' => 'tulang',
                 'batak' => 'Tulang',
-                'indonesian' => 'Paman (Saudara laki-laki ibu)',
+                'indonesian' => 'Paman (Saudara laki-laki Ibu)',
                 'category' => 'keluarga',
                 'phonetic' => 'tu-lang',
                 'syllables' => ['Tu', 'lang'],
-                'example_batak' => 'Tulang ro sian huta.',
-                'example_indonesian' => 'Paman datang dari kampung.',
-                'audio_note' => 'Kunci utama dalam sistem kekerabatan Dalihan Na Tolu'
+                'example_batak' => 'Somba hita marhula-hula tu Tulang.',
+                'example_indonesian' => 'Kita harus selalu hormat kepada Tulang.',
+                'audio_note' => 'Posisi hula-hula tertinggi pembawa doa restu berkah.',
             ],
             [
                 'slug' => 'nantulang',
                 'batak' => 'Nantulang',
-                'indonesian' => 'Bibi (Istri dari saudara laki-laki ibu)',
+                'indonesian' => 'Bibi (Istri dari Tulang)',
                 'category' => 'keluarga',
                 'phonetic' => 'nan-tu-lang',
                 'syllables' => ['Nan', 'tu', 'lang'],
-                'example_batak' => 'Nantulang mangalehon ulos.',
-                'example_indonesian' => 'Bibi memberikan kain ulos.',
-                'audio_note' => 'Pasangan dari Tulang'
+                'example_batak' => 'Santabi nantulang, mauliate di pangurupionmu.',
+                'example_indonesian' => 'Permisi bibi, terima kasih atas pertolonganmu.',
+                'audio_note' => 'Pendamping Tulang yang sangat dihormati.',
             ],
+            [
+                'slug' => 'lae',
+                'batak' => 'Lae',
+                'indonesian' => 'Sahabat pria sebaya / Ipar pria',
+                'category' => 'keluarga',
+                'phonetic' => 'la-e',
+                'syllables' => ['La', 'e'],
+                'example_batak' => 'Horas lae, mangan hita jolo!',
+                'example_indonesian' => 'Halo kawan, mari kita makan dulu!',
+                'audio_note' => 'Sapaan paling populer antar pria Batak.',
+            ],
+            [
+                'slug' => 'ito',
+                'batak' => 'Ito / Iboto',
+                'indonesian' => 'Saudara perempuan / Panggilan kawan wanita',
+                'category' => 'keluarga',
+                'phonetic' => 'i-to',
+                'syllables' => ['I', 'to'],
+                'example_batak' => 'Tudia ho laho, ito?',
+                'example_indonesian' => 'Hendak ke mana kamu, saudari?',
+                'audio_note' => 'Bermakna perlindungan dan kehormatan bagi perempuan.',
+            ],
+
+            // Angka & Bilangan
             [
                 'slug' => 'sada',
                 'batak' => 'Sada',
@@ -184,9 +211,9 @@ class BatakSeeder extends Seeder
                 'category' => 'angka',
                 'phonetic' => 'sa-da',
                 'syllables' => ['Sa', 'da'],
-                'example_batak' => 'Sada huta.',
-                'example_indonesian' => 'Satu kampung.',
-                'audio_note' => 'Angka dasar'
+                'example_batak' => 'Sada roha hita saluhutna.',
+                'example_indonesian' => 'Kita semua satu hati dan jiwa.',
+                'audio_note' => 'Makna persatuan dan keutuhan.',
             ],
             [
                 'slug' => 'dua',
@@ -195,9 +222,9 @@ class BatakSeeder extends Seeder
                 'category' => 'angka',
                 'phonetic' => 'du-a',
                 'syllables' => ['Du', 'a'],
-                'example_batak' => 'Dua boru.',
-                'example_indonesian' => 'Dua anak perempuan.',
-                'audio_note' => 'Angka dasar'
+                'example_batak' => 'Dua hali au ro tu Samosir.',
+                'example_indonesian' => 'Dua kali aku datang ke Samosir.',
+                'audio_note' => 'Vokal u dan a terucap jelas.',
             ],
             [
                 'slug' => 'tolu',
@@ -206,9 +233,134 @@ class BatakSeeder extends Seeder
                 'category' => 'angka',
                 'phonetic' => 'to-lu',
                 'syllables' => ['To', 'lu'],
-                'example_batak' => 'Dalihan Na Tolu.',
-                'example_indonesian' => 'Tungku nan tiga (falsafah hidup Batak).',
-                'audio_note' => 'Sangat sakral dalam filosofi Batak'
+                'example_batak' => 'Dalihan Na Tolu patogu adat.',
+                'example_indonesian' => 'Tiga tungku adat memperkokoh budaya.',
+                'audio_note' => 'Angka filosofis sakral masyarakat Batak.',
+            ],
+            [
+                'slug' => 'opat',
+                'batak' => 'Opat',
+                'indonesian' => 'Empat (4)',
+                'category' => 'angka',
+                'phonetic' => 'o-pat',
+                'syllables' => ['O', 'pat'],
+                'example_batak' => 'Opat suhi ni ampang na opat.',
+                'example_indonesian' => 'Empat sudut bakul empat penjuru.',
+                'audio_note' => 'Menandakan keseimbangan empat penjuru mata angin.',
+            ],
+            [
+                'slug' => 'lima',
+                'batak' => 'Lima',
+                'indonesian' => 'Lima (5)',
+                'category' => 'angka',
+                'phonetic' => 'li-ma',
+                'syllables' => ['Li', 'ma'],
+                'example_batak' => 'Lima hepeng hepengna.',
+                'example_indonesian' => 'Lima keeping uangnya.',
+                'audio_note' => 'Pelafalan sama seperti bahasa Melayu/Indonesia.',
+            ],
+
+            // Kuliner & Makanan
+            [
+                'slug' => 'mangan',
+                'batak' => 'Mangan',
+                'indonesian' => 'Makan',
+                'category' => 'makanan',
+                'phonetic' => 'ma-ngan',
+                'syllables' => ['Ma', 'ngan'],
+                'example_batak' => 'Nga mangan ho, ito?',
+                'example_indonesian' => 'Sudah makankah kamu, saudari?',
+                'audio_note' => 'Tanda kepedulian utama saat bertamu.',
+            ],
+            [
+                'slug' => 'minum',
+                'batak' => 'Minum',
+                'indonesian' => 'Minum',
+                'category' => 'makanan',
+                'phonetic' => 'mi-num',
+                'syllables' => ['Mi', 'num'],
+                'example_batak' => 'Aek aek aek minum hita.',
+                'example_indonesian' => 'Mari kita minum air segar.',
+                'audio_note' => 'Kata serapan yang lazim digunakan di Toba.',
+            ],
+            [
+                'slug' => 'dekke_naniura',
+                'batak' => 'Dekke Naniura',
+                'indonesian' => 'Ikan mas bumbu asam jungga khas Batak (sashimi tradisional)',
+                'category' => 'makanan',
+                'phonetic' => 'dek-ke na-ni-u-ra',
+                'syllables' => ['Dek', 'ke', 'Na', 'ni', 'u', 'ra'],
+                'example_batak' => 'Mansai tabo dekke naniura on!',
+                'example_indonesian' => 'Sangat lezat ikan mas naniura ini!',
+                'audio_note' => 'Dimatangkan tanpa api menggunakan asam jungga dan andaliman.',
+            ],
+            [
+                'slug' => 'tabo',
+                'batak' => 'Tabo',
+                'indonesian' => 'Enak / Lezat / Gurih',
+                'category' => 'sifat',
+                'phonetic' => 'ta-bo',
+                'syllables' => ['Ta', 'bo'],
+                'example_batak' => 'Tabo hian sipanganon on!',
+                'example_indonesian' => 'Enak sekali hidangan makanan ini!',
+                'audio_note' => 'Ucapkan dengan riang untuk memuji hidangan.',
+            ],
+
+            // Budaya & Tradisi
+            [
+                'slug' => 'sigale_gale',
+                'batak' => 'Sigale-gale',
+                'indonesian' => 'Patung kayu tradisional Batak penari tortor',
+                'category' => 'budaya',
+                'phonetic' => 'si-ga-le ga-le',
+                'syllables' => ['Si', 'ga', 'le', 'ga', 'le'],
+                'example_batak' => 'Manortor patung Sigale-gale di Samosir.',
+                'example_indonesian' => 'Patung Sigale-gale menari tortor di Samosir.',
+                'audio_note' => 'Maskot resmi platform BATAKGO.',
+            ],
+            [
+                'slug' => 'ulos',
+                'batak' => 'Ulos',
+                'indonesian' => 'Kain tenun sakral Batak pembawa berkat',
+                'category' => 'budaya',
+                'phonetic' => 'u-los',
+                'syllables' => ['U', 'los'],
+                'example_batak' => 'Mangulosi pengantin dohot Ulos Ragidup.',
+                'example_indonesian' => 'Memberi ulos kepada mempelai dengan Ulos Ragidup.',
+                'audio_note' => 'Simbol kehangatan, doa, dan perlindungan leluhur.',
+            ],
+            [
+                'slug' => 'tao_toba',
+                'batak' => 'Tao Toba',
+                'indonesian' => 'Danau Toba',
+                'category' => 'budaya',
+                'phonetic' => 'ta-o to-ba',
+                'syllables' => ['Ta', 'o', 'To', 'ba'],
+                'example_batak' => 'Tung mansai uli Tao Toba.',
+                'example_indonesian' => 'Sungguh sangat indah Danau Toba.',
+                'audio_note' => 'Danau vulkanik terbesar di dunia kebanggaan Sumatra Utara.',
+            ],
+            [
+                'slug' => 'uli',
+                'batak' => 'Uli',
+                'indonesian' => 'Indah / Cantik / Anggun',
+                'category' => 'sifat',
+                'phonetic' => 'u-li',
+                'syllables' => ['U', 'li'],
+                'example_batak' => 'Boru Batak na uli rupana.',
+                'example_indonesian' => 'Gadis Batak yang rupawan.',
+                'audio_note' => 'Sifat keindahan rupa, alam, maupun budi pekerti.',
+            ],
+            [
+                'slug' => 'burju',
+                'batak' => 'Burju',
+                'indonesian' => 'Baik hati / Tulus / Berbudi luhur',
+                'category' => 'sifat',
+                'phonetic' => 'bur-ju',
+                'syllables' => ['Bur', 'ju'],
+                'example_batak' => 'Parsiajar na burju marroha.',
+                'example_indonesian' => 'Pelajar yang tulus dan berbudi baik.',
+                'audio_note' => 'Karakter ideal orang Batak yang bersahaja.',
             ],
         ];
 
@@ -220,4 +372,3 @@ class BatakSeeder extends Seeder
         }
     }
 }
-
