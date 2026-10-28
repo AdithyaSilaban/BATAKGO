@@ -37,7 +37,8 @@ export const OpenApiShowcaseView: React.FC = () => {
       : `GET /api/v1/open/aksara?text=${encodeURIComponent(paramInput)}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`http://localhost:8000${currentUrl.replace('GET ', '')}`);
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    navigator.clipboard.writeText(`${origin}${currentUrl.replace('GET ', '')}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

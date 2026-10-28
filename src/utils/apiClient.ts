@@ -1,8 +1,10 @@
 /**
  * BATAKGO API Client
  * Terhubung dengan Laravel 13 RESTful API & MySQL Database
- * Mendukung graceful offline fallback & ID canonicalization
+ * Mendukung graceful offline fallback
  */
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export interface AuthUser {
   id: number;
@@ -29,60 +31,6 @@ export interface LeaderboardUser {
   isCurrentUser?: boolean;
 }
 
-export interface ProgressSyncResponse {
-  status: 'success' | 'error';
-  message: string;
-  xp_awarded?: number;
-  is_first_completion?: boolean;
-  data?: {
-    xp: number;
-    streak: number;
-    hearts: number;
-    maxHearts: number;
-    completedLessons: string[];
-    unlockedUnits: string[];
-    unlockedUlos: string[];
-  };
-}
-
-/**
- * Resolves the API Base URL cleanly for local dev and production environments.
- */
-export const getApiBaseUrl = (): string => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
-    return envUrl.trim().replace(/\/+$/, '');
-  }
-  return 'http://localhost:8000/api';
-};
-
-/**
- * Converts legacy underscore IDs to canonical kebab-case (e.g. 'u1_l1' -> 'u1-l1', 'unit_1' -> 'unit-1').
- */
-export const normalizeCanonicalId = (id?: string | null): string => {
-  if (!id) return '';
-  return id.trim().toLowerCase().replace(/_/g, '-');
-};
-
-export const normalizeCanonicalIds = (ids?: (string | null)[] | null): string[] => {
-  if (!ids || !Array.isArray(ids)) return [];
-  const set = new Set<string>();
-  ids.forEach(item => {
-    const norm = normalizeCanonicalId(item);
-    if (norm) set.add(norm);
-  });
-  return Array.from(set);
-};
-
-export const normalizeAuthUser = (user: AuthUser): AuthUser => {
-  return {
-    ...user,
-    completed_lessons: normalizeCanonicalIds(user.completed_lessons),
-    unlocked_units: normalizeCanonicalIds(user.unlocked_units?.length ? user.unlocked_units : ['unit-1']),
-    unlocked_ulos: normalizeCanonicalIds(user.unlocked_ulos),
-  };
-};
-
 // Token storage helpers
 export const getStoredToken = (): string | null => {
   if (typeof window === 'undefined') return null;
@@ -103,8 +51,7 @@ export const getStoredUser = (): AuthUser | null => {
   const raw = localStorage.getItem('batakgo_auth_user');
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw);
-    return normalizeAuthUser(parsed);
+    return JSON.parse(raw);
   } catch {
     return null;
   }
@@ -113,8 +60,7 @@ export const getStoredUser = (): AuthUser | null => {
 export const setStoredUser = (user: AuthUser | null) => {
   if (typeof window === 'undefined') return;
   if (user) {
-    const normalized = normalizeAuthUser(user);
-    localStorage.setItem('batakgo_auth_user', JSON.stringify(normalized));
+    localStorage.setItem('batakgo_auth_user', JSON.stringify(user));
   } else {
     localStorage.removeItem('batakgo_auth_user');
   }
@@ -134,7 +80,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const timeoutId = setTimeout(() => controller.abort(), 6000);
 
   try {
-    const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
       signal: controller.signal,
@@ -154,16 +100,6 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 }
 
-// 0. API Health Check
-export async function checkApiHealth(): Promise<boolean> {
-  try {
-    const res = await request<{ status: string }>('/health');
-    return res?.status === 'healthy';
-  } catch {
-    return false;
-  }
-}
-
 // 1. Auth APIs
 export async function registerApi(data: {
   name: string;
@@ -178,10 +114,9 @@ export async function registerApi(data: {
   });
 
   if (res && res.token && res.user) {
-    const normalizedUser = normalizeAuthUser(res.user);
     setStoredToken(res.token);
-    setStoredUser(normalizedUser);
-    return { token: res.token, user: normalizedUser };
+    setStoredUser(res.user);
+    return { token: res.token, user: res.user };
   }
   return null;
 }
@@ -196,54 +131,39 @@ export async function loginApi(data: {
   });
 
   if (res && res.token && res.user) {
-    const normalizedUser = normalizeAuthUser(res.user);
     setStoredToken(res.token);
-    setStoredUser(normalizedUser);
-    return { token: res.token, user: normalizedUser };
+    setStoredUser(res.user);
+    return { token: res.token, user: res.user };
   }
   return null;
 }
 
 export async function fetchCurrentUserApi(): Promise<AuthUser | null> {
-  const token = getStoredToken();
-  if (!token) return null; // Avoid 401 unauthenticated requests when not logged in
-
   const res = await request<{ status: string; user: AuthUser }>('/auth/me');
   if (res && res.user) {
-    const normalizedUser = normalizeAuthUser(res.user);
-    setStoredUser(normalizedUser);
-    return normalizedUser;
+    setStoredUser(res.user);
+    return res.user;
   }
   return null;
 }
 
 export async function logoutApi(): Promise<void> {
-  const token = getStoredToken();
-  if (token) {
-    await request('/auth/logout', { method: 'POST' });
-  }
+  await request('/auth/logout', { method: 'POST' });
   setStoredToken(null);
   setStoredUser(null);
 }
 
 // 2. Progress Sync APIs
 export async function syncProgressApi(payload: {
-  xpEarned?: number;
+  xpEarned: number;
   lessonId?: string;
   unlockedUnitId?: string;
   heartsRemaining: number;
   unlockedUlosId?: string;
-}): Promise<ProgressSyncResponse | null> {
-  const canonicalPayload = {
-    ...payload,
-    lessonId: payload.lessonId ? normalizeCanonicalId(payload.lessonId) : undefined,
-    unlockedUnitId: payload.unlockedUnitId ? normalizeCanonicalId(payload.unlockedUnitId) : undefined,
-    unlockedUlosId: payload.unlockedUlosId ? normalizeCanonicalId(payload.unlockedUlosId) : undefined,
-  };
-
-  return await request<ProgressSyncResponse>('/progress/sync', {
+}): Promise<any> {
+  return await request('/progress/sync', {
     method: 'POST',
-    body: JSON.stringify(canonicalPayload),
+    body: JSON.stringify(payload),
   });
 }
 
@@ -277,3 +197,4 @@ export async function calculatePartuturanApi(myGender: string, relation: string)
 export async function transliterateAksaraApi(text: string) {
   return await request<any>(`/v1/open/aksara?text=${encodeURIComponent(text)}`);
 }
+
