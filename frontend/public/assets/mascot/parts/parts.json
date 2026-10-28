@@ -1,0 +1,47 @@
+{
+  "head": {
+    "name": "head",
+    "x": 75,
+    "y": 0,
+    "width": 370,
+    "height": 339,
+    "pivotX": 0.5,
+    "pivotY": 0.95
+  },
+  "left_arm": {
+    "name": "left_arm",
+    "x": 0,
+    "y": 219,
+    "width": 146,
+    "height": 205,
+    "pivotX": 0.88,
+    "pivotY": 0.9
+  },
+  "right_arm": {
+    "name": "right_arm",
+    "x": 375,
+    "y": 245,
+    "width": 145,
+    "height": 195,
+    "pivotX": 0.12,
+    "pivotY": 0.9
+  },
+  "torso": {
+    "name": "torso",
+    "x": 120,
+    "y": 315,
+    "width": 280,
+    "height": 236,
+    "pivotX": 0.5,
+    "pivotY": 0.9
+  },
+  "legs": {
+    "name": "legs",
+    "x": 120,
+    "y": 530,
+    "width": 266,
+    "height": 141,
+    "pivotX": 0.5,
+    "pivotY": 0.05
+  }
+}

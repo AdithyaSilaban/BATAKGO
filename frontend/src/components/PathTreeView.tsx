@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Check,
   Lock,
   Play,
+  Star,
   BookOpen,
   Flame,
   Zap,
@@ -13,13 +14,17 @@ import {
   Crown,
   MessageCircle,
   Mic,
-  ArrowRight
+  ArrowRight,
+  Trophy
 } from 'lucide-react';
-import { UNITS, Lesson, DAILY_QUESTS } from '../utils/batakData';
+import { UNITS, Lesson, DAILY_QUESTS, Unit } from '../utils/batakData';
 import { UserProgress, calculateLevel } from '../utils/gamification';
 import { getStoredUser } from '../utils/apiClient';
 import { GorgaShield, PitaTenun } from './GorgaEmblem';
 import { Mascot } from './Mascot';
+import { Mascot3D } from './Mascot3D';
+import { GuidebookModal } from './GuidebookModal';
+import { playGordangBeat } from '../utils/audioSynthesizer';
 
 interface PathTreeViewProps {
   progress: UserProgress;
@@ -68,14 +73,35 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
   onRefillHearts,
   onNavigateToTab
 }) => {
+  const [selectedGuideUnit, setSelectedGuideUnit] = useState<Unit | null>(null);
+  const [hoveredLessonId, setHoveredLessonId] = useState<string | null>(null);
+
   const levelInfo = calculateLevel(progress.xp);
   const storedUser = getStoredUser();
 
   const userName = storedUser?.name || 'Parsiajar Batak';
   const userMarga = storedUser?.marga ? `Marga ${storedUser.marga}` : 'Batak Toba';
 
+  // Offset sequence for organic winding snake path
+  const S_OFFSETS = [
+    'translate-x-0',
+    '-translate-x-12 sm:-translate-x-16',
+    'translate-x-0',
+    'translate-x-12 sm:translate-x-16',
+    'translate-x-0'
+  ];
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-start font-body">
+      {/* Guidebook Modal */}
+      {selectedGuideUnit && (
+        <GuidebookModal
+          unit={selectedGuideUnit}
+          isOpen={Boolean(selectedGuideUnit)}
+          onClose={() => setSelectedGuideUnit(null)}
+        />
+      )}
+
       {/* Left/Center: Main Learning Curriculum Tree */}
       <div className="flex-1 w-full max-w-2xl mx-auto">
         {UNITS.map(unit => {
@@ -90,86 +116,104 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
           const isUnitFullyCompleted = completedInUnit === unit.lessons.length;
 
           return (
-            <div key={unit.id} className="mb-14">
-              {/* Unit Header Card: Papan Ukir Datar Bergaris Arang */}
-              <div className="card-batak-dark overflow-hidden mb-10 relative">
-                {/* Pembatas Section: Pita 3 Garis (Arang, Secang, Kapur) setinggi 6px */}
-                <PitaTenun />
+            <div key={unit.id} className="mb-16">
+              {/* 1. UNIT HEADER BANNER DENGAN GRADIEN KAYA WARNA (Aktifkan unit.bannerColor) */}
+              <div
+                className={`w-full rounded-3xl p-6 sm:p-7 mb-10 text-white shadow-xl ${unit.bannerColor} relative overflow-hidden transition-all duration-300`}
+              >
+                {/* Watermark Aksara Batak Transparan */}
+                <div
+                  className="font-batak absolute -right-2 -bottom-4 text-8xl text-white/10 select-none pointer-events-none"
+                  style={{ fontWeight: 400, fontSynthesis: 'none' }}
+                  aria-hidden="true"
+                >
+                  {config.aksara}
+                </div>
 
-                <div className="p-6 relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  {/* Aksara Batak Watermark (Regular weight, font-synthesis none) */}
-                  <div
-                    className="font-batak absolute -right-2 -bottom-2 text-7xl text-[#F4EDE0]/5 select-none pointer-events-none"
-                    style={{ fontWeight: 400, fontSynthesis: 'none' }}
-                    aria-hidden="true"
-                  >
-                    {config.aksara}
-                  </div>
+                {/* Ornamen Pita Tenun di Atas Banner */}
+                <div className="absolute top-0 left-0 right-0 opacity-80">
+                  <PitaTenun />
+                </div>
 
-                  {/* Left Content */}
-                  <div className="relative z-10 max-w-lg">
+                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 pt-2">
+                  <div className="max-w-md">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-[2px] bg-[#2C2622] text-[#D9A21B] border border-[#433D38]">
-                        UNIT 0{unit.number}
+                      <span className="text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-black/30 text-amber-300 border border-white/20 backdrop-blur-xs">
+                        BAGIAN 1, UNIT 0{unit.number}
                       </span>
-                      <span className="text-[11px] font-semibold text-[#E8DFC8]">
+                      <span className="text-[11px] font-bold text-white/90">
                         {config.badgeLabel}
                       </span>
                     </div>
 
-                    <h2 className="font-heading text-xl sm:text-2xl font-bold text-[#F4EDE0] tracking-tight leading-snug">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
                       {unit.title}
                     </h2>
 
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs font-semibold text-[#D9A21B] italic">
+                      <span className="text-xs font-bold text-amber-200 italic">
                         {unit.batakTitle}
                       </span>
-                      <span className="text-[#433D38] text-xs">•</span>
+                      <span className="text-white/60 text-xs">•</span>
                       <span
-                        className="font-batak text-xs text-[#E8DFC8] tracking-wider"
+                        className="font-batak text-xs text-white/90 tracking-wider"
                         style={{ fontWeight: 400, fontSynthesis: 'none' }}
                       >
                         {config.aksara}
                       </span>
                     </div>
 
-                    <p className="text-[#E8DFC8] text-xs sm:text-sm mt-2 leading-relaxed font-medium">
+                    <p className="text-white/90 text-xs sm:text-sm mt-2.5 leading-relaxed font-medium">
                       {unit.description}
                     </p>
 
-                    {/* Unit Progress: Motif Garis Tenun (Bukan Gradasi) */}
+                    {/* Unit Progress: Motif Garis Tenun */}
                     <div className="mt-4 flex items-center gap-3">
-                      <div className="progress-tenun-container flex-1 max-w-[200px]">
+                      <div className="bg-black/30 p-[2px] rounded-full flex-1 max-w-[200px] border border-white/20">
                         <div
-                          className="progress-tenun-bar"
+                          className="h-2.5 rounded-full bg-gradient-to-r from-amber-300 to-amber-400 transition-all duration-300"
                           style={{
                             width: `${(completedInUnit / unit.lessons.length) * 100}%`
                           }}
                         />
                       </div>
-                      <span className="text-[11px] font-bold text-[#E8DFC8]">
+                      <span className="text-[11px] font-extrabold text-white">
                         {completedInUnit} / {unit.lessons.length} Pelajaran
                       </span>
                       {isUnitFullyCompleted && (
-                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-[2px] bg-[#FAF6EE] text-[#1E1A17] border border-[#1E1A17]">
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-white text-stone-900 shadow">
                           Tuntas
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Right Cultural Icon Medallion */}
-                  <div className="relative z-10 shrink-0 self-end sm:self-center">
-                    <div className="w-14 h-14 rounded-[4px] bg-[#2C2622] border-[1.5px] border-[#433D38] flex items-center justify-center">
-                      <UnitIcon className="text-[#D9A21B]" size={26} />
+                  {/* Tombol Timbul "BUKU PANDUAN" */}
+                  <div className="shrink-0 flex sm:flex-col items-center gap-3 self-end sm:self-center">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedGuideUnit(unit)}
+                      className="px-4 py-2.5 rounded-2xl bg-black/25 hover:bg-black/40 border-2 border-white/40 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition active:translate-y-1 cursor-pointer shadow-md backdrop-blur-xs"
+                    >
+                      <BookOpen size={16} />
+                      <span>BUKU PANDUAN</span>
+                    </button>
+
+                    <div className="w-12 h-12 rounded-2xl bg-black/20 border border-white/30 flex items-center justify-center text-amber-300">
+                      <UnitIcon size={24} />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Lesson Path Nodes */}
-              <div className="flex flex-col items-center gap-10 py-2 relative">
+              {/* 2. JALUR BELAJAR BERKELOK DENGAN NODE LINGKARAN 3D & JEJAK PENGHUBUNG */}
+              <div className="w-full flex flex-col items-center gap-10 py-4 relative">
+                {/* Garis Jejak Jalur Penghubung Melengkung Putus-Putus di Latar Belakang */}
+                <div
+                  className="absolute top-8 bottom-8 w-1 border-r-2 border-dashed border-[#1E1A17]/30 pointer-events-none -z-0"
+                  aria-hidden="true"
+                />
+
                 {unit.lessons.map((lesson, idx) => {
                   const isCompleted = progress.completedLessons.includes(lesson.id);
                   const isUnlocked =
@@ -177,108 +221,97 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
                     (idx === 0 || progress.completedLessons.includes(unit.lessons[idx - 1].id));
                   const isCurrent = isUnlocked && !isCompleted;
 
-                  const showMascotGuide = isCurrent && unit.number === 1;
-
-                  // Alternating offset for pathway
-                  const offsets = [
-                    'translate-x-0',
-                    'translate-x-8 sm:translate-x-12',
-                    '-translate-x-8 sm:-translate-x-12'
-                  ];
-                  const offsetClass = offsets[idx % offsets.length];
+                  // Posisi berkelok kiri-kanan
+                  const offsetClass = S_OFFSETS[idx % S_OFFSETS.length];
+                  const isFinal = idx === unit.lessons.length - 1;
 
                   return (
                     <div
                       key={lesson.id}
-                      className={`relative flex flex-col items-center transition-transform ${offsetClass}`}
+                      className={`relative flex items-center justify-center transition-transform duration-200 z-10 ${offsetClass}`}
                     >
-                      {/* Mascot Companion Guide beside active node */}
-                      {showMascotGuide && (
-                        <div className="absolute right-full mr-5 top-1/2 -translate-y-1/2 hidden xl:flex items-center z-20 pointer-events-none animate-in fade-in duration-200">
-                          <div className="card-batak p-3 flex items-center gap-3 max-w-[220px]">
-                            <Mascot
-                              mood="happy"
-                              size="sm"
-                              showStatusLabel={false}
-                              interactive={false}
-                            />
-                            <div>
-                              <div className="text-[10px] font-bold uppercase text-[#A62B1F] tracking-wider">
-                                Panduan Gale
-                              </div>
-                              <p className="text-xs font-bold text-[#1E1A17] mt-0.5 leading-snug">
-                                Horas! Mulai parsiajaran dison.
-                              </p>
-                              <p className="text-[10px] text-[#433D38] mt-0.5">
-                                Klik tombol untuk mulai.
-                              </p>
-                            </div>
+                      {/* Balon Mengambang Membal "MULAI" di Atas Node Aktif */}
+                      {isCurrent && (
+                        <div className="absolute -top-12 z-30 flex flex-col items-center animate-bounce pointer-events-none">
+                          <div className="bg-[#1E1A17] text-[#D9A21B] border-2 border-[#D9A21B] px-3.5 py-1 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-1.5">
+                            <Play size={10} className="fill-[#D9A21B]" />
+                            <span>MULAI</span>
                           </div>
+                          {/* Segitiga penunjuk ke bawah */}
+                          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#D9A21B] -mt-[1px]" />
                         </div>
                       )}
 
-                      {/* Lesson Node: Papan Datar Radius 4px, Tepi Bawah 3px Lebih Gelap */}
+                      {/* Tooltip Judul Pelajaran Melayang Saat Hover */}
+                      {hoveredLessonId === lesson.id && (
+                        <div className="absolute bottom-full mb-3 z-30 bg-[#1E1A17] text-[#F4EDE0] border border-[#A62B1F] px-3 py-1.5 rounded-xl shadow-xl text-center pointer-events-none whitespace-nowrap animate-in fade-in zoom-in-95 duration-150">
+                          <p className="text-xs font-black">{lesson.title}</p>
+                          <p className="text-[10px] text-[#D9A21B] font-bold">
+                            {isCompleted ? '✓ Sidung (Tuntas)' : isCurrent ? 'Pelajaran Aktif' : 'Terkunci'}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Tombol Lingkaran 3D (Tactile Coin Button) */}
                       <button
                         type="button"
                         disabled={!isUnlocked}
-                        onClick={() => onSelectLesson(lesson)}
+                        onMouseEnter={() => setHoveredLessonId(lesson.id)}
+                        onMouseLeave={() => setHoveredLessonId(null)}
+                        onClick={() => {
+                          playGordangBeat();
+                          onSelectLesson(lesson);
+                        }}
                         aria-label={`${lesson.title} (${
                           isCompleted ? 'Selesai' : isUnlocked ? 'Mulai Pelajaran' : 'Terkunci'
                         })`}
-                        className={`relative w-18 h-18 sm:w-20 sm:h-20 flex flex-col items-center justify-center transition-all ${
-                          isCompleted
-                            ? 'btn-secang'
-                            : isCurrent
-                            ? 'btn-indigo'
-                            : 'bg-[#FAF6EE] border-[1.5px] border-[#433D38] text-[#433D38] opacity-60 cursor-not-allowed rounded-[4px]'
+                        className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full flex flex-col items-center justify-center transition-all cursor-pointer select-none ${
+                          isCurrent
+                            ? 'bg-[#A62B1F] border-b-[6px] border-[#7A1F16] text-[#F4EDE0] ring-8 ring-[#A62B1F]/25 shadow-xl active:translate-y-1 active:border-b-0 hover:brightness-105'
+                            : isCompleted
+                            ? 'bg-[#D9A21B] border-b-[6px] border-[#A67910] text-[#1E1A17] shadow-md active:translate-y-1 active:border-b-0 hover:brightness-105'
+                            : 'bg-[#E8DFC8] border-b-[6px] border-[#C8BFA8] text-[#8C8270] cursor-not-allowed opacity-90'
                         }`}
                       >
+                        {/* Ikon di dalam node */}
                         {isCompleted ? (
-                          <Check size={28} className="stroke-[3] text-[#F4EDE0]" />
+                          <Star size={32} className="fill-[#1E1A17] text-[#1E1A17]" />
                         ) : isCurrent ? (
-                          <Play size={24} className="fill-[#F4EDE0] text-[#F4EDE0] translate-x-0.5" />
+                          <Play size={28} className="fill-white text-white translate-x-0.5" />
+                        ) : isFinal ? (
+                          <Trophy size={28} className="text-[#8C8270]" />
                         ) : (
-                          <Lock size={20} className="text-[#433D38]" />
+                          <Lock size={22} className="text-[#8C8270]" />
                         )}
 
-                        {/* XP Badge Pill: Radius 2px Bergaris Arang */}
+                        {/* Badge XP Ramping di Bawah Node */}
                         <div
-                          className={`absolute -bottom-2.5 px-2 py-0.5 rounded-[2px] text-[10px] font-bold border whitespace-nowrap flex items-center gap-0.5 ${
+                          className={`absolute -bottom-3 px-2.5 py-0.5 rounded-full text-[10px] font-black border whitespace-nowrap flex items-center gap-1 shadow-xs ${
                             isCompleted
-                              ? 'bg-[#1E1A17] text-[#D9A21B] border-[#1E1A17]'
+                              ? 'bg-[#1E1A17] text-[#D9A21B] border-[#D9A21B]'
                               : isCurrent
-                              ? 'bg-[#FAF6EE] text-[#1E1A17] border-[#1E1A17]'
-                              : 'bg-[#E8DFC8] text-[#433D38] border-[#433D38]'
+                              ? 'bg-[#1E1A17] text-white border-[#A62B1F]'
+                              : 'bg-[#FAF6EE] text-[#8C8270] border-[#C8BFA8]'
                           }`}
                         >
-                          <Zap size={10} className={isCompleted ? 'fill-[#D9A21B]' : ''} />
+                          <Zap size={10} className={isCompleted ? 'fill-[#D9A21B]' : isCurrent ? 'fill-amber-400' : ''} />
                           +{lesson.xpReward} XP
                         </div>
                       </button>
 
-                      {/* Lesson Title & Status Label */}
-                      <div className="mt-3.5 text-center z-10 max-w-[210px]">
-                        <div className="card-batak px-3 py-1.5">
-                          <p className="text-xs font-bold tracking-tight text-[#1E1A17] truncate">
-                            {lesson.title}
-                          </p>
-                          <div className="flex items-center justify-center gap-1.5 mt-0.5">
-                            {isCompleted ? (
-                              <span className="text-[10px] font-bold text-[#A62B1F] flex items-center gap-1">
-                                <Check size={11} className="stroke-[3]" /> Tuntas
-                              </span>
-                            ) : isCurrent ? (
-                              <span className="text-[10px] font-bold uppercase text-[#23365A] tracking-wider">
-                                Pelajaran Aktif
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-medium text-[#433D38]">
-                                Terkunci
-                              </span>
-                            )}
-                          </div>
+                      {/* 3. PELEPASAN MASKOT 3D: BERDIRI BEBAS DI SAMPING NODE AKTIF BISA GERAK */}
+                      {isCurrent && unit.number === 1 && (
+                        <div className="absolute left-full ml-4 sm:ml-8 top-1/2 -translate-y-1/2 z-20 pointer-events-auto">
+                          <Mascot3D
+                            width={240}
+                            height={310}
+                            followMouse={true}
+                            interactive={true}
+                            speech="Horas! Ahu ma maskot 3D BatakGO!"
+                            subSpeech="Klik 'Lompat', 'Sapa', atau 'Putar' untuk melihat aku gerak!"
+                          />
                         </div>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
@@ -288,42 +321,41 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
         })}
       </div>
 
-      {/* Right Sidebar: Institutional Gamification Stats & Cultural Cards */}
-      <div className="w-full lg:w-80 flex flex-col gap-4 sticky top-24">
+      {/* Right Sidebar: Gamification Cards dengan Sudut Melengkung Lembut (rounded-3xl) */}
+      <div className="w-full lg:w-80 flex flex-col gap-5 sticky top-24">
         {/* Card 1: User Profile & Gordang Level */}
-        <div className="card-batak p-5">
+        <div className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3.5">
             <GorgaShield size={40} className="shrink-0" />
             <div className="overflow-hidden">
-              <p className="font-heading font-bold text-[#1E1A17] text-base truncate">
+              <p className="font-heading font-black text-[#1E1A17] text-base truncate">
                 {userName}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[10px] font-bold text-[#1E1A17] bg-[#E8DFC8] border border-[#1E1A17] px-2 py-0.5 rounded-[2px]">
+                <span className="text-[10px] font-black uppercase text-[#1E1A17] bg-[#E8DFC8] border border-[#1E1A17] px-2.5 py-0.5 rounded-full">
                   {userMarga}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#1E1A17]/20">
+          <div className="pt-3 border-t border-[#1E1A17]/15">
             <div className="flex items-center justify-between text-xs font-bold text-[#1E1A17] mb-1.5">
               <span className="text-[#433D38] uppercase tracking-wider text-[10px]">
                 Gordang Level
               </span>
-              <span className="text-[#A62B1F] font-bold">
+              <span className="text-[#A62B1F] font-black">
                 Tingkat {levelInfo.level} • {levelInfo.title}
               </span>
             </div>
 
-            {/* Progress tenun motif */}
-            <div className="progress-tenun-container">
+            <div className="progress-tenun-container rounded-full">
               <div
-                className="progress-tenun-bar"
+                className="progress-tenun-bar rounded-full"
                 style={{ width: `${levelInfo.progressPercent}%` }}
               />
             </div>
-            <div className="flex justify-between text-[11px] font-semibold text-[#433D38] mt-1">
+            <div className="flex justify-between text-[11px] font-bold text-[#433D38] mt-1">
               <span>{levelInfo.currentXp} XP</span>
               <span>{levelInfo.nextLevelXp} XP</span>
             </div>
@@ -331,25 +363,24 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
         </div>
 
         {/* Card 2: Tondi (Nyawa Semangat) */}
-        <div className="card-batak p-5">
+        <div className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
-              <Heart size={15} className="text-[#A62B1F] fill-[#A62B1F]" />
-              <span className="text-xs font-bold uppercase text-[#1E1A17] tracking-wider">
+              <Heart size={16} className="text-[#A62B1F] fill-[#A62B1F]" />
+              <span className="text-xs font-black uppercase text-[#1E1A17] tracking-wider">
                 Tondi (Daya Hidup)
               </span>
             </div>
-            <span className="text-xs font-bold text-[#A62B1F] px-2 py-0.5 rounded-[2px] bg-[#E8DFC8] border border-[#1E1A17]">
+            <span className="text-xs font-black text-[#A62B1F] px-2.5 py-0.5 rounded-full bg-[#E8DFC8] border border-[#1E1A17]">
               {progress.hearts} / {progress.maxHearts}
             </span>
           </div>
 
-          {/* Visual Heart Indicators: Balok Tegas */}
           <div className="flex items-center gap-1.5 mb-3">
             {Array.from({ length: progress.maxHearts }).map((_, i) => (
               <div
                 key={i}
-                className={`flex-1 h-2 rounded-[1px] border border-[#1E1A17] transition-all ${
+                className={`flex-1 h-2 rounded-full border border-[#1E1A17] transition-all ${
                   i < progress.hearts
                     ? 'bg-[#A62B1F]'
                     : 'bg-[#E8DFC8]'
@@ -367,22 +398,22 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
             type="button"
             onClick={onRefillHearts}
             disabled={progress.hearts >= progress.maxHearts}
-            className="btn-secang w-full py-2.5 text-xs"
+            className="w-full py-2.5 rounded-2xl bg-[#A62B1F] hover:bg-[#7A1F16] border-b-4 border-[#5E1610] text-[#F4EDE0] font-black text-xs uppercase tracking-wider transition active:translate-y-1 active:border-b-0 cursor-pointer shadow"
           >
             Pulihkan Penuh Tondi (Gratis)
           </button>
         </div>
 
         {/* Card 3: Daily Quests (Tugas Sadari On) */}
-        <div className="card-batak p-5">
+        <div className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               <Zap className="text-[#D9A21B]" size={16} />
-              <h3 className="font-heading font-bold text-[#1E1A17] text-sm">
+              <h3 className="font-heading font-black text-[#1E1A17] text-sm">
                 Tugas Sadari On (Harian)
               </h3>
             </div>
-            <span className="text-[10px] font-bold text-[#433D38] uppercase tracking-wider">
+            <span className="text-[10px] font-black text-[#433D38] uppercase tracking-wider">
               24 Jam
             </span>
           </div>
@@ -394,25 +425,25 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
               return (
                 <div
                   key={q.id}
-                  className="p-2.5 bg-[#F4EDE0] rounded-[2px] border border-[#1E1A17] text-xs"
+                  className="p-3 bg-[#F4EDE0] rounded-2xl border border-[#1E1A17] text-xs"
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-[2px] bg-[#E8DFC8] border border-[#1E1A17] flex items-center justify-center text-[#1E1A17] shrink-0">
-                        <QuestIcon size={12} />
+                      <div className="w-6 h-6 rounded-xl bg-[#E8DFC8] border border-[#1E1A17] flex items-center justify-center text-[#1E1A17] shrink-0">
+                        <QuestIcon size={13} />
                       </div>
-                      <span className="font-bold text-[#1E1A17] leading-tight">
+                      <span className="font-black text-[#1E1A17] leading-tight">
                         {q.title}
                       </span>
                     </div>
-                    <span className="font-bold text-[#A62B1F] shrink-0 bg-[#E8DFC8] px-1.5 py-0.2 rounded-[2px] border border-[#1E1A17] text-[10px]">
+                    <span className="font-black text-[#A62B1F] shrink-0 bg-[#E8DFC8] px-2 py-0.5 rounded-full border border-[#1E1A17] text-[10px]">
                       +{q.rewardXP} XP
                     </span>
                   </div>
 
-                  <div className="progress-tenun-container h-2 mt-1.5">
+                  <div className="progress-tenun-container h-2 mt-2 rounded-full">
                     <div
-                      className="progress-tenun-bar"
+                      className="progress-tenun-bar rounded-full"
                       style={{
                         width: `${Math.min(100, (progress.xp / q.target) * 100)}%`
                       }}
@@ -427,21 +458,21 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
         {/* Card 4: Lemari Tenun Ulos Promo Card */}
         <div
           onClick={() => onNavigateToTab('ulos')}
-          className="card-batak p-5 cursor-pointer hover:bg-[#E8DFC8]/60 transition"
+          className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 cursor-pointer hover:bg-[#E8DFC8]/50 transition shadow-sm group"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A62B1F] bg-[#E8DFC8] border border-[#1E1A17] px-2 py-0.5 rounded-[2px]">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#A62B1F] bg-[#E8DFC8] border border-[#1E1A17] px-2.5 py-0.5 rounded-full">
               Warisan Tenun Adat
             </span>
-            <ArrowRight size={14} className="text-[#1E1A17]" />
+            <ArrowRight size={16} className="text-[#1E1A17] group-hover:translate-x-1 transition-transform" />
           </div>
-          <h4 className="font-heading font-bold text-base text-[#1E1A17] tracking-tight">
+          <h4 className="font-heading font-black text-base text-[#1E1A17] tracking-tight">
             Lemari Tenun Ulos Batak
           </h4>
           <p className="text-xs text-[#433D38] mt-1 leading-relaxed">
             Koleksi kain sakral Ulos Mangiring, Ragidup, dan Sadum sebagai simbol doa keselamatan.
           </p>
-          <div className="mt-2.5 flex items-center gap-1 text-xs font-bold text-[#23365A] underline">
+          <div className="mt-3 flex items-center gap-1 text-xs font-black text-[#23365A] underline">
             <span>Buka Galeri Ulos</span>
             <ArrowRight size={12} />
           </div>
