@@ -73,7 +73,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
   // Instant Guest Mode Entry
   const handleGuestEntry = () => {
     const guestUser: AuthUser = {
-      id: 'guest-' + Date.now().toString(36),
+      id: 999999,
       name: 'Parsiajar Tamu',
       email: 'tamu@batakgo.id',
       marga: 'Siregar',

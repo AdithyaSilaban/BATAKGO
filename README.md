@@ -87,6 +87,36 @@ graph TD
     ThirdPartyApps -->|"GET /api/v1/open/*"| OpenApiCtrl
 ```
 
+### 📁 Struktur Direktori Terpisah (Clean Monorepo Separation)
+
+Proyek ini telah dipisahkan secara modular dan rapi ke dalam dua domain utama:
+
+```
+BATAKGO/
+├── 📁 backend/                    # Domain Backend (Laravel 13 API & MySQL)
+│   ├── app/                       # Logika Bisnis, Controllers, Models, & Services
+│   │   ├── Http/Controllers/      # Auth, Progress, Leaderboard, OpenCulturalApi
+│   │   ├── Models/                # User, CulturalVocabulary
+│   │   └── Services/              # CurriculumService (Anti-cheat XP & canonical validation)
+│   ├── routes/api.php             # REST API Endpoints v1
+│   ├── database/                  # Migrations & Cultural Seeders
+│   ├── tests/Feature/             # PHPUnit Automated Test Suites
+│   └── artisan                    # Laravel CLI Entry Point
+│
+├── 📁 frontend/                   # Domain Frontend (React 19 + TypeScript + Vite)
+│   ├── src/                       # Komponen UI, Gamifikasi, & Utilitas Budaya
+│   │   ├── components/            # Views (Learn, Kamus, Partuturan, Aksara, Leaderboard, Ulos)
+│   │   └── utils/                 # AudioSynthesizer, AksaraBatak, BatakData, ApiClient
+│   ├── public/                    # Aset statis & audio
+│   ├── tests/                     # Vitest/TSX Unit Tests (Aksara Unicode & Kurikulum)
+│   ├── index.html                 # Entry Point HTML SPA
+│   ├── vite.config.ts             # Konfigurasi Vite & Tailwind CSS
+│   └── package.json               # Dependensi & script khusus frontend
+│
+├── package.json                   # Root Orchestrator (npm run dev/build/test otomatis delegasi)
+└── README.md                      # Dokumentasi Proyek & Panduan Pengujian
+```
+
 ---
 
 ## 🔒 Keamanan & Integritas Data (Anti-Cheat System)
@@ -143,14 +173,23 @@ graph TD
 
 ### Langkah 2: Menjalankan Frontend React
 
-1. Buka terminal baru di root folder:
-   ```bash
-   npm run dev
-   ```
-2. Buka peramban (*browser*) di tautan:
-   ```
-   http://localhost:3000
-   ```
+Tersedia dua opsi yang fleksibel:
+
+**Opsi A (Dari Root Folder):**
+```bash
+npm run dev
+```
+
+**Opsi B (Dari Folder Frontend):**
+```bash
+cd frontend
+npm run dev
+```
+
+Buka peramban (*browser*) di tautan:
+```
+http://localhost:3000
+```
 
 ---
 
