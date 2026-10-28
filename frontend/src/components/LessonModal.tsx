@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { X, Heart, Volume2, Mic, CheckCircle2, XCircle, ArrowRight, Sparkles, Award } from 'lucide-react';
 import { Lesson, Question } from '../utils/batakData';
@@ -40,21 +40,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
   const [selectedBatakPair, setSelectedBatakPair] = useState<string | null>(null);
   const [selectedIndoPair, setSelectedIndoPair] = useState<string | null>(null);
-  const [shuffledBatakPairs, setShuffledBatakPairs] = useState<string[]>([]);
-  const [shuffledIndoPairs, setShuffledIndoPairs] = useState<string[]>([]);
-  const autoAdvanceTimerRef = useRef<any>(null);
 
   // Pronunciation voice state
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAccuracy, setRecordedAccuracy] = useState<number | null>(null);
-  const [spokenTranscript, setSpokenTranscript] = useState<string | null>(null);
-  const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
-
-  const recognitionRef = useRef<any>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  const recordingTimerRef = useRef<any>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const animFrameRef = useRef<number | null>(null);
 
   // Submission & Feedback
   const [isChecked, setIsChecked] = useState(false);
@@ -74,55 +63,11 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     setSelectedIndoPair(null);
     setIsRecording(false);
     setRecordedAccuracy(null);
-    setSpokenTranscript(null);
-    setVoiceNotice(null);
     setIsChecked(false);
     setIsCorrect(false);
 
-    if (autoAdvanceTimerRef.current) {
-      clearTimeout(autoAdvanceTimerRef.current);
-      autoAdvanceTimerRef.current = null;
-    }
-
     if (currentQ?.wordBank) {
       setAvailableWords([...currentQ.wordBank].sort(() => 0.5 - Math.random()));
-    }
-
-    // 1. Acak pasangan agar posisi kiri dan kanan tidak segaris/sejajar langsung
-    if (currentQ?.type === 'match_pairs' && currentQ.pairs) {
-      const bataks = currentQ.pairs.map(p => p.batak);
-      const indos = currentQ.pairs.map(p => p.indonesian);
-
-      const shuffle = <T,>(arr: T[]): T[] => {
-        const copy = [...arr];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
-      };
-
-      const sBatak = shuffle(bataks);
-      let sIndo = shuffle(indos);
-
-      if (sBatak.length > 1) {
-        let attempts = 0;
-        while (attempts < 15) {
-          const hasSameRowMatch = sBatak.some((bWord, rowIdx) => {
-            const match = currentQ.pairs?.find(p => p.batak === bWord);
-            return match && match.indonesian === sIndo[rowIdx];
-          });
-          if (!hasSameRowMatch) break;
-          sIndo = shuffle(indos);
-          attempts++;
-        }
-      }
-
-      setShuffledBatakPairs(sBatak);
-      setShuffledIndoPairs(sIndo);
-    } else {
-      setShuffledBatakPairs([]);
-      setShuffledIndoPairs([]);
     }
 
     setMascotMood('thinking');
@@ -156,17 +101,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     const pair = currentQ.pairs?.find(p => p.batak === batakVal && p.indonesian === indoVal);
     if (pair) {
       playHasapiPluck(660);
-      const newMatched = [...matchedPairs, batakVal, indoVal];
-      setMatchedPairs(newMatched);
+      setMatchedPairs(prev => [...prev, batakVal, indoVal]);
       setSelectedBatakPair(null);
       setSelectedIndoPair(null);
 
-      // 2. Di pencocokan: jika semua pasangan cocok -> benar & tambah skor
-      const totalPairs = (currentQ.pairs?.length || 0) * 2;
-      if (totalPairs > 0 && newMatched.length >= totalPairs) {
+      // Check if all matched
+      if (currentQ.pairs && matchedPairs.length + 2 >= currentQ.pairs.length * 2) {
         setIsChecked(true);
         setIsCorrect(true);
-        setCorrectCount(prev => prev + 1);
         setMascotMood('happy');
         setMascotSpeech('Las roha! Lengkap sude!');
         playGordangBeat();
@@ -181,225 +123,65 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   };
 
   // Handle Speech recognition for pronunciation questions
-  const stopVoiceRecording = () => {
-    if (recordingTimerRef.current) {
-      clearTimeout(recordingTimerRef.current);
-      recordingTimerRef.current = null;
-    }
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch {}
-      recognitionRef.current = null;
-    }
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(t => t.stop());
-      mediaStreamRef.current = null;
-    }
-    if (audioContextRef.current) {
-      try {
-        audioContextRef.current.close();
-      } catch {}
-      audioContextRef.current = null;
-    }
-    setIsRecording(false);
-  };
-
-  const finishPronunciation = (transcriptText: string, forcedScore?: number) => {
-    if (isChecked) return;
-    stopVoiceRecording();
-    const targetPhrase =
-      currentQ.batakText ||
-      (typeof currentQ.correctAnswer === 'string' ? currentQ.correctAnswer : '') ||
-      '';
-    const textClean = transcriptText.trim();
-    const score = forcedScore !== undefined
-      ? forcedScore
-      : calculatePronunciationAccuracy(textClean || targetPhrase, targetPhrase);
-
-    setSpokenTranscript(textClean || targetPhrase);
-    setRecordedAccuracy(score);
-    setIsChecked(true);
-
-    if (score >= 65) {
-      setIsCorrect(true);
-      setCorrectCount(prev => prev + 1);
-      setMascotMood('happy');
-      setMascotSpeech('Pintar hian ho! Pelafalan pas!');
-      playGordangBeat();
-    } else {
-      setIsCorrect(false);
-      setMascotMood('sad');
-      setMascotSpeech('Boasa sala? Unang mandele!');
-      playMistakeSound();
-      handleWrongAnswer();
-    }
-
-    // Solusi: Jika di latihan pelafalan sudah benar/salah, langsung pindah level/soal berikutnya
-    if (autoAdvanceTimerRef.current) {
-      clearTimeout(autoAdvanceTimerRef.current);
-    }
-    autoAdvanceTimerRef.current = setTimeout(() => {
-      handleNext();
-    }, 1800);
-  };
-
-  const simulatePronunciationPractice = () => {
-    if (isChecked) return;
-    setIsRecording(true);
-    setVoiceNotice('Memproses simulasi pelafalan...');
-    setTimeout(() => {
-      const targetPhrase =
-        currentQ.batakText ||
-        (typeof currentQ.correctAnswer === 'string' ? currentQ.correctAnswer : '') ||
-        '';
-      finishPronunciation(targetPhrase, 92);
-    }, 1200);
-  };
-
-  const startVoiceRecording = async () => {
-    if (isChecked) return;
-    if (isRecording) {
-      stopVoiceRecording();
-      return;
-    }
-
-    setVoiceNotice(null);
-    setRecordedAccuracy(null);
-    setSpokenTranscript(null);
-
-    const targetPhrase =
-      currentQ.batakText ||
-      (typeof currentQ.correctAnswer === 'string' ? currentQ.correctAnswer : '') ||
-      '';
-
-    let hasVoiceDetected = false;
-    let audioStream: MediaStream | null = null;
-
-    // 1. Hardware Microphone Access via getUserMedia
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaStreamRef.current = audioStream;
-
-        try {
-          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-          if (AudioCtx) {
-            const ctx = new AudioCtx();
-            audioContextRef.current = ctx;
-            const source = ctx.createMediaStreamSource(audioStream);
-            const analyser = ctx.createAnalyser();
-            analyser.fftSize = 256;
-            source.connect(analyser);
-
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            const checkVolume = () => {
-              if (!analyser) return;
-              analyser.getByteFrequencyData(dataArray);
-              let sum = 0;
-              for (let i = 0; i < dataArray.length; i++) {
-                sum += dataArray[i];
-              }
-              const avg = sum / dataArray.length;
-              if (avg > 8) {
-                hasVoiceDetected = true;
-              }
-              animFrameRef.current = requestAnimationFrame(checkVolume);
-            };
-            animFrameRef.current = requestAnimationFrame(checkVolume);
-          }
-        } catch (err) {
-          console.warn('AudioContext setup:', err);
-        }
-      }
-    } catch (micErr) {
-      console.warn('Microphone permission warning:', micErr);
-      setVoiceNotice('Akses mikrofon dicegah oleh browser. Anda dapat menggunakan mode simulasi.');
-    }
-
-    setIsRecording(true);
-
-    // 2. Web Speech API Recognition
+  const startVoiceRecording = () => {
     const SpeechRecognitionClass =
       (window as unknown as { SpeechRecognition?: any }).SpeechRecognition ||
       (window as unknown as { webkitSpeechRecognition?: any }).webkitSpeechRecognition;
 
-    if (SpeechRecognitionClass) {
-      try {
-        const recognition = new SpeechRecognitionClass();
-        recognitionRef.current = recognition;
-        recognition.lang = 'id-ID';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 2;
-
-        let recognized = false;
-
-        recognition.onresult = (e: any) => {
-          recognized = true;
-          const transcript = e.results?.[0]?.[0]?.transcript || '';
-          finishPronunciation(transcript);
-        };
-
-        recognition.onerror = (e: any) => {
-          console.warn('Speech error event:', e?.error);
-          if (!recognized) {
-            if (hasVoiceDetected || audioStream) {
-              setVoiceNotice('Suara terdeteksi via mikrofon! (Pelafalan lokal)');
-              finishPronunciation(targetPhrase, 90);
-            } else if (e.error === 'not-allowed') {
-              setVoiceNotice('Izin mikrofon belum aktif. Izinkan akses mikrofon di browser.');
-              stopVoiceRecording();
-            } else {
-              setVoiceNotice('Belum terdengar suara jelas. Klik mikrofon kembali dan ucapkan lebih lantang.');
-              stopVoiceRecording();
-            }
-          }
-        };
-
-        recognition.onend = () => {
-          if (!recognized && isRecording) {
-            if (hasVoiceDetected) {
-              finishPronunciation(targetPhrase, 88);
-            } else {
-              stopVoiceRecording();
-            }
-          }
-        };
-
-        recognition.start();
-
-        // Safety timeout after 5 seconds
-        recordingTimerRef.current = setTimeout(() => {
-          if (recognitionRef.current) {
-            try {
-              recognitionRef.current.stop();
-            } catch {}
-          }
-        }, 5000);
-
-        return;
-      } catch (e) {
-        console.warn('Recognition initiation failed:', e);
-      }
+    if (!SpeechRecognitionClass) {
+      // Fallback for simulation if API not present in iframe
+      setIsRecording(true);
+      setTimeout(() => {
+        setIsRecording(false);
+        const simAccuracy = 88;
+        setRecordedAccuracy(simAccuracy);
+        setIsChecked(true);
+        setIsCorrect(true);
+        setMascotMood('happy');
+        setMascotSpeech('Luar biasa! Pelafalan mantap!');
+        playGordangBeat();
+      }, 1500);
+      return;
     }
 
-    // 3. Fallback for non-SpeechRecognition browsers (Firefox, Safari, etc.)
-    recordingTimerRef.current = setTimeout(() => {
-      if (hasVoiceDetected || audioStream) {
-        setVoiceNotice('Suara berhasil direkam dari mikrofon!');
-        finishPronunciation(targetPhrase, 90);
-      } else {
-        finishPronunciation(targetPhrase, 85);
-      }
-    }, 3000);
+    try {
+      const recognition = new SpeechRecognitionClass();
+      recognition.lang = 'id-ID';
+      recognition.interimResults = false;
+
+      setIsRecording(true);
+      recognition.onresult = (e: any) => {
+        const transcript = e.results[0][0].transcript;
+        const target = currentQ.batakText || (typeof currentQ.correctAnswer === 'string' ? currentQ.correctAnswer : '');
+        const score = calculatePronunciationAccuracy(transcript, target);
+        setRecordedAccuracy(score);
+        setIsRecording(false);
+        setIsChecked(true);
+
+        if (score >= 65) {
+          setIsCorrect(true);
+          setMascotMood('happy');
+          setMascotSpeech('Pintar hian ho! Pelafalan pas!');
+          playGordangBeat();
+        } else {
+          setIsCorrect(false);
+          setMascotMood('sad');
+          setMascotSpeech('Boasa sala? Coba taulahi muse!');
+          playMistakeSound();
+          handleWrongAnswer();
+        }
+      };
+
+      recognition.onerror = () => {
+        setIsRecording(false);
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.warn('Speech error:', err);
+      setIsRecording(false);
+    }
   };
-
-
 
   // Check generic answers
   const handleCheckAnswer = () => {
@@ -413,11 +195,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         : currentQ.correctAnswer;
       correct = selectedWords.join(' ') === expected;
     } else if (currentQ.type === 'match_pairs') {
-      // 2. Di pencocokan: kalo ga bisa dijawab semua maka salah
-      const totalRequired = (currentQ.pairs?.length || 0) * 2;
-      correct = totalRequired > 0 && matchedPairs.length >= totalRequired;
-    } else if (currentQ.type === 'pronunciation') {
-      correct = (recordedAccuracy ?? 0) >= 65;
+      correct = true; // handled by pair clicks
     }
 
     setIsChecked(true);
@@ -460,10 +238,6 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   };
 
   const handleNext = () => {
-    if (autoAdvanceTimerRef.current) {
-      clearTimeout(autoAdvanceTimerRef.current);
-      autoAdvanceTimerRef.current = null;
-    }
     if (currentIndex + 1 < lesson.questions.length && hearts > 0) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -767,69 +541,61 @@ export const LessonModal: React.FC<LessonModalProps> = ({
 
           {/* 3. Match Pairs */}
           {currentQ.type === 'match_pairs' && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between mb-3 text-xs text-stone-500 font-bold">
-                <span>Pilih kata di kiri, lalu pasangkan dengan artinya di kanan</span>
-                <span className="bg-stone-100 px-2 py-0.5 rounded-md border text-stone-700">
-                  {matchedPairs.length / 2} / {currentQ.pairs?.length || 0} Pasangan
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              {/* Batak Column */}
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
+                  Bahasa Batak
                 </span>
+                {currentQ.pairs?.map((p, idx) => {
+                  const isMatched = matchedPairs.includes(p.batak);
+                  const isSelected = selectedBatakPair === p.batak;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      disabled={isMatched}
+                      onClick={() => handlePairClick('batak', p.batak)}
+                      className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
+                        isMatched
+                          ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60'
+                          : isSelected
+                          ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
+                          : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer'
+                      }`}
+                    >
+                      {p.batak}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Batak Column */}
-                <div className="flex flex-col gap-2.5">
-                  <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
-                    Bahasa Batak
-                  </span>
-                  {(shuffledBatakPairs.length > 0 ? shuffledBatakPairs : (currentQ.pairs?.map(p => p.batak) || [])).map((batakWord, idx) => {
-                    const isMatched = matchedPairs.includes(batakWord);
-                    const isSelected = selectedBatakPair === batakWord;
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        disabled={isMatched || isChecked}
-                        onClick={() => handlePairClick('batak', batakWord)}
-                        className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
-                          isMatched
-                            ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60 cursor-default'
-                            : isSelected
-                            ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
-                            : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer active:translate-y-0.5'
-                        }`}
-                      >
-                        {batakWord}
-                      </button>
-                    );
-                  })}
-                </div>
 
-                {/* Indonesian Column */}
-                <div className="flex flex-col gap-2.5">
-                  <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
-                    Bahasa Indonesia
-                  </span>
-                  {(shuffledIndoPairs.length > 0 ? shuffledIndoPairs : (currentQ.pairs?.map(p => p.indonesian) || [])).map((indoWord, idx) => {
-                    const isMatched = matchedPairs.includes(indoWord);
-                    const isSelected = selectedIndoPair === indoWord;
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        disabled={isMatched || isChecked}
-                        onClick={() => handlePairClick('indo', indoWord)}
-                        className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
-                          isMatched
-                            ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60 cursor-default'
-                            : isSelected
-                            ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
-                            : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer active:translate-y-0.5'
-                        }`}
-                      >
-                        {indoWord}
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Indonesian Column */}
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-bold text-stone-500 uppercase tracking-wide">
+                  Bahasa Indonesia
+                </span>
+                {currentQ.pairs?.map((p, idx) => {
+                  const isMatched = matchedPairs.includes(p.indonesian);
+                  const isSelected = selectedIndoPair === p.indonesian;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      disabled={isMatched}
+                      onClick={() => handlePairClick('indo', p.indonesian)}
+                      className={`p-3.5 rounded-xl border-2 font-bold text-left transition-all ${
+                        isMatched
+                          ? 'border-emerald-300 bg-emerald-50 text-emerald-800 opacity-60'
+                          : isSelected
+                          ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-[0_3px_0_0_#f59e0b]'
+                          : 'border-stone-300 bg-white text-stone-800 shadow-[0_3px_0_0_#e7e5e4] hover:bg-stone-50 cursor-pointer'
+                      }`}
+                    >
+                      {p.indonesian}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -837,22 +603,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           {/* 4. Pronunciation Practice */}
           {currentQ.type === 'pronunciation' && (
             <div className="mt-6 flex flex-col items-center text-center">
-              <div className="bg-white border-2 border-stone-300 rounded-3xl p-6 shadow-sm max-w-md w-full mb-6 relative">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-stone-500 text-xs font-bold uppercase tracking-wider">
-                    Target Pelafalan
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => speakBatakWord(currentQ.batakText || '')}
-                    className="flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded-full border border-red-200 transition-colors cursor-pointer"
-                    title="Dengarkan Contoh Pelafalan"
-                  >
-                    <Volume2 size={14} />
-                    <span>Dengar Contoh</span>
-                  </button>
-                </div>
-
+              <div className="bg-white border-2 border-stone-300 rounded-3xl p-6 shadow-sm max-w-md w-full mb-6">
+                <p className="text-stone-500 text-xs font-bold uppercase tracking-wider mb-2">
+                  Target Pelafalan
+                </p>
                 <p className="text-3xl font-black text-red-600 tracking-tight">
                   &ldquo;{currentQ.batakText}&rdquo;
                 </p>
@@ -874,87 +628,26 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               </div>
 
               {/* Mic interaction button */}
-              <div className="relative flex items-center justify-center">
-                <button
-                  type="button"
-                  disabled={isRecording || isChecked}
-                  onClick={startVoiceRecording}
-                  className={`w-24 h-24 rounded-full flex flex-col items-center justify-center text-white border-4 transition-all shadow-lg ${
-                    isChecked
-                      ? 'bg-stone-300 border-stone-400 opacity-60 cursor-not-allowed'
-                      : isRecording
-                      ? 'bg-red-600 border-red-800 ring-8 ring-red-400/50 animate-pulse cursor-pointer'
-                      : 'bg-emerald-500 hover:bg-emerald-400 border-emerald-700 shadow-[0_6px_0_0_#047857] active:translate-y-1 cursor-pointer'
-                  }`}
-                  aria-label={isRecording ? 'Hentikan rekaman suara' : 'Mulai bicara pelafalan'}
-                >
-                  <Mic size={36} className={isRecording ? 'animate-bounce' : ''} />
-                </button>
-              </div>
-
-              {isRecording ? (
-                <div className="flex flex-col items-center gap-2 mt-4">
-                  <div className="flex items-center gap-1.5 h-6">
-                    <span className="w-1.5 bg-red-500 rounded-full animate-bounce [animation-delay:0ms] h-4"></span>
-                    <span className="w-1.5 bg-red-500 rounded-full animate-bounce [animation-delay:150ms] h-6"></span>
-                    <span className="w-1.5 bg-red-500 rounded-full animate-bounce [animation-delay:300ms] h-3"></span>
-                    <span className="w-1.5 bg-red-500 rounded-full animate-bounce [animation-delay:450ms] h-5"></span>
-                    <span className="w-1.5 bg-red-500 rounded-full animate-bounce [animation-delay:200ms] h-4"></span>
-                  </div>
-                  <p className="text-sm font-extrabold text-red-600">
-                    Mendengarkan... Ucapkan &ldquo;{currentQ.batakText}&rdquo;!
-                  </p>
-                  <span className="text-xs text-stone-500">(Klik mikrofon lagi jika sudah selesai)</span>
-                </div>
-              ) : isChecked ? (
-                <div className="flex flex-col items-center mt-3">
-                  <p className="text-sm font-extrabold text-stone-700">
-                    {isCorrect ? '✅ Pelafalan Berhasil Diselesaikan' : '❌ Pelafalan Selesai Dievaluasi'}
-                  </p>
-                  <span className="text-xs text-stone-500 mt-0.5 animate-pulse">
-                    Mengarahkan ke soal berikutnya...
-                  </span>
-                </div>
-              ) : (
-                <p className="text-sm font-bold text-stone-600 mt-4">
-                  {recordedAccuracy !== null ? 'Latihan Selesai' : 'Klik Mikrofon & Ucapkan'}
-                </p>
-              )}
-
-              {spokenTranscript && (
-                <div className="mt-4 p-3 bg-stone-50 border border-stone-200 rounded-2xl max-w-md w-full">
-                  <p className="text-xs text-stone-500 font-semibold uppercase">Kata yang Terdengar</p>
-                  <p className="text-base font-bold text-stone-800">&ldquo;{spokenTranscript}&rdquo;</p>
-                </div>
-              )}
+              <button
+                type="button"
+                disabled={isRecording}
+                onClick={startVoiceRecording}
+                className={`w-24 h-24 rounded-full flex flex-col items-center justify-center text-white border-4 transition-all cursor-pointer shadow-lg ${
+                  isRecording
+                    ? 'bg-red-600 border-red-800 animate-ping'
+                    : 'bg-emerald-500 hover:bg-emerald-400 border-emerald-700 shadow-[0_6px_0_0_#047857] active:translate-y-1'
+                }`}
+              >
+                <Mic size={36} />
+              </button>
+              <p className="text-sm font-bold text-stone-600 mt-4">
+                {isRecording ? 'Mendengarkan suara Anda...' : 'Klik Mikrofon & Ucapkan'}
+              </p>
 
               {recordedAccuracy !== null && (
-                <div className="mt-3 p-3 bg-stone-100 rounded-2xl border text-sm font-bold flex items-center justify-center gap-2">
-                  <span>Skor Akurasi:</span>
-                  <span className={`text-lg font-black ${recordedAccuracy >= 65 ? 'text-emerald-700' : 'text-red-600'}`}>
-                    {recordedAccuracy}%
-                  </span>
-                  <span className="text-xs font-semibold text-stone-500">
-                    {recordedAccuracy >= 65 ? '(Sintong / Tepat)' : '(Bisa ditingkatkan)'}
-                  </span>
+                <div className="mt-4 p-3 bg-stone-100 rounded-2xl border text-sm font-bold">
+                  Skor Akurasi: <span className="text-emerald-700 text-lg font-black">{recordedAccuracy}%</span>
                 </div>
-              )}
-
-              {voiceNotice && (
-                <div className="mt-3 p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs font-medium text-amber-800 max-w-md w-full">
-                  {voiceNotice}
-                </div>
-              )}
-
-              {/* Simulation fallback link if mic has issues */}
-              {!isChecked && (
-                <button
-                  type="button"
-                  onClick={simulatePronunciationPractice}
-                  className="mt-4 text-xs font-semibold text-stone-400 hover:text-stone-700 underline cursor-pointer"
-                >
-                  Uji Pelafalan Cepat (Simulasi Suara)
-                </button>
               )}
             </div>
           )}
@@ -1000,9 +693,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <div className="text-xs sm:text-sm mt-1">
                       <span className="font-semibold text-stone-600">Jawaban yang tepat: </span>
                       <span className="font-bold text-red-700">
-                        {currentQ.type === 'match_pairs' && currentQ.pairs
-                          ? currentQ.pairs.map(p => `${p.batak} = ${p.indonesian}`).join(' • ')
-                          : Array.isArray(currentQ.correctAnswer)
+                        {Array.isArray(currentQ.correctAnswer)
                           ? currentQ.correctAnswer.join(' ')
                           : currentQ.correctAnswer}
                       </span>
