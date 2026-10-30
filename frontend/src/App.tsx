@@ -263,12 +263,12 @@ export default function App() {
                 BATAK<span className="text-[#A62B1F]">GO</span> • Parsiajaran Hata Batak
               </p>
               <p className="text-xs text-stone-400 mt-0.5">
-                Didukung arsitektur Laravel 13 RESTful API & basis data relasional MySQL (Laragon).
+                By kelompok Himatop
               </p>
             </div>
           </div>
           <p className="text-xs text-stone-500 font-medium">
-            Horas ma di hita saluhutna! &copy; 2026 BATAKGO • UINIC 8.0
+            Horas ma di hita saluhutna! &copy; 2026 BATAKGO
           </p>
         </div>
       </footer>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang=" id\>
 <head>
  <meta charset=\UTF-8\>
@@ -23,7 +23,7 @@
 <body>
  <div class=\card\>
  <h1>🧣 BATAKGO <span class=\badge\>Online</span></h1>
- <p>Parsiajaran Hata Batak Interaktif & Open Cultural API (UINIC 8.0).</p>
+ <p>Parsiajaran Hata Batak Interaktif & Open Cultural API • By kelompok Himatop</p>
  
  <div class=\links\>
  <a href=\/frontend/dist/index.html\ class=\btn btn-primary\>🚀 Buka Frontend SPA</a>

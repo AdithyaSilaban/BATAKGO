@@ -511,7 +511,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
       {/* Clean Bottom Bar */}
       <footer className="py-4 text-center text-xs text-[#433D38] border-t-[1.5px] border-[#1E1A17] bg-[#E8DFC8]">
         <p className="font-semibold">
-          BATAKGO • Web Development Competition UINIC 8.0 (2026) • HMPS Informatika UIN Sunan Kalijaga
+          BATAKGO • By kelompok Himatop
         </p>
       </footer>
     </div>
