@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Database } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { LEADERBOARD_USERS } from '../utils/batakData';
 import { fetchLeaderboardApi, LeaderboardUser } from '../utils/apiClient';
 import { Mascot } from './Mascot';
@@ -13,14 +13,12 @@ interface LeaderboardViewProps {
 export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userStreak }) => {
   const [liveUsers, setLiveUsers] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isFromDatabase, setIsFromDatabase] = useState<boolean>(false);
 
   const loadLeaderboard = async () => {
     setLoading(true);
     const data = await fetchLeaderboardApi();
     if (data && data.length > 0) {
       setLiveUsers(data);
-      setIsFromDatabase(true);
     } else {
       // Fallback to local default users
       const fallback = LEADERBOARD_USERS.map((u, idx) => ({
@@ -33,7 +31,6 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userSt
         isCurrentUser: u.isUser,
       })).sort((a, b) => b.xp - a.xp).map((u, idx) => ({ ...u, rank: idx + 1 }));
       setLiveUsers(fallback);
-      setIsFromDatabase(false);
     }
     setLoading(false);
   };
@@ -58,11 +55,6 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userSt
               <span className="text-[11px] font-bold uppercase tracking-wider bg-[#2C2622] text-[#F4EDE0] border border-[#433D38] px-2.5 py-0.5 rounded-[2px]">
                 Liga Parsiajar Batak
               </span>
-              {isFromDatabase && (
-                <span className="text-[11px] font-bold bg-[#FAF6EE] text-[#1E1A17] border border-[#1E1A17] px-2 py-0.5 rounded-[2px] flex items-center gap-1">
-                  <Database size={11} /> Live MySQL
-                </span>
-              )}
             </div>
             <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#F4EDE0]">
               Papan Skor Juara Mingguan

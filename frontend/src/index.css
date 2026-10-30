@@ -39,11 +39,17 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3, h4, .font-heading {
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: inherit;
+  }
+}
+
+.font-heading {
   font-family: var(--font-heading);
-  font-weight: 700;
-  color: var(--arang);
-  letter-spacing: -0.01em;
 }
 
 /* Aksara Batak Murni (Regular, No Synthesis, Never Bold) */
