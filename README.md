@@ -280,6 +280,5 @@ curl -X GET "http://localhost:8000/api/v1/open/aksara?text=horas"
 ---
 
 ## 📜 Lisensi & Tim Pengembang
-Hak cipta proyek sepenuhnya milik Tim Pengembang **BATAKGO** © 2026 untuk keikutsertaan dalam **UIN Informatic Competition (UINIC) 8.0**, HMPS Informatika Universitas Islam Negeri Sunan Kalijaga Yogyakarta.
-
+Hak cipta proyek sepenuhnya milik Tim Pengembang **BATAKGO** © 2026
 *Horas ma di hita saluhutna!*
