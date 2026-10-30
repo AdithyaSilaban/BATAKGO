@@ -19,8 +19,8 @@ export const GuidebookModal: React.FC<GuidebookModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-[#FAF6EE] text-[#1E1A17] border-2 border-[#1E1A17] rounded-3xl max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-150">
-        {/* Header dengan Gradien Unit */}
-        <div className={`p-6 ${unit.bannerColor} text-white relative shadow-md`}>
+        {/* Header dengan Satu Warna Dinamis Unit */}
+        <div className={`p-6 ${unit.bannerColor} text-white relative shadow-md`} style={{ backgroundColor: unit.themeColor }}>
           <button
             onClick={onClose}
             className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition cursor-pointer"

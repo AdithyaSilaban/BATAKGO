@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { playHasapiPluck, playOgungGong, playGordangBeat, speakBatakWord } from '../utils/audioSynthesizer';
-import { ArrowUp, Hand, Music, Sparkles } from 'lucide-react';
+import { ArrowUp, Hand, Music, Sparkles, MessageCircle, Smile } from 'lucide-react';
 
 interface Mascot3DProps {
   className?: string;
@@ -35,12 +35,19 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
   const [activeSpeech, setActiveSpeech] = useState<string | null>(speech);
   const [activeSubSpeech, setActiveSubSpeech] = useState<string | null>(subSpeech);
   const [speechVisible, setSpeechVisible] = useState(true);
+  
+  // Animation & Motion States
   const [currentAction, setCurrentAction] = useState<'idle' | 'jump' | 'wave' | 'tor-tor'>('idle');
   const [jumpStage, setJumpStage] = useState<'anticipate' | 'air' | 'land' | 'none'>('none');
   const [spinDeg, setSpinDeg] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [showPuppetStrings, setShowPuppetStrings] = useState(true);
   const [sparks, setSparks] = useState<Array<{ id: number; x: number; y: number; emoji: string }>>([]);
+
+  // Articulated Mouth & Finger States
+  const [isMouthOpen, setIsMouthOpen] = useState(false); // false = closed smile, true = open mouth
+  const [isSpeakingLipSync, setIsSpeakingLipSync] = useState(false);
+  const [isWigglingFingers, setIsWigglingFingers] = useState(false);
 
   // Smooth mouse tracking for head and perspective
   const [mouseLook, setMouseLook] = useState({
@@ -128,6 +135,22 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
     }, 1200);
   }, []);
 
+  // Lip-Sync Engine: Flap mouth in sync with Batak speech syllables
+  const triggerLipSync = useCallback((durationMs = 1500) => {
+    setIsSpeakingLipSync(true);
+    const interval = 130;
+    let elapsed = 0;
+    const timer = setInterval(() => {
+      elapsed += interval;
+      setIsMouthOpen(prev => !prev);
+      if (elapsed >= durationMs) {
+        clearInterval(timer);
+        setIsMouthOpen(false);
+        setIsSpeakingLipSync(false);
+      }
+    }, interval);
+  }, []);
+
   // 2. Action: Jump (Squash & Stretch Physics)
   const handleJump = useCallback(() => {
     if (currentAction !== 'idle') return;
@@ -137,6 +160,7 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
     setActiveSpeech('Horas! Las hian rohangku!');
     setActiveSubSpeech('Lompat gembira!');
     setSpeechVisible(true);
+    setIsMouthOpen(true); // mouth opens in joy!
     if (onAction) onAction('jump');
 
     setJumpStage('anticipate');
@@ -149,18 +173,23 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
         setTimeout(() => {
           setJumpStage('none');
           setCurrentAction('idle');
+          setIsMouthOpen(false);
         }, 180);
       }, 380);
     }, 120);
   }, [currentAction, onAction, spawnSparkles]);
 
-  // 3. Action: Sapa (Melambaikan Tangan & Suara Batak)
+  // 3. Action: Sapa (Melambaikan Tangan, Jari Bergerak & Suara Batak)
   const handleWave = useCallback(() => {
     if (currentAction !== 'idle') return;
     setCurrentAction('wave');
+    setIsWigglingFingers(true);
     playHasapiPluck(500);
     spawnSparkles('👋', 4);
+    
     speakBatakWord('Horas ma di hita saluhutna!');
+    triggerLipSync(1600);
+    
     setActiveSpeech('Horas ma di hita saluhutna!');
     setActiveSubSpeech('Salam hangat khas Batak!');
     setSpeechVisible(true);
@@ -168,13 +197,16 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
 
     setTimeout(() => {
       setCurrentAction('idle');
-    }, 1500);
-  }, [currentAction, onAction, spawnSparkles]);
+      setIsWigglingFingers(false);
+    }, 1600);
+  }, [currentAction, onAction, spawnSparkles, triggerLipSync]);
 
-  // 4. Action: Manortor (Batak Tor-tor Dance & Gong)
+  // 4. Action: Manortor (Batak Tor-tor Dance, Gong, Somba Finger Movement)
   const handleManortor = useCallback(() => {
     if (currentAction !== 'idle') return;
     setCurrentAction('tor-tor');
+    setIsWigglingFingers(true);
+    setIsMouthOpen(true);
     playOgungGong();
     setTimeout(() => playGordangBeat(), 350);
     setTimeout(() => playGordangBeat(), 800);
@@ -185,6 +217,7 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
     setActiveSpeech('Ole-ole! Tapungka ma manortor!');
     setActiveSubSpeech(randomPhrase.trans);
     setSpeechVisible(true);
+    triggerLipSync(1800);
     if (onAction) onAction('tor-tor');
 
     setIsSpinning(true);
@@ -193,18 +226,40 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
     setTimeout(() => {
       setIsSpinning(false);
       setCurrentAction('idle');
+      setIsWigglingFingers(false);
+      setIsMouthOpen(false);
     }, 1800);
-  }, [currentAction, onAction, spawnSparkles]);
+  }, [currentAction, onAction, spawnSparkles, triggerLipSync]);
 
-  // 5. Interactive Mascot Part Click
+  // 5. Interactive Part Click (Face/Mouth, Fingers/Hands, Torso/Ulos)
   const handlePartClick = (part: 'head' | 'torso' | 'arm') => {
     if (currentAction !== 'idle') return;
-    playHasapiPluck(part === 'head' ? 620 : (part === 'torso' ? 480 : 540));
-    spawnSparkles(part === 'head' ? '✨' : (part === 'torso' ? '💜' : '👍'), 3);
-    const phrase = BATAK_PHRASES[Math.floor(Math.random() * BATAK_PHRASES.length)];
-    setActiveSpeech(phrase.text);
-    setActiveSubSpeech(phrase.trans);
-    setSpeechVisible(true);
+    if (part === 'head') {
+      // Toggle mouth and laugh!
+      setIsMouthOpen(true);
+      playHasapiPluck(620);
+      spawnSparkles('👄', 3);
+      speakBatakWord('Horas!');
+      triggerLipSync(1000);
+      setActiveSpeech('Horas! Malo do ahu manghatai!');
+      setActiveSubSpeech('Mulutku bisa terbuka dan berbicara!');
+      setSpeechVisible(true);
+    } else if (part === 'arm') {
+      // Wiggle fingers!
+      setIsWigglingFingers(true);
+      playHasapiPluck(540);
+      spawnSparkles('🖐️', 4);
+      setActiveSpeech('Ida ma jariku! Boi do margoyang!');
+      setActiveSubSpeech('Jari dan tanganku bisa digerakkan!');
+      setSpeechVisible(true);
+      setTimeout(() => setIsWigglingFingers(false), 1400);
+    } else if (part === 'torso') {
+      playHasapiPluck(480);
+      spawnSparkles('💜', 4);
+      setActiveSpeech('Ulos na uli, tenunan Batak!');
+      setActiveSubSpeech('Ulos ungu melambangkan kemuliaan!');
+      setSpeechVisible(true);
+    }
   };
 
   // Base dynamic offsets for full-body root
@@ -254,34 +309,6 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
         perspective: '1000px'
       }}
     >
-      {/* Floating Cultural Speech Bubble */}
-      {speechVisible && activeSpeech && (
-        <div
-          onClick={() => setSpeechVisible(false)}
-          className="absolute -top-16 z-50 bg-[#1E1A17] text-[#F4EDE0] border-2 border-[#D9A21B] rounded-2xl px-3.5 py-2 max-w-[250px] shadow-2xl animate-in fade-in zoom-in-95 duration-200 cursor-pointer pointer-events-auto"
-        >
-          <div className="flex items-center justify-between gap-2 mb-0.5">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs">🎭</span>
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#D9A21B]">
-                Gale Si Sigale-gale
-              </span>
-            </div>
-            <span className="text-[9px] text-[#A69B88]">klik tutup</span>
-          </div>
-          <p className="font-heading font-black text-xs sm:text-sm text-white leading-tight">
-            {activeSpeech}
-          </p>
-          {activeSubSpeech && (
-            <p className="text-[10px] text-[#E8DFC8] mt-0.5 italic">
-              {activeSubSpeech}
-            </p>
-          )}
-
-          {/* Speech bubble arrow pointer */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[7px] border-t-[#D9A21B]" />
-        </div>
-      )}
 
       {/* Floating Reaction Sparks */}
       {sparks.map(spark => (
@@ -350,13 +377,13 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
         )}
 
         {/* 
-          ARTICULATED 2D MARIONETTE BODY
-          Rendered using the 5 parts sliced from the authentic BatakGO pixel art:
+          ARTICULATED 2D PIXEL MARIONETTE BODY
+          Rendered using the articulated parts:
           1. LEGS (120, 530, 266x141) - Hip pivot (50% 5%)
-          2. TORSO (120, 315, 280x236) with authentic purple Ulos - Waist pivot (50% 90%)
-          3. LEFT ARM (0, 219, 146x205) - Shoulder pivot (88% 90%)
-          4. RIGHT ARM (375, 245, 145x195) - Shoulder pivot (12% 90%)
-          5. HEAD (75, 0, 370x339) with Batak turban & smiling face - Neck pivot (50% 95%)
+          2. TORSO (120, 315, 280x236) with purple Ulos - Waist pivot (50% 90%)
+          3. LEFT ARM (0, 219, 146x205) - Sleeve + Movable Thumb + Movable Fingers!
+          4. RIGHT ARM (375, 245, 145x195) - Sleeve + Movable Thumb + Movable Fingers!
+          5. HEAD (75, 0, 370x339) - Dynamic Mouth (Open Laugh vs Closed Smile with Lip Sync)!
         */}
         <div
           className="relative w-44 sm:w-52 aspect-[520/671] flex-shrink-0"
@@ -415,7 +442,7 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
             />
           </div>
 
-          {/* 3. LEFT ARM LAYER (VIEWER'S LEFT - Z-INDEX 30) */}
+          {/* 3. ARTICULATED LEFT ARM WITH MOVABLE THUMB & FINGERS (Z-INDEX 30) */}
           <div
             onClick={(e) => { e.stopPropagation(); handlePartClick('arm'); }}
             className={`absolute ${
@@ -431,18 +458,67 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
               transformOrigin: '88% 90%',
               zIndex: 30
             }}
-            title="Lengan Kiri Gale"
+            title="Klik Tangan Kiri untuk menggerakkan jari!"
           >
+            {/* Left Sleeve (Base cloth & gold wrist band) */}
             <img
-              src="/assets/mascot/parts/left_arm.png"
-              alt="Lengan Kiri Gale"
-              className="w-full h-full object-contain pointer-events-none"
+              src="/assets/mascot/parts/left_sleeve.png"
+              alt="Lengan Baju Kiri"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
               style={{ imageRendering: 'pixelated' }}
               draggable={false}
             />
+
+            {/* Left Hand Container with Wrist Pivot */}
+            <div
+              className={`absolute inset-0 ${isWigglingFingers ? 'animate-wrist-wiggle-left' : ''}`}
+              style={{ transformOrigin: '45% 55%' }}
+            >
+              {/* Left Thumb (Articulated on thumb base pivot) */}
+              <div
+                className={`absolute ${isWigglingFingers || currentAction === 'tor-tor' ? 'animate-thumb-waggle-left' : 'hover:rotate-12 transition-transform duration-150'}`}
+                style={{
+                  left: '20.548%',
+                  top: '0%',
+                  width: '41.096%',
+                  height: '26.829%',
+                  transformOrigin: '50% 85%'
+                }}
+                title="Jempol Kiri"
+              >
+                <img
+                  src="/assets/mascot/parts/left_thumb.png"
+                  alt="Jempol Kiri"
+                  className="w-full h-full object-contain pointer-events-none"
+                  style={{ imageRendering: 'pixelated' }}
+                  draggable={false}
+                />
+              </div>
+
+              {/* Left Fingers (4 Curled Fingers, Articulated on knuckles) */}
+              <div
+                className={`absolute ${isWigglingFingers || currentAction === 'tor-tor' ? 'animate-fingers-flutter-left' : 'hover:scale-105 transition-transform duration-150'}`}
+                style={{
+                  left: '0%',
+                  top: '22.439%',
+                  width: '61.644%',
+                  height: '31.707%',
+                  transformOrigin: '75% 75%'
+                }}
+                title="Jari-jari Kiri"
+              >
+                <img
+                  src="/assets/mascot/parts/left_fingers.png"
+                  alt="Jari-jari Kiri"
+                  className="w-full h-full object-contain pointer-events-none"
+                  style={{ imageRendering: 'pixelated' }}
+                  draggable={false}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* 4. RIGHT ARM LAYER (VIEWER'S RIGHT - Z-INDEX 30) */}
+          {/* 4. ARTICULATED RIGHT ARM WITH MOVABLE THUMB & FINGERS (Z-INDEX 30) */}
           <div
             onClick={(e) => { e.stopPropagation(); handlePartClick('arm'); }}
             className={`absolute ${
@@ -458,18 +534,67 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
               transformOrigin: '12% 90%',
               zIndex: 30
             }}
-            title="Lengan Kanan Gale"
+            title="Klik Tangan Kanan untuk melambaikan jari!"
           >
+            {/* Right Sleeve (Base cloth & gold wrist band) */}
             <img
-              src="/assets/mascot/parts/right_arm.png"
-              alt="Lengan Kanan Gale"
-              className="w-full h-full object-contain pointer-events-none"
+              src="/assets/mascot/parts/right_sleeve.png"
+              alt="Lengan Baju Kanan"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
               style={{ imageRendering: 'pixelated' }}
               draggable={false}
             />
+
+            {/* Right Hand Container with Wrist Pivot */}
+            <div
+              className={`absolute inset-0 ${isWigglingFingers ? 'animate-wrist-wiggle-right' : ''}`}
+              style={{ transformOrigin: '55% 55%' }}
+            >
+              {/* Right Thumb (Articulated on thumb base pivot) */}
+              <div
+                className={`absolute ${isWigglingFingers || currentAction === 'tor-tor' ? 'animate-thumb-waggle-right' : 'hover:-rotate-12 transition-transform duration-150'}`}
+                style={{
+                  left: '46.897%',
+                  top: '0%',
+                  width: '41.379%',
+                  height: '28.205%',
+                  transformOrigin: '50% 85%'
+                }}
+                title="Jempol Kanan"
+              >
+                <img
+                  src="/assets/mascot/parts/right_thumb.png"
+                  alt="Jempol Kanan"
+                  className="w-full h-full object-contain pointer-events-none"
+                  style={{ imageRendering: 'pixelated' }}
+                  draggable={false}
+                />
+              </div>
+
+              {/* Right Fingers (4 Curled Fingers, Articulated on knuckles) */}
+              <div
+                className={`absolute ${isWigglingFingers || currentAction === 'tor-tor' ? 'animate-fingers-flutter-right' : 'hover:scale-105 transition-transform duration-150'}`}
+                style={{
+                  left: '34.483%',
+                  top: '23.59%',
+                  width: '65.517%',
+                  height: '33.333%',
+                  transformOrigin: '25% 75%'
+                }}
+                title="Jari-jari Kanan"
+              >
+                <img
+                  src="/assets/mascot/parts/right_fingers.png"
+                  alt="Jari-jari Kanan"
+                  className="w-full h-full object-contain pointer-events-none"
+                  style={{ imageRendering: 'pixelated' }}
+                  draggable={false}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* 5. HEAD & TURBAN LAYER (Z-INDEX 40) */}
+          {/* 5. HEAD & TURBAN WITH DYNAMIC OPEN/CLOSED MOUTH (Z-INDEX 40) */}
           <div
             onClick={(e) => { e.stopPropagation(); handlePartClick('head'); }}
             className={`absolute ${
@@ -491,12 +616,13 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
               transition: 'transform 0.08s ease-out',
               zIndex: 40
             }}
-            title="Klik Kepala Gale untuk menyapa!"
+            title="Klik Kepala Gale untuk membuka mulut dan menyapa!"
           >
+            {/* Dynamic Mouth System: Swaps cleanly between open mouth and closed smile */}
             <img
-              src="/assets/mascot/parts/head.png"
-              alt="Kepala Gale & Tali Sortali"
-              className="w-full h-full object-contain pointer-events-none drop-shadow-[0_6px_14px_rgba(0,0,0,0.3)]"
+              src={isMouthOpen ? '/assets/mascot/parts/head.png' : '/assets/mascot/parts/head_closed.png'}
+              alt={isMouthOpen ? 'Kepala Gale Mulut Terbuka' : 'Kepala Gale Mulut Tersenyum'}
+              className="w-full h-full object-contain pointer-events-none drop-shadow-[0_6px_14px_rgba(0,0,0,0.3)] transition-opacity duration-75"
               style={{ imageRendering: 'pixelated' }}
               draggable={false}
             />
@@ -516,10 +642,10 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
         />
       </div>
 
-      {/* Action Control Buttons (Lompat, Sapa, Manortor 360°, Tali Puppet) */}
+      {/* Interactive Control Dashboard: Lompat, Sapa, Manortor, Mulut, Jari */}
       {interactive && (
-        <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2 bg-[#FAF6EE] border-2 border-[#1E1A17] px-3 py-1.5 rounded-full shadow-lg z-30 pointer-events-auto">
-          {/* 1. Lompat Button */}
+        <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 bg-[#FAF6EE] border-2 border-[#1E1A17] p-1.5 sm:px-3 sm:py-1.5 rounded-2xl shadow-lg z-30 pointer-events-auto max-w-[340px] sm:max-w-none">
+          {/* 1. Lompat */}
           <button
             type="button"
             onClick={(e) => {
@@ -533,7 +659,7 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
             <span>Lompat</span>
           </button>
 
-          {/* 2. Sapa Button */}
+          {/* 2. Sapa */}
           <button
             type="button"
             onClick={(e) => {
@@ -547,7 +673,7 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
             <span>Sapa</span>
           </button>
 
-          {/* 3. Manortor 360° Button */}
+          {/* 3. Manortor 360° */}
           <button
             type="button"
             onClick={(e) => {
@@ -558,26 +684,43 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
             title="Tarian Tor-tor Batak & Ogung Gong"
           >
             <Music size={12} />
-            <span>Manortor 360°</span>
+            <span>Manortor</span>
           </button>
 
-          {/* 4. Puppet Strings Toggle */}
+          {/* 4. Mulut Buka / Tutup Toggle */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setShowPuppetStrings(prev => !prev);
-              playHasapiPluck(showPuppetStrings ? 380 : 580);
+              setIsMouthOpen(prev => !prev);
+              playHasapiPluck(isMouthOpen ? 420 : 640);
+              spawnSparkles(isMouthOpen ? '🙂' : '🗣️', 2);
             }}
             className={`px-2 py-1 rounded-full font-black text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-90 cursor-pointer ${
-              showPuppetStrings
-                ? 'bg-[#4A3B32] text-[#F4EDE0]'
-                : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
+              isMouthOpen ? 'bg-amber-600 text-white' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
             }`}
-            title="Toggle Tali Pengendali Boneka Sigale-gale"
+            title="Buka atau Tutup Mulut Gale"
+          >
+            <Smile size={11} />
+            <span>{isMouthOpen ? 'Mulut Terbuka' : 'Mulut Tertutup'}</span>
+          </button>
+
+          {/* 5. Goyang Jari Toggle */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsWigglingFingers(prev => !prev);
+              playHasapiPluck(580);
+              spawnSparkles('🖐️', 3);
+            }}
+            className={`px-2 py-1 rounded-full font-black text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-90 cursor-pointer ${
+              isWigglingFingers ? 'bg-emerald-600 text-white' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+            }`}
+            title="Gerakkan Jari-Jemari dan Jempol Gale"
           >
             <Sparkles size={11} />
-            <span className="hidden sm:inline">{showPuppetStrings ? 'Tali On' : 'Tali Off'}</span>
+            <span>{isWigglingFingers ? 'Jari Bergerak' : 'Gerak Jari'}</span>
           </button>
         </div>
       )}
@@ -615,6 +758,55 @@ export const Mascot3D: React.FC<Mascot3DProps> = ({
         }
         .animate-right-arm-idle {
           animation: rightArmIdle 2.8s ease-in-out infinite;
+        }
+
+        /* --- FINGER & THUMB ARTICULATION KEYFRAMES --- */
+        @keyframes thumbWaggleLeft {
+          0%, 100% { transform: rotate(-12deg); }
+          50% { transform: rotate(18deg); }
+        }
+        .animate-thumb-waggle-left {
+          animation: thumbWaggleLeft 0.32s ease-in-out infinite;
+        }
+
+        @keyframes thumbWaggleRight {
+          0%, 100% { transform: rotate(12deg); }
+          50% { transform: rotate(-18deg); }
+        }
+        .animate-thumb-waggle-right {
+          animation: thumbWaggleRight 0.32s ease-in-out infinite;
+        }
+
+        @keyframes fingersFlutterLeft {
+          0%, 100% { transform: rotate(-8deg) scaleY(1); }
+          50% { transform: rotate(12deg) scaleY(0.92); }
+        }
+        .animate-fingers-flutter-left {
+          animation: fingersFlutterLeft 0.38s ease-in-out infinite;
+        }
+
+        @keyframes fingersFlutterRight {
+          0%, 100% { transform: rotate(8deg) scaleY(1); }
+          50% { transform: rotate(-12deg) scaleY(0.92); }
+        }
+        .animate-fingers-flutter-right {
+          animation: fingersFlutterRight 0.38s ease-in-out infinite;
+        }
+
+        @keyframes wristWiggleLeft {
+          0%, 100% { transform: rotate(-10deg); }
+          50% { transform: rotate(14deg); }
+        }
+        .animate-wrist-wiggle-left {
+          animation: wristWiggleLeft 0.4s ease-in-out infinite;
+        }
+
+        @keyframes wristWiggleRight {
+          0%, 100% { transform: rotate(10deg); }
+          50% { transform: rotate(-14deg); }
+        }
+        .animate-wrist-wiggle-right {
+          animation: wristWiggleRight 0.4s ease-in-out infinite;
         }
 
         /* --- MANORTOR (TOR-TOR BATAK DANCE) --- */

@@ -80,7 +80,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           </button>
 
           <div className="flex justify-center mb-2">
-            <GorgaShield size={44} />
+            <img
+              src="/assets/logo.png"
+              alt="Logo BatakGO"
+              className="w-14 h-14 object-contain mx-auto drop-shadow-sm"
+              style={{ imageRendering: 'pixelated' }}
+            />
           </div>
 
           <h2 className="text-xl font-heading font-bold tracking-tight text-[#F4EDE0]">

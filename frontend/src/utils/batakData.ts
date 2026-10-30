@@ -292,8 +292,8 @@ export const UNITS: Unit[] = [
     title: 'Salam, Sapaan & Kata Dasar',
     batakTitle: 'Horas & Sapaan Na Parjolo',
     description: 'Pelajari ucapan salam khas Batak, terima kasih, menanyakan kabar, dan sapaan harian.',
-    bannerColor: 'bg-gradient-to-r from-red-600 to-amber-600',
-    themeColor: '#DC2626',
+    bannerColor: 'bg-[#A62B1F]',
+    themeColor: '#A62B1F',
     lessons: [
       {
         id: 'u1-l1',
@@ -424,7 +424,7 @@ export const UNITS: Unit[] = [
     title: 'Partuturan & Kekerabatan Batak',
     batakTitle: 'Partuturan Dalihan Na Tolu',
     description: 'Pahami cara memanggil kerabat: Lae, Ito, Tulang, Nantulang, dan prinsip Dalihan Na Tolu.',
-    bannerColor: 'bg-gradient-to-r from-stone-800 to-red-900',
+    bannerColor: 'bg-[#7F1D1D]',
     themeColor: '#7F1D1D',
     lessons: [
       {
@@ -533,8 +533,8 @@ export const UNITS: Unit[] = [
     title: 'Angka & Alam Tao Toba',
     batakTitle: 'Bilangan & Tao Toba Na Uli',
     description: 'Belajar berhitung 1 hingga 10 dan mendeskripsikan keindahan alam Danau Toba.',
-    bannerColor: 'bg-gradient-to-r from-blue-700 to-teal-700',
-    themeColor: '#0D9488',
+    bannerColor: 'bg-[#1D4ED8]',
+    themeColor: '#1D4ED8',
     lessons: [
       {
         id: 'u3-l1',
@@ -599,8 +599,8 @@ export const UNITS: Unit[] = [
     title: 'Aktivitas Harian & Kuliner Khas',
     batakTitle: 'Ulaon Sadari & Sipanganon Batak',
     description: 'Kosakata makan, minum, tidur, serta kuliner khas Batak seperti Dekke Naniura.',
-    bannerColor: 'bg-gradient-to-r from-emerald-700 to-green-900',
-    themeColor: '#059669',
+    bannerColor: 'bg-[#047857]',
+    themeColor: '#047857',
     lessons: [
       {
         id: 'u4-l1',
@@ -653,8 +653,8 @@ export const UNITS: Unit[] = [
     title: 'Umpasa & Filosofi Sigale-gale',
     batakTitle: 'Umpasa & Budaya Sigale-gale',
     description: 'Selami peribahasa Batak (Umpasa), makna sakral Ulos, dan legenda patung Sigale-gale.',
-    bannerColor: 'bg-gradient-to-r from-purple-800 to-indigo-900',
-    themeColor: '#7C3AED',
+    bannerColor: 'bg-[#6D28D9]',
+    themeColor: '#6D28D9',
     lessons: [
       {
         id: 'u5-l1',

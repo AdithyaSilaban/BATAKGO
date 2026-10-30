@@ -12,7 +12,7 @@ import { DictionaryView } from './components/DictionaryView';
 import { PartuturanView } from './components/PartuturanView';
 import { AksaraBatakView } from './components/AksaraBatakView';
 import { LeaderboardView } from './components/LeaderboardView';
-import { UlosCollectionView } from './components/UlosCollectionView';
+
 import { OpenApiShowcaseView } from './components/OpenApiShowcaseView';
 import { AuthModal } from './components/AuthModal';
 import { LoginPage } from './components/LoginPage';
@@ -224,7 +224,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'ulos' && <UlosCollectionView />}
+
 
         {activeTab === 'openapi' && <OpenApiShowcaseView />}
       </main>
@@ -252,7 +252,12 @@ export default function App() {
       <footer className="bg-[#1E1A17] text-[#F4EDE0] py-8 px-4 border-t border-[#1E1A17]">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
-            <GorgaShield size={36} />
+            <img
+              src="/assets/logo.png"
+              alt="Logo BATAKGO"
+              className="w-9 h-9 object-contain shrink-0"
+              style={{ imageRendering: 'pixelated' }}
+            />
             <div>
               <p className="font-heading font-bold text-[#F4EDE0] text-base tracking-tight">
                 BATAK<span className="text-[#A62B1F]">GO</span> • Parsiajaran Hata Batak

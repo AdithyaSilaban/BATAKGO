@@ -74,7 +74,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ userXP, userSt
           <Mascot
             mood="happy"
             size="lg"
-            speech="Gale bangga melihat semangatmu! Toruskon!"
+            
             showStatusLabel={false}
           />
         </div>

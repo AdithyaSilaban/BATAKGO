@@ -19,31 +19,18 @@ export interface UserProgress {
   }[];
 }
 
-const STORAGE_KEY = 'batakgo_progress_v1';
+const STORAGE_KEY = 'batakgo_progress_v2';
 
 export const INITIAL_PROGRESS: UserProgress = {
   hearts: 5,
   maxHearts: 5,
   lastHeartRegenTime: Date.now(),
-  xp: 120,
-  streak: 3,
+  xp: 0,
+  streak: 0,
   lastCompletedDate: new Date().toISOString().split('T')[0],
-  completedLessons: ['u1-l1'],
-  unlockedUnits: ['unit-1', 'unit-2'],
-  collectedUlos: [
-    {
-      id: 'ulos-mangiring',
-      name: 'Ulos Mangiring',
-      description: 'Diberikan sebagai doa restu kesuburan dan keberkahan langkah awal belajar.',
-      earnedDate: '2026-10-19'
-    },
-    {
-      id: 'ulos-ragidup',
-      name: 'Ulos Ragidup',
-      description: 'Ulos lambang kehidupan dan keluhuran derajat budi pekerti.',
-      earnedDate: '2026-10-20'
-    }
-  ]
+  completedLessons: [],
+  unlockedUnits: ['unit-1'],
+  collectedUlos: []
 };
 
 export function loadUserProgress(): UserProgress {

@@ -44,7 +44,7 @@ export const AksaraBatakView: React.FC = () => {
         <Mascot
           mood="thinking"
           size="lg"
-          speech="Ketik namamu atau kalimat Batak kesukaanmu!"
+          
           showStatusLabel={false}
         />
       </div>

@@ -21,8 +21,6 @@ import { UNITS, Lesson, DAILY_QUESTS, Unit } from '../utils/batakData';
 import { UserProgress, calculateLevel } from '../utils/gamification';
 import { getStoredUser } from '../utils/apiClient';
 import { GorgaShield, PitaTenun } from './GorgaEmblem';
-import { Mascot } from './Mascot';
-import { Mascot3D } from './Mascot3D';
 import { GuidebookModal } from './GuidebookModal';
 import { playGordangBeat } from '../utils/audioSynthesizer';
 
@@ -104,8 +102,10 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
 
       {/* Left/Center: Main Learning Curriculum Tree */}
       <div className="flex-1 w-full max-w-2xl mx-auto">
-        {UNITS.map(unit => {
-          const isUnitUnlocked = progress.unlockedUnits.includes(unit.id);
+        {UNITS.map((unit, unitIdx) => {
+          // Strictly lock units: Unit 1 is unlocked, Unit N is only unlocked if ALL lessons in Unit N-1 are completed!
+          const prevUnit = unitIdx > 0 ? UNITS[unitIdx - 1] : null;
+          const isUnitUnlocked = !prevUnit || prevUnit.lessons.every(l => progress.completedLessons.includes(l.id));
           const config = UNIT_CONFIGS[unit.number] || UNIT_CONFIGS[1];
           const UnitIcon = config.icon;
 
@@ -117,9 +117,12 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
 
           return (
             <div key={unit.id} className="mb-16">
-              {/* 1. UNIT HEADER BANNER DENGAN GRADIEN KAYA WARNA (Aktifkan unit.bannerColor) */}
+              {/* 1. UNIT HEADER BANNER DENGAN SATU WARNA DINAMIS */}
               <div
-                className={`w-full rounded-3xl p-6 sm:p-7 mb-10 text-white shadow-xl ${unit.bannerColor} relative overflow-hidden transition-all duration-300`}
+                className={`w-full rounded-3xl p-6 sm:p-7 mb-10 text-white shadow-xl ${unit.bannerColor} relative overflow-hidden transition-all duration-300 ${
+                  !isUnitUnlocked ? 'opacity-75 saturate-50 ring-1 ring-white/10' : ''
+                }`}
+                style={{ backgroundColor: !isUnitUnlocked ? '#38322D' : unit.themeColor }}
               >
                 {/* Watermark Aksara Batak Transparan */}
                 <div
@@ -141,9 +144,15 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
                       <span className="text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-black/30 text-amber-300 border border-white/20 backdrop-blur-xs">
                         BAGIAN 1, UNIT 0{unit.number}
                       </span>
-                      <span className="text-[11px] font-bold text-white/90">
-                        {config.badgeLabel}
-                      </span>
+                      {!isUnitUnlocked ? (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-200 bg-black/40 px-3 py-1 rounded-full border border-amber-300/30">
+                          <Lock size={12} /> Terkunci (Selesaikan Unit {unit.number - 1} Terlebih Dahulu)
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-bold text-white/90">
+                          {config.badgeLabel}
+                        </span>
+                      )}
                     </div>
 
                     <h2 className="font-heading text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
@@ -298,20 +307,6 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
                           +{lesson.xpReward} XP
                         </div>
                       </button>
-
-                      {/* 3. PELEPASAN MASKOT 3D: BERDIRI BEBAS DI SAMPING NODE AKTIF BISA GERAK */}
-                      {isCurrent && unit.number === 1 && (
-                        <div className="absolute left-full ml-4 sm:ml-8 top-1/2 -translate-y-1/2 z-20 pointer-events-auto">
-                          <Mascot3D
-                            width={240}
-                            height={310}
-                            followMouse={true}
-                            interactive={true}
-                            speech="Horas! Ahu ma maskot 3D BatakGO!"
-                            subSpeech="Klik 'Lompat', 'Sapa', atau 'Putar' untuk melihat aku gerak!"
-                          />
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -326,7 +321,12 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
         {/* Card 1: User Profile & Gordang Level */}
         <div className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3.5">
-            <GorgaShield size={40} className="shrink-0" />
+            <img
+              src="/assets/logo.png"
+              alt="Logo BATAKGO"
+              className="w-10 h-10 object-contain shrink-0"
+              style={{ imageRendering: 'pixelated' }}
+            />
             <div className="overflow-hidden">
               <p className="font-heading font-black text-[#1E1A17] text-base truncate">
                 {userName}
@@ -455,28 +455,7 @@ export const PathTreeView: React.FC<PathTreeViewProps> = ({
           </div>
         </div>
 
-        {/* Card 4: Lemari Tenun Ulos Promo Card */}
-        <div
-          onClick={() => onNavigateToTab('ulos')}
-          className="bg-[#FAF6EE] border-2 border-[#1E1A17] rounded-3xl p-5 cursor-pointer hover:bg-[#E8DFC8]/50 transition shadow-sm group"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#A62B1F] bg-[#E8DFC8] border border-[#1E1A17] px-2.5 py-0.5 rounded-full">
-              Warisan Tenun Adat
-            </span>
-            <ArrowRight size={16} className="text-[#1E1A17] group-hover:translate-x-1 transition-transform" />
-          </div>
-          <h4 className="font-heading font-black text-base text-[#1E1A17] tracking-tight">
-            Lemari Tenun Ulos Batak
-          </h4>
-          <p className="text-xs text-[#433D38] mt-1 leading-relaxed">
-            Koleksi kain sakral Ulos Mangiring, Ragidup, dan Sadum sebagai simbol doa keselamatan.
-          </p>
-          <div className="mt-3 flex items-center gap-1 text-xs font-black text-[#23365A] underline">
-            <span>Buka Galeri Ulos</span>
-            <ArrowRight size={12} />
-          </div>
-        </div>
+
       </div>
     </div>
   );

@@ -168,7 +168,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
 
             {/* Title & Crest */}
             <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
-              <GorgaShield size={64} className="shrink-0" />
+              <img
+                src="/assets/logo.png"
+                alt="Logo BatakGO"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0 drop-shadow-sm"
+                style={{ imageRendering: 'pixelated' }}
+              />
               <div>
                 <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1E1A17] leading-none">
                   BATAK<span className="text-[#A62B1F]">GO</span>
@@ -188,7 +193,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
               <Mascot
                 mood="happy"
                 size="md"
-                speech="Horas! Pature roham tu parsiajaran hata Batak!"
+                
                 showStatusLabel={false}
               />
               <div className="flex-1">

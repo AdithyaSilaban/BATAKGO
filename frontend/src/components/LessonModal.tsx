@@ -40,6 +40,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
   const [selectedBatakPair, setSelectedBatakPair] = useState<string | null>(null);
   const [selectedIndoPair, setSelectedIndoPair] = useState<string | null>(null);
+  const [shuffledIndoPairs, setShuffledIndoPairs] = useState<string[]>([]);
+  const [shuffledBatakPairs, setShuffledBatakPairs] = useState<string[]>([]);
 
   // Pronunciation voice state
   const [isRecording, setIsRecording] = useState(false);
@@ -65,6 +67,20 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     setRecordedAccuracy(null);
     setIsChecked(false);
     setIsCorrect(false);
+
+    if (currentQ?.type === 'match_pairs' && currentQ.pairs) {
+      const batakList = currentQ.pairs.map(p => p.batak);
+      const indoList = currentQ.pairs.map(p => p.indonesian);
+      let shuffled = [...indoList].sort(() => 0.5 - Math.random());
+      if (indoList.length > 1 && shuffled.every((v, i) => v === indoList[i])) {
+        shuffled = [...shuffled.slice(1), shuffled[0]];
+      }
+      setShuffledBatakPairs(batakList);
+      setShuffledIndoPairs(shuffled);
+    } else {
+      setShuffledBatakPairs([]);
+      setShuffledIndoPairs([]);
+    }
 
     if (currentQ?.wordBank) {
       setAvailableWords([...currentQ.wordBank].sort(() => 0.5 - Math.random()));
@@ -101,12 +117,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     const pair = currentQ.pairs?.find(p => p.batak === batakVal && p.indonesian === indoVal);
     if (pair) {
       playHasapiPluck(660);
-      setMatchedPairs(prev => [...prev, batakVal, indoVal]);
+      const nextMatched = [...matchedPairs, batakVal, indoVal];
+      setMatchedPairs(nextMatched);
       setSelectedBatakPair(null);
       setSelectedIndoPair(null);
 
       // Check if all matched
-      if (currentQ.pairs && matchedPairs.length + 2 >= currentQ.pairs.length * 2) {
+      if (currentQ.pairs && nextMatched.length >= currentQ.pairs.length * 2) {
+        setCorrectCount(prev => prev + 1);
         setIsChecked(true);
         setIsCorrect(true);
         setMascotMood('happy');
@@ -115,6 +133,9 @@ export const LessonModal: React.FC<LessonModalProps> = ({
       }
     } else {
       playMistakeSound();
+      setMascotMood('sad');
+      setMascotSpeech('Sala pasanganna! Coba rimangi muse.');
+      handleWrongAnswer();
       setTimeout(() => {
         setSelectedBatakPair(null);
         setSelectedIndoPair(null);
@@ -195,7 +216,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         : currentQ.correctAnswer;
       correct = selectedWords.join(' ') === expected;
     } else if (currentQ.type === 'match_pairs') {
-      correct = true; // handled by pair clicks
+      correct = Boolean(currentQ.pairs && matchedPairs.length >= currentQ.pairs.length * 2);
     }
 
     setIsChecked(true);
@@ -435,7 +456,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               </h1>
 
               {/* Batak phrase card with audio trigger */}
-              {currentQ.batakText && currentQ.type !== 'listening' && (
+              {currentQ.batakText && currentQ.type !== 'listening' && currentQ.type !== 'pronunciation' && (
+                currentQ.type !== 'multiple_choice' ||
+                currentQ.prompt.toLowerCase().includes(currentQ.batakText.toLowerCase())
+              ) && (
                 <div className="mt-3 inline-flex items-center gap-3 bg-[#EADBCE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-2.5 px-4">
                   <button
                     type="button"
@@ -569,15 +593,15 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 <span className="text-xs font-bold text-[#A62B1F] uppercase tracking-wide">
                   Bahasa Batak
                 </span>
-                {currentQ.pairs?.map((p, idx) => {
-                  const isMatched = matchedPairs.includes(p.batak);
-                  const isSelected = selectedBatakPair === p.batak;
+                {(shuffledBatakPairs.length > 0 ? shuffledBatakPairs : (currentQ.pairs?.map(p => p.batak) || [])).map((batakWord, idx) => {
+                  const isMatched = matchedPairs.includes(batakWord);
+                  const isSelected = selectedBatakPair === batakWord;
                   return (
                     <button
                       key={idx}
                       type="button"
                       disabled={isMatched}
-                      onClick={() => handlePairClick('batak', p.batak)}
+                      onClick={() => handlePairClick('batak', batakWord)}
                       className={`p-3.5 rounded-[4px] border-[1.5px] font-bold text-left transition-all ${
                         isMatched
                           ? 'border-dashed border-[#1E1A17] bg-[#EADBCE] text-[#1E1A17] opacity-45'
@@ -586,26 +610,26 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                           : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] border-b-[3px] border-b-[#1E1A17] hover:bg-[#EADBCE] cursor-pointer active:translate-y-[2px]'
                       }`}
                     >
-                      {p.batak}
+                      {batakWord}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Indonesian Column */}
+              {/* Indonesian Column (Diacak) */}
               <div className="flex flex-col gap-2.5">
                 <span className="text-xs font-bold text-[#23365A] uppercase tracking-wide">
                   Bahasa Indonesia
                 </span>
-                {currentQ.pairs?.map((p, idx) => {
-                  const isMatched = matchedPairs.includes(p.indonesian);
-                  const isSelected = selectedIndoPair === p.indonesian;
+                {(shuffledIndoPairs.length > 0 ? shuffledIndoPairs : (currentQ.pairs?.map(p => p.indonesian) || [])).map((indoWord, idx) => {
+                  const isMatched = matchedPairs.includes(indoWord);
+                  const isSelected = selectedIndoPair === indoWord;
                   return (
                     <button
                       key={idx}
                       type="button"
                       disabled={isMatched}
-                      onClick={() => handlePairClick('indo', p.indonesian)}
+                      onClick={() => handlePairClick('indo', indoWord)}
                       className={`p-3.5 rounded-[4px] border-[1.5px] font-bold text-left transition-all ${
                         isMatched
                           ? 'border-dashed border-[#1E1A17] bg-[#EADBCE] text-[#1E1A17] opacity-45'
@@ -614,7 +638,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                           : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] border-b-[3px] border-b-[#1E1A17] hover:bg-[#EADBCE] cursor-pointer active:translate-y-[2px]'
                       }`}
                     >
-                      {p.indonesian}
+                      {indoWord}
                     </button>
                   );
                 })}
@@ -690,6 +714,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   (currentQ.type === 'multiple_choice' && !selectedOption) ||
                   (currentQ.type === 'listening' && !selectedOption) ||
                   (currentQ.type === 'sentence_builder' && selectedWords.length === 0) ||
+                  (currentQ.type === 'match_pairs' && (!currentQ.pairs || matchedPairs.length < currentQ.pairs.length * 2)) ||
                   (currentQ.type === 'pronunciation' && recordedAccuracy === null)
                 }
                 className="btn-indigo w-full sm:w-auto px-8 py-3.5 text-base font-bold disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"

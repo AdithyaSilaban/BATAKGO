@@ -10,7 +10,7 @@ import {
   Users,
   Languages,
   Trophy,
-  Layers,
+
   Plus
 } from 'lucide-react';
 import { UserProgress } from '../utils/gamification';
@@ -33,7 +33,7 @@ const NAV_ITEMS = [
   { id: 'partuturan', label: 'Partuturan', Icon: Users },
   { id: 'aksara', label: 'Aksara Batak', Icon: Languages },
   { id: 'leaderboard', label: 'Papan Skor', Icon: Trophy },
-  { id: 'ulos', label: 'Koleksi Ulos', Icon: Layers },
+
 ];
 
 export const Header: React.FC<HeaderProps> = ({
@@ -57,7 +57,12 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => onTabChange('learn')}
           className="flex items-center gap-3 cursor-pointer text-left group focus-visible:ring-2 focus-visible:ring-[#23365A]"
         >
-          <GorgaShield size={38} className="shrink-0" />
+          <img
+            src="/assets/logo.png"
+            alt="Logo BatakGO"
+            className="w-10 h-10 object-contain shrink-0 group-hover:scale-105 transition-transform"
+            style={{ imageRendering: 'pixelated' }}
+          />
 
           <div>
             <div className="flex items-center gap-1.5 leading-none">

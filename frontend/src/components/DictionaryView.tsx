@@ -51,7 +51,7 @@ export const DictionaryView: React.FC = () => {
         <Mascot
           mood="thinking"
           size="lg"
-          speech="Gunakan tombol mikrofon untuk uji suaramu!"
+          
           showStatusLabel={false}
         />
       </div>

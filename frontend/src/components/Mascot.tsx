@@ -54,6 +54,14 @@ const MOOD_INFO: Record<MascotMood, {
   }
 };
 
+const MOOD_IMAGES: Record<MascotMood, string> = {
+  happy: '/assets/mascot/mascot-happy.png',
+  sad: '/assets/mascot/mascot-sad.png',
+  thinking: '/assets/mascot/mascot-thinking.png',
+  angry: '/assets/mascot/mascot-angry.png',
+  idle: '/assets/mascot/mascot-happy.png'
+};
+
 const SIZE_STYLES: Record<MascotSize, { bubbleText: string; imgHeight: string; shadowWidth: string }> = {
   xs: { bubbleText: 'text-xs', imgHeight: 'h-11', shadowWidth: 'w-8' },
   sm: { bubbleText: 'text-xs', imgHeight: 'h-18', shadowWidth: 'w-14' },
@@ -182,12 +190,8 @@ export const Mascot: React.FC<MascotProps> = ({
   // Dynamic filter for moods
   const getMoodFilter = () => {
     switch (mood) {
-      case 'sad':
-        return 'brightness(0.9) contrast(0.95) saturate(0.8) hue-rotate(-10deg)';
       case 'angry':
-        return 'brightness(1.05) contrast(1.1) saturate(1.2) drop-shadow(0 0 6px rgba(166,43,31,0.5))';
-      case 'thinking':
-        return 'brightness(1.02) contrast(1.02)';
+        return 'drop-shadow(0 0 8px rgba(220, 38, 38, 0.4))';
       default:
         return 'none';
     }
@@ -199,33 +203,6 @@ export const Mascot: React.FC<MascotProps> = ({
       className={`relative flex flex-col items-center select-none ${className}`}
       style={{ perspective: '800px' }}
     >
-      {/* Speech Bubble */}
-      {speechVisible && activeSpeech && (
-        <div
-          className={`absolute bottom-full mb-3 z-30 bg-[#1E1A17] text-[#F4EDE0] border-2 border-[#D9A21B] rounded-2xl px-3.5 py-2.5 max-w-[220px] sm:max-w-[260px] shadow-xl animate-in fade-in zoom-in-95 duration-200 pointer-events-auto cursor-pointer`}
-          onClick={() => setSpeechVisible(false)}
-        >
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-xs">{config.badge}</span>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#D9A21B]">
-              {config.label} • {config.batakTerm}
-            </span>
-          </div>
-          <p className="font-heading font-bold text-xs sm:text-sm text-white leading-tight">
-            {activeSpeech}
-          </p>
-          {activeSubSpeech && (
-            <p className="text-[11px] text-[#E8DFC8] mt-1 italic font-body">
-              {activeSubSpeech}
-            </p>
-          )}
-
-          {/* Speech bubble tail pointer */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-[#D9A21B]" />
-          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#1E1A17]" />
-        </div>
-      )}
-
       {/* Mascot 3D Layer with Mouse Tracking - Bebas Tanpa Kotak */}
       <div
         onClick={handleClick}
@@ -242,24 +219,14 @@ export const Mascot: React.FC<MascotProps> = ({
         }}
         title={`Maskot BatakGO - ${config.label} (${config.batakTerm})`}
       >
-        {/* Sprite Maskot Tegak & Transparan */}
+        {/* Sprite Maskot Tegak & Transparan dengan Ekspresi Dinamis */}
         <img
-          src="/mascot.png"
-          alt="Maskot BatakGO"
+          src={MOOD_IMAGES[mood] || '/assets/mascot/mascot-happy.png'}
+          alt={`Maskot BatakGO - ${config.label}`}
           className={`${sizeConfig.imgHeight} w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform duration-150`}
           style={{ imageRendering: 'pixelated' }}
           draggable={false}
         />
-
-        {/* Floating Mood Badge Indicator */}
-        {config.badge && (
-          <span
-            className="absolute top-0 right-1 text-sm sm:text-base animate-pulse drop-shadow"
-            aria-hidden="true"
-          >
-            {config.badge}
-          </span>
-        )}
       </div>
 
       {/* Bayangan Lantai Elips Melingkar (Floor Pedestal Shadow) */}
