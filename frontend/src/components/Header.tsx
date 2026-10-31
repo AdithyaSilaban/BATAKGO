@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Flame,
   Heart,
@@ -43,32 +43,47 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onLogout,
 }) => {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <>
       <header className="sticky top-0 z-40 bg-[#F4EDE0] border-b-[1.5px] border-[#1E1A17]">
         {/* Pembatas Section: Pita 3 Garis (Arang, Secang, Kapur) setinggi 6px */}
         <PitaTenun />
 
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 py-1.5 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-4">
           {/* Brand / Logo */}
           <button
             type="button"
             onClick={() => onTabChange('learn')}
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer text-left group focus-visible:ring-2 focus-visible:ring-[#23365A] shrink-0"
+            className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer text-left group focus-visible:ring-2 focus-visible:ring-[#23365A] shrink-0"
           >
             <img
               src="/assets/logo.png"
               alt="Logo BatakGO"
-              className="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0 group-hover:scale-105 transition-transform"
+              className="w-7 h-7 sm:w-10 sm:h-10 object-contain shrink-0 group-hover:scale-105 transition-transform"
               style={{ imageRendering: 'pixelated' }}
             />
 
             <div>
               <div className="flex items-center gap-1 sm:gap-1.5 leading-none">
-                <span className="font-heading text-lg sm:text-xl font-bold tracking-tight text-[#A62B1F]">
+                <span className="font-heading text-base sm:text-xl font-bold tracking-tight text-[#A62B1F]">
                   BATAK<span className="text-[#1E1A17]">GO</span>
                 </span>
-                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-[#E8DFC8] text-[#1E1A17] px-1 sm:px-1.5 py-0.5 rounded-[2px] border border-[#1E1A17]">
+                {/* Sembunyikan badge Toba di layar HP sempit (< sm) agar tidak mendorong elemen kanan keluar layar */}
+                <span className="hidden sm:inline-block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-[#E8DFC8] text-[#1E1A17] px-1 sm:px-1.5 py-0.5 rounded-[2px] border border-[#1E1A17]">
                   Toba
                 </span>
               </div>
@@ -100,23 +115,23 @@ export const Header: React.FC<HeaderProps> = ({
             })}
           </nav>
 
-          {/* User HUD & Authentication */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 font-body">
+          {/* User HUD & Authentication (Compact & Anti-Overflow on Mobile) */}
+          <div className="flex items-center gap-1 sm:gap-2 font-body shrink-0">
             {/* Streak Indicator */}
             <div
               title="Pardalanan Ari (Streak Harian)"
-              className="flex items-center gap-1 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] px-2 py-1 sm:px-2.5 rounded-[4px] text-xs font-bold"
+              className="flex items-center gap-0.5 sm:gap-1 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-[4px] text-[11px] sm:text-xs font-bold"
             >
-              <Flame size={14} className="fill-[#D9A21B] text-[#D9A21B]" />
+              <Flame size={13} className="fill-[#D9A21B] text-[#D9A21B]" />
               <span>{progress.streak}</span>
             </div>
 
             {/* XP Indicator */}
             <div
               title="Poin Gordang XP"
-              className="flex items-center gap-1 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] px-2 py-1 sm:px-2.5 rounded-[4px] text-xs font-bold"
+              className="flex items-center gap-0.5 sm:gap-1 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-[4px] text-[11px] sm:text-xs font-bold"
             >
-              <Zap size={14} className="fill-[#1E1A17] text-[#1E1A17]" />
+              <Zap size={13} className="fill-[#1E1A17] text-[#1E1A17]" />
               <span>{progress.xp}</span>
               <span className="hidden sm:inline text-[10px] text-[#433D38] font-normal">XP</span>
             </div>
@@ -126,41 +141,75 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={onRefillHearts}
               title="Sistem Nyawa Tondi (Klik untuk pulihkan penuh)"
-              className="flex items-center gap-1 bg-[#FAF6EE] border-[1.5px] border-[#A62B1F] hover:bg-[#E8DFC8] text-[#A62B1F] px-2 py-1 sm:px-2.5 rounded-[4px] text-xs font-bold cursor-pointer transition"
+              className="flex items-center gap-0.5 sm:gap-1 bg-[#FAF6EE] border-[1.5px] border-[#A62B1F] hover:bg-[#E8DFC8] text-[#A62B1F] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-[4px] text-[11px] sm:text-xs font-bold cursor-pointer transition active:scale-95"
             >
-              <Heart size={14} className="fill-[#A62B1F] text-[#A62B1F]" />
+              <Heart size={13} className="fill-[#A62B1F] text-[#A62B1F]" />
               <span>{progress.hearts}</span>
-              <Plus size={11} className="text-[#A62B1F]" />
+              <Plus size={10} className="text-[#A62B1F] hidden sm:inline" />
             </button>
 
-            {/* User Account / Profile */}
+            {/* User Account / Profile & Logout */}
             {currentUser ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 border-l-[1.5px] border-[#1E1A17]">
-                <div
+              <div ref={profileMenuRef} className="relative flex items-center gap-1 pl-1 sm:pl-1.5 border-l border-[#1E1A17]/40">
+                {/* Profile Pill Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowProfileMenu(prev => !prev)}
                   title={`${currentUser.name} (${currentUser.marga || 'Batak'})`}
-                  className="flex items-center gap-1.5 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] px-2 py-1 sm:px-2.5 rounded-[4px] text-xs font-bold max-w-[150px] truncate"
+                  className="flex items-center gap-1 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] hover:bg-[#E8DFC8] text-[#1E1A17] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-[4px] text-[11px] sm:text-xs font-bold transition cursor-pointer"
                 >
                   <span className="text-xs shrink-0">{currentUser.avatar || '🧒'}</span>
-                  <span className="truncate hidden md:inline">
+                  <span className="truncate hidden md:inline max-w-[100px]">
                     {currentUser.name.split(' ')[0]} {currentUser.marga ? `(${currentUser.marga})` : ''}
                   </span>
-                </div>
+                </button>
+
+                {/* Direct Logout Icon Button */}
                 <button
                   type="button"
                   onClick={onLogout}
                   title="Keluar Sesi (Logout)"
-                  className="text-[#433D38] hover:text-[#A62B1F] hover:bg-[#E8DFC8] p-1 sm:p-1.5 rounded-[4px] border border-transparent hover:border-[#1E1A17] transition cursor-pointer flex items-center justify-center shrink-0"
+                  className="text-[#433D38] hover:text-[#A62B1F] hover:bg-[#E8DFC8] p-1 rounded-[4px] border border-transparent hover:border-[#1E1A17] transition cursor-pointer flex items-center justify-center shrink-0"
                 >
-                  <LogOut size={15} />
+                  <LogOut size={14} />
                 </button>
+
+                {/* Mobile Dropdown Popover on Avatar Click */}
+                {showProfileMenu && (
+                  <div className="absolute top-full right-0 mt-1.5 w-48 bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] rounded-[4px] shadow-xl p-3 z-50 text-[#1E1A17] animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#1E1A17]/20">
+                      <span className="text-xl">{currentUser.avatar || '🧒'}</span>
+                      <div className="truncate">
+                        <p className="font-heading font-bold text-xs truncate">{currentUser.name}</p>
+                        <p className="text-[10px] text-[#A62B1F] font-semibold">{currentUser.marga ? `Marga ${currentUser.marga}` : 'Batak Toba'}</p>
+                      </div>
+                    </div>
+                    <div className="text-[11px] space-y-1 mb-2.5 text-[#433D38]">
+                      <div>🔥 Streak: <b>{progress.streak} hari</b></div>
+                      <div>⚡ XP: <b>{progress.xp} XP</b></div>
+                      <div>❤️ Tondi: <b>{progress.hearts}/{progress.maxHearts}</b></div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        onLogout();
+                      }}
+                      className="w-full py-1.5 px-2 bg-[#F5E2DF] text-[#A62B1F] hover:bg-[#A62B1F] hover:text-white rounded-[2px] border border-[#A62B1F] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <LogOut size={12} />
+                      <span>Keluar Akun</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="btn-indigo px-2.5 sm:px-3.5 py-1 text-xs"
+                className="btn-indigo px-2 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs"
               >
-                <UserIcon size={13} className="mr-1" />
+                <UserIcon size={12} className="mr-1" />
                 <span>Masuk</span>
               </button>
             )}
