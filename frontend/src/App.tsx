@@ -12,28 +12,25 @@ import { DictionaryView } from './components/DictionaryView';
 import { PartuturanView } from './components/PartuturanView';
 import { AksaraBatakView } from './components/AksaraBatakView';
 import { LeaderboardView } from './components/LeaderboardView';
-
 import { OpenApiShowcaseView } from './components/OpenApiShowcaseView';
 import { AuthModal } from './components/AuthModal';
 import { LoginPage } from './components/LoginPage';
-import { GorgaShield, PitaTenun } from './components/GorgaEmblem';
+import { PitaTenun } from './components/GorgaEmblem';
 import { UNITS, Lesson } from './utils/batakData';
 import {
   UserProgress,
   loadUserProgress,
   saveUserProgress,
-  INITIAL_PROGRESS
 } from './utils/gamification';
 import {
   AuthUser,
   getStoredUser,
-  setStoredUser,
   fetchCurrentUserApi,
   logoutApi,
   syncProgressApi,
   refillHeartsApi,
 } from './utils/apiClient';
-import { playOgungGong, playGordangBeat } from './utils/audioSynthesizer';
+import { playOgungGong } from './utils/audioSynthesizer';
 
 export default function App() {
   const [progress, setProgress] = useState<UserProgress>(loadUserProgress);
@@ -184,7 +181,7 @@ export default function App() {
     <div className="min-h-screen bg-[#F4EDE0] text-[#1E1A17] flex flex-col font-body relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[#1E1A17] text-[#F4EDE0] px-4 py-2.5 rounded-[4px] border-[1.5px] border-[#A62B1F] font-bold text-xs animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2">
+        <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-50 bg-[#1E1A17] text-[#F4EDE0] px-4 py-2.5 rounded-[4px] border-[1.5px] border-[#A62B1F] font-bold text-xs animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2 max-w-[90vw] text-center shadow-lg">
           <span>{toastMessage}</span>
         </div>
       )}
@@ -200,8 +197,8 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {/* Tab Views */}
-      <main className="flex-1 pb-16">
+      {/* Tab Views with bottom padding so bottom nav doesn't cover content */}
+      <main className="flex-1 pb-24 lg:pb-16">
         {activeTab === 'learn' && (
           <PathTreeView
             progress={progress}
@@ -223,8 +220,6 @@ export default function App() {
             userStreak={progress.streak}
           />
         )}
-
-
 
         {activeTab === 'openapi' && <OpenApiShowcaseView />}
       </main>
@@ -248,30 +243,32 @@ export default function App() {
       />
 
       {/* Footer */}
-      <PitaTenun />
-      <footer className="bg-[#1E1A17] text-[#F4EDE0] py-8 px-4 border-t border-[#1E1A17]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div className="flex items-center gap-3">
-            <img
-              src="/assets/logo.png"
-              alt="Logo BATAKGO"
-              className="w-9 h-9 object-contain shrink-0"
-              style={{ imageRendering: 'pixelated' }}
-            />
-            <div>
-              <p className="font-heading font-bold text-[#F4EDE0] text-base tracking-tight">
-                BATAK<span className="text-[#A62B1F]">GO</span> • Parsiajaran Hata Batak
-              </p>
-              <p className="text-xs text-stone-400 mt-0.5">
-                By kelompok Himatop
-              </p>
+      <div className="hidden lg:block">
+        <PitaTenun />
+        <footer className="bg-[#1E1A17] text-[#F4EDE0] py-6 px-4 border-t border-[#1E1A17]">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <img
+                src="/assets/logo.png"
+                alt="Logo BATAKGO"
+                className="w-8 h-8 object-contain shrink-0"
+                style={{ imageRendering: 'pixelated' }}
+              />
+              <div>
+                <p className="font-heading font-bold text-[#F4EDE0] text-sm tracking-tight">
+                  BATAK<span className="text-[#A62B1F]">GO</span> • Parsiajaran Hata Batak
+                </p>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  By kelompok Himatop
+                </p>
+              </div>
             </div>
+            <p className="text-xs text-stone-500 font-medium">
+              Horas ma di hita saluhutna! &copy; 2026 BATAKGO
+            </p>
           </div>
-          <p className="text-xs text-stone-500 font-medium">
-            Horas ma di hita saluhutna! &copy; 2026 BATAKGO
-          </p>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }

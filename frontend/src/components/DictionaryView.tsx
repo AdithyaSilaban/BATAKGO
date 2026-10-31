@@ -32,52 +32,51 @@ export const DictionaryView: React.FC = () => {
   });
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 font-body">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 font-body">
       {/* Header Banner */}
-      <div className="bg-[#1E1A17] rounded-[4px] p-6 text-[#F4EDE0] mb-6 border-[1.5px] border-[#1E1A17] flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-[#1E1A17] rounded-[4px] p-4 sm:p-6 text-[#F4EDE0] mb-4 sm:mb-6 border-[1.5px] border-[#1E1A17] flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 relative overflow-hidden">
         <PitaTenun className="absolute top-0 left-0 right-0" />
 
-        <div className="pt-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider bg-[#2C2622] text-[#F4EDE0] border border-[#433D38] px-2.5 py-0.5 rounded-[2px] inline-block mb-2">
+        <div className="pt-2 text-center sm:text-left">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#2C2622] text-[#F4EDE0] border border-[#433D38] px-2.5 py-0.5 rounded-[2px] inline-block mb-1.5 sm:mb-2">
             Pustaka Kata Penutur Asli
           </span>
           <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#F4EDE0]">
             Kamus Saku Bahasa Batak
           </h1>
-          <p className="text-[#E8DFC8] text-sm mt-1 max-w-lg font-medium">
+          <p className="text-[#E8DFC8] text-xs sm:text-sm mt-1 max-w-lg font-medium">
             Dengarkan pelafalan asli, pelajari suku kata pemenggalan, dan uji suara pelafalan Anda lewat mikrofon bersama Sigale-gale.
           </p>
         </div>
         <Mascot
           mood="thinking"
-          size="lg"
-          
+          size="sm"
           showStatusLabel={false}
         />
       </div>
 
-      {/* Search and Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+      {/* Search Bar */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-3 sm:mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#433D38]" size={18} />
           <input
             type="text"
-            placeholder="Cari kata Batak atau artinya (misal: horas, terima kasih, mangan)..."
+            placeholder="Cari kata Batak atau artinya (horas, terima kasih)..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] font-semibold text-[#1E1A17] text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] font-semibold text-[#1E1A17] text-base sm:text-sm"
           />
         </div>
       </div>
 
       {/* Categories Horizontal Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 sm:mb-6 no-scrollbar">
         {categories.map(cat => (
           <button
             key={cat.id}
             type="button"
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-3 py-1.5 rounded-[4px] font-bold text-xs whitespace-nowrap border-[1.5px] transition cursor-pointer ${
+            className={`px-3 py-1.5 rounded-[4px] font-bold text-xs whitespace-nowrap border-[1.5px] transition cursor-pointer shrink-0 ${
               selectedCategory === cat.id
                 ? 'bg-[#23365A] text-[#F4EDE0] border-[#162238]'
                 : 'bg-[#FAF6EE] text-[#1E1A17] border-[#1E1A17] hover:bg-[#E8DFC8]'
@@ -88,41 +87,46 @@ export const DictionaryView: React.FC = () => {
         ))}
       </div>
 
-      {/* Vocab Cards Grid: Permukaan datar, tanpa bayangan, garis arang 1.5px */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      {/* Vocab Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
         {filtered.map(item => (
           <div
             key={item.id}
-            className="card-batak p-4 flex flex-col justify-between"
+            className="card-batak p-3.5 sm:p-4 flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="flex items-start justify-between gap-2.5 mb-2">
                 <div>
-                  <h3 className="font-heading text-xl font-bold text-[#A62B1F] tracking-tight">
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#1E1A17] tracking-tight">
                     {item.batak}
                   </h3>
-                  <p className="text-sm font-semibold text-[#1E1A17]">
-                    {item.indonesian}
+                  <p className="text-xs text-[#A62B1F] font-semibold italic">
+                    /{item.phonetic}/
                   </p>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1E1A17] bg-[#E8DFC8] px-2 py-0.5 rounded-[2px] border border-[#1E1A17]">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1E1A17] bg-[#E8DFC8] px-2 py-0.5 rounded-[2px] border border-[#1E1A17] shrink-0">
                   {item.category}
                 </span>
               </div>
 
-              {/* Example sentences */}
-              <div className="bg-[#E8DFC8]/50 rounded-[4px] p-2.5 my-2.5 border border-[#1E1A17] text-xs">
-                <p className="font-bold text-[#1E1A17] italic">
-                  &ldquo;{item.exampleBatak}&rdquo;
-                </p>
-                <p className="text-[#433D38] mt-0.5">
-                  {item.exampleIndonesian}
-                </p>
-              </div>
+              <p className="text-xs sm:text-sm text-[#1E1A17] font-bold mt-1">
+                {item.indonesian}
+              </p>
+
+              {item.exampleBatak && (
+                <div className="bg-[#E8DFC8]/50 rounded-[4px] p-2.5 my-2.5 border border-[#1E1A17] text-xs">
+                  <p className="font-bold text-[#1E1A17] italic">
+                    &ldquo;{item.exampleBatak}&rdquo;
+                  </p>
+                  <p className="text-[#433D38] mt-0.5">
+                    {item.exampleIndonesian}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Audio & Practice Controls */}
-            <div className="pt-2 border-t border-[#1E1A17]/30 flex items-center justify-between">
+            <div className="pt-2 border-t border-[#1E1A17]/20 flex items-center justify-between">
               <AudioPronunciationButton
                 text={item.batak}
                 phonetic={item.phonetic}
@@ -136,14 +140,9 @@ export const DictionaryView: React.FC = () => {
         ))}
 
         {filtered.length === 0 && (
-          <div className="col-span-full py-10 text-center bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-dashed border-[#1E1A17]">
-            <Mascot mood="sad" size="md" className="mx-auto mb-3" />
-            <p className="text-[#1E1A17] font-bold">
-              Kosakata &ldquo;{search}&rdquo; tidak ditemukan.
-            </p>
-            <p className="text-[#433D38] text-xs mt-1">
-              Coba cari kata lain seperti "horas", "lae", atau "tulang".
-            </p>
+          <div className="col-span-full text-center py-12 text-[#433D38] card-batak p-8">
+            <p className="text-base font-bold">Ndang adong kosakata na dapot</p>
+            <p className="text-xs mt-1">Tidak ada kosakata yang cocok dengan pencarian &ldquo;{search}&rdquo;.</p>
           </div>
         )}
       </div>

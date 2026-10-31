@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, User as UserIcon, Mail, Lock, LogIn, UserPlus } from 'lucide-react';
 import { registerApi, loginApi, AuthUser } from '../utils/apiClient';
-import { GorgaShield, PitaTenun } from './GorgaEmblem';
+import { PitaTenun } from './GorgaEmblem';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -64,31 +64,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#1E1A17]/70 flex items-center justify-center p-4 animate-in fade-in duration-150">
-      <div className="card-batak bg-[#F4EDE0] max-w-md w-full relative overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-[#1E1A17]/70 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150 overflow-y-auto">
+      <div className="card-batak bg-[#F4EDE0] max-w-md w-full relative overflow-hidden my-auto shadow-xl">
         <PitaTenun />
 
         {/* Modal Header */}
-        <div className="bg-[#1E1A17] p-6 text-[#F4EDE0] text-center relative border-b-[1.5px] border-[#1E1A17]">
+        <div className="bg-[#1E1A17] p-4 sm:p-6 text-[#F4EDE0] text-center relative border-b-[1.5px] border-[#1E1A17]">
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup"
-            className="absolute top-4 right-4 text-[#F4EDE0]/70 hover:text-[#F4EDE0] p-1.5 rounded-[4px] border border-transparent hover:border-[#F4EDE0]/40 transition cursor-pointer"
+            className="absolute top-3.5 right-3.5 text-[#F4EDE0]/70 hover:text-[#F4EDE0] p-1.5 rounded-[4px] border border-transparent hover:border-[#F4EDE0]/40 transition cursor-pointer"
           >
             <X size={18} />
           </button>
 
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center mb-1.5 sm:mb-2">
             <img
               src="/assets/logo.png"
               alt="Logo BatakGO"
-              className="w-14 h-14 object-contain mx-auto drop-shadow-sm"
+              className="w-12 h-12 sm:w-14 sm:h-14 object-contain mx-auto drop-shadow-sm"
               style={{ imageRendering: 'pixelated' }}
             />
           </div>
 
-          <h2 className="text-xl font-heading font-bold tracking-tight text-[#F4EDE0]">
+          <h2 className="text-lg sm:text-xl font-heading font-bold tracking-tight text-[#F4EDE0]">
             {isRegister ? 'Daftar Akun BATAKGO' : 'Masuk ke BATAKGO'}
           </h2>
           <p className="text-[#F4EDE0]/75 text-xs mt-1 font-body">
@@ -98,10 +98,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           </p>
         </div>
 
+        {/* Tab Toggle */}
+        <div className="flex bg-[#EADBCE] border-b-[1.5px] border-[#1E1A17]">
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegister(false);
+              setErrorMsg(null);
+            }}
+            className={`flex-1 py-2.5 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ${
+              !isRegister
+                ? 'bg-[#F4EDE0] text-[#1E1A17] border-b-2 border-[#A62B1F]'
+                : 'text-[#1E1A17]/60 hover:text-[#1E1A17]'
+            }`}
+          >
+            <LogIn size={14} /> Masuk Akun
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegister(true);
+              setErrorMsg(null);
+            }}
+            className={`flex-1 py-2.5 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ${
+              isRegister
+                ? 'bg-[#F4EDE0] text-[#1E1A17] border-b-2 border-[#A62B1F]'
+                : 'text-[#1E1A17]/60 hover:text-[#1E1A17]'
+            }`}
+          >
+            <UserPlus size={14} /> Daftar Baru
+          </button>
+        </div>
+
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5">
           {errorMsg && (
-            <div className="bg-[#F5E2DF] border-[1.5px] border-[#A62B1F] text-[#A62B1F] text-xs font-semibold rounded-[4px] p-3">
+            <div className="p-3 bg-[#F5E2DF] border border-[#A62B1F] text-[#A62B1F] text-xs font-bold rounded-[4px]">
               {errorMsg}
             </div>
           )}
@@ -113,14 +145,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
                   Nama Lengkap
                 </label>
                 <div className="relative">
-                  <UserIcon size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
+                  <UserIcon size={16} className="text-[#1E1A17]/50 absolute left-3 top-3" />
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    placeholder="Contoh: Ucok Tampubolon"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
+                    placeholder="Contoh: Tigor Siregar"
+                    className="w-full pl-9 pr-3 py-2 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] text-base sm:text-sm font-semibold"
                   />
                 </div>
               </div>
@@ -132,7 +164,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
                 <select
                   value={marga}
                   onChange={e => setMarga(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
+                  className="w-full px-3 py-2 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] text-base sm:text-sm font-semibold cursor-pointer"
                 >
                   {POPULAR_MARGA.map(m => (
                     <option key={m} value={m}>{m}</option>
@@ -147,14 +179,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
               Email
             </label>
             <div className="relative">
-              <Mail size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
+              <Mail size={16} className="text-[#1E1A17]/50 absolute left-3 top-3" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
+                className="w-full pl-9 pr-3 py-2 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] text-base sm:text-sm font-semibold"
               />
             </div>
           </div>
@@ -164,14 +196,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
               Kata Sandi
             </label>
             <div className="relative">
-              <Lock size={15} className="text-[#1E1A17]/50 absolute left-3 top-3.5" />
+              <Lock size={16} className="text-[#1E1A17]/50 absolute left-3 top-3" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Minimal 6 karakter"
-                className="w-full pl-9 pr-4 py-2.5 rounded-[4px] border-[1.5px] border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] focus:border-[#23365A] focus:outline-none text-sm font-medium"
+                placeholder="••••••••"
+                className="w-full pl-9 pr-3 py-2 bg-[#FAF6EE] rounded-[4px] border-[1.5px] border-[#1E1A17] text-base sm:text-sm font-semibold"
               />
             </div>
           </div>
@@ -179,37 +211,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           <button
             type="submit"
             disabled={loading}
-            className="btn-indigo w-full mt-2 py-3 text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="btn-indigo w-full py-3 text-sm font-bold mt-2 min-h-[46px]"
           >
-            {loading ? (
-              <span className="text-sm">Sedang memproses...</span>
-            ) : isRegister ? (
-              <>
-                <UserPlus size={16} />
-                <span>Buat Akun Sekarang</span>
-              </>
-            ) : (
-              <>
-                <LogIn size={16} />
-                <span>Masuk Akun</span>
-              </>
-            )}
+            {loading ? 'Memproses...' : isRegister ? 'Daftar Akun' : 'Masuk'}
           </button>
-
-          <div className="text-center pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setIsRegister(!isRegister);
-                setErrorMsg(null);
-              }}
-              className="text-xs text-[#23365A] hover:text-[#162238] font-bold underline cursor-pointer"
-            >
-              {isRegister
-                ? 'Sudah punya akun? Masuk di sini'
-                : 'Belum punya akun? Daftar gratis sekarang'}
-            </button>
-          </div>
         </form>
       </div>
     </div>

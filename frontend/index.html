@@ -2,20 +2,31 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <title>BATAKGO - Belajar Bahasa Batak Interaktif</title>
     <meta name="description" content="Platform belajar bahasa dan budaya Batak interaktif bersama maskot Sigale-gale, lengkap dengan latihan pelafalan audio penutur asli, kosakata lokal, kuis bertingkat, dan sistem partuturan." />
+    
+    <!-- Mobile & PWA Optimization -->
+    <meta name="theme-color" content="#F4EDE0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="BATAKGO" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Open Graph & Social -->
     <meta property="og:title" content="BATAKGO - Belajar Bahasa Batak Interaktif" />
     <meta property="og:description" content="Platform belajar bahasa dan budaya Batak interaktif bersama maskot Sigale-gale, lengkap dengan latihan pelafalan audio penutur asli, kosakata lokal, kuis bertingkat, dan sistem partuturan." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans+Batak&family=Zilla+Slab:wght@700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F4EDE0] text-[#1E1A17] font-['Atkinson_Hyperlegible',sans-serif] antialiased selection:bg-[#A62B1F] selection:text-[#F4EDE0]">
+  <body class="bg-[#F4EDE0] text-[#1E1A17] font-['Atkinson_Hyperlegible',sans-serif] antialiased selection:bg-[#A62B1F] selection:text-[#F4EDE0] min-h-screen overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

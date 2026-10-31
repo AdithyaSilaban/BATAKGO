@@ -16,7 +16,7 @@ import {
   Languages
 } from 'lucide-react';
 import { registerApi, loginApi, AuthUser, setStoredUser } from '../utils/apiClient';
-import { GorgaShield, PitaTenun } from './GorgaEmblem';
+import { PitaTenun } from './GorgaEmblem';
 import { Mascot } from './Mascot';
 
 interface LoginPageProps {
@@ -157,57 +157,56 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
       <PitaTenun />
 
       {/* Main Grid Wrapper */}
-      <div className="max-w-6xl w-full mx-auto px-4 py-8 sm:py-12 flex-1 flex items-center justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+      <div className="max-w-6xl w-full mx-auto px-3 sm:px-6 py-6 sm:py-10 flex-1 flex items-center justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center w-full">
           
-          {/* Left Hero (7 Cols) */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] text-xs font-bold uppercase tracking-wider">
+          {/* Left Hero (7 Cols on desktop, compact on mobile) */}
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 rounded-[4px] bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] text-[#1E1A17] text-[11px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Platform Edukasi Budaya Batak Toba</span>
             </div>
 
             {/* Title & Crest */}
-            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
+            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-3 sm:gap-4">
               <img
                 src="/assets/logo.png"
                 alt="Logo BatakGO"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0 drop-shadow-sm"
+                className="w-14 h-14 sm:w-20 sm:h-20 object-contain shrink-0 drop-shadow-sm"
                 style={{ imageRendering: 'pixelated' }}
               />
               <div>
-                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1E1A17] leading-none">
+                <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1E1A17] leading-none">
                   BATAK<span className="text-[#A62B1F]">GO</span>
                 </h1>
-                <p className="text-base sm:text-lg text-[#433D38] font-bold mt-1.5 font-body">
+                <p className="text-sm sm:text-lg text-[#433D38] font-bold mt-1 font-body">
                   Parsiajaran Hata Batak Interaktif & Open Cultural API
                 </p>
               </div>
             </div>
 
-            <p className="text-[#1E1A17] text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-              Selamat datang di BATAKGO. Masuk ke akun Anda atau daftar sebagai pembelajar baru untuk mencatat perolehan poin Gordang XP, memelihara nyawa Tondi, dan mengumpulkan koleksi kain tenun Ulos.
+            <p className="text-[#1E1A17] text-xs sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+              Selamat datang di BATAKGO. Belajar bahasa Batak Toba menyenangkan bersama maskot Sigale-gale, kuis bertingkat, dan audio penutur asli.
             </p>
 
-            {/* Mascot Greeting Box (Papan Datar Bergaris Arang) */}
-            <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-4 sm:p-5 flex items-center gap-4 max-w-lg mx-auto lg:mx-0 text-left">
+            {/* Mascot Greeting Box */}
+            <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] rounded-[4px] p-3 sm:p-4 flex items-center gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0 text-left">
               <Mascot
                 mood="happy"
-                size="md"
-                
+                size="sm"
                 showStatusLabel={false}
               />
               <div className="flex-1">
-                <span className="text-xs font-bold text-[#A62B1F] uppercase tracking-wider block">
+                <span className="text-[10px] sm:text-xs font-bold text-[#A62B1F] uppercase tracking-wider block">
                   Poda Ni Sigale-gale
                 </span>
                 <p className="text-xs sm:text-sm font-semibold text-[#1E1A17] mt-0.5 leading-snug">
-                  &ldquo;Unang mandele, marsiajar ma hita marhite roha na las!&rdquo; (Jangan ragu, mari belajar dengan hati yang gembira!)
+                  &ldquo;Unang mandele, marsiajar ma hita marhite roha na las!&rdquo; (Mari belajar dengan hati gembira!)
                 </p>
               </div>
             </div>
 
-            {/* Feature Highlights Grid (Permukaan Datar Garis Arang 1.5px, Tanpa Bayangan) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-xl mx-auto lg:mx-0 pt-2 text-left">
+            {/* Feature Highlights Grid (Desktop only or below form on mobile) */}
+            <div className="hidden sm:grid sm:grid-cols-4 gap-2.5 max-w-xl mx-auto lg:mx-0 pt-1 text-left">
               <div className="bg-[#FAF6EE] border-[1.5px] border-[#1E1A17] p-2.5 rounded-[4px]">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1A17]">
                   <BookOpen size={14} className="text-[#23365A]" /> 5 Unit Belajar
@@ -237,13 +236,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
 
           {/* Right Login / Register Card (5 Cols) */}
           <div className="lg:col-span-5 w-full max-w-md mx-auto">
-            <div className="bg-[#FAF6EE] text-[#1E1A17] rounded-[4px] p-6 sm:p-8 border-[1.5px] border-[#1E1A17] relative">
+            <div className="bg-[#FAF6EE] text-[#1E1A17] rounded-[4px] p-4 sm:p-7 border-[1.5px] border-[#1E1A17] relative shadow-sm">
               
-              {/* Card Top Strip (Pita Tenun 3 Garis) */}
+              {/* Card Top Strip */}
               <div className="absolute top-0 left-0 right-0 h-[4px] bg-[#A62B1F]"></div>
 
               {/* Mode Toggle Tabs */}
-              <div className="flex bg-[#E8DFC8] p-1 rounded-[4px] mb-6 border-[1.5px] border-[#1E1A17]">
+              <div className="flex bg-[#E8DFC8] p-1 rounded-[4px] mb-4 sm:mb-5 border-[1.5px] border-[#1E1A17]">
                 <button
                   type="button"
                   onClick={() => {
@@ -279,18 +278,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
               </div>
 
               {/* Heading */}
-              <div className="mb-5">
-                <h2 className="font-heading text-2xl font-bold text-[#1E1A17] tracking-tight">
+              <div className="mb-4">
+                <h2 className="font-heading text-xl sm:text-2xl font-bold text-[#1E1A17] tracking-tight">
                   {isRegister ? 'Daftar Akun Parsiajar' : 'Masuk ke BATAKGO'}
                 </h2>
-                <p className="text-xs text-[#433D38] mt-1 font-semibold">
+                <p className="text-xs text-[#433D38] mt-0.5 font-semibold">
                   {isRegister
-                    ? 'Buat akun untuk menyimpan kemajuan belajar dan membuka Ulos.'
-                    : 'Masuk dengan email Anda untuk melanjutkan pembelajaran.'}
+                    ? 'Buat akun untuk mencatat kemajuan dan perolehan skor XP.'
+                    : 'Masuk dengan email Anda untuk melanjutkan belajar.'}
                 </p>
               </div>
 
-              {/* Error Message (Ikon + Teks) */}
+              {/* Error Message */}
               {errorMsg && (
                 <div className="mb-4 p-3 bg-[#F5EAE8] border-[1.5px] border-[#A62B1F] text-[#A62B1F] text-xs font-bold rounded-[4px] flex items-start gap-2">
                   <AlertCircle size={16} className="shrink-0 mt-0.5" />
@@ -298,7 +297,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                 </div>
               )}
 
-              {/* Success Message (Ikon + Teks) */}
+              {/* Success Message */}
               {successMsg && (
                 <div className="mb-4 p-3 bg-[#FAF6EE] border-[1.5px] border-[#23365A] text-[#23365A] text-xs font-bold rounded-[4px] flex items-start gap-2">
                   <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
@@ -307,7 +306,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
               )}
 
               {/* Authentication Form */}
-              <form onSubmit={handleSubmit} className="space-y-3.5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {isRegister && (
                   <>
                     {/* Full Name */}
@@ -323,7 +322,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                           value={name}
                           onChange={e => setName(e.target.value)}
                           placeholder="Contoh: Tigor Siregar"
-                          className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                          className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17]"
                         />
                       </div>
                     </div>
@@ -349,13 +348,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                           value={customMarga}
                           onChange={e => setCustomMarga(e.target.value)}
                           placeholder="Ketik marga Anda"
-                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17]"
                         />
                       ) : (
                         <select
                           value={marga}
                           onChange={e => setMarga(e.target.value)}
-                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17] cursor-pointer"
+                          className="w-full px-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17] cursor-pointer"
                         >
                           {POPULAR_MARGA.map(m => (
                             <option key={m} value={m}>{m}</option>
@@ -364,18 +363,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                       )}
                     </div>
 
-                    {/* Avatar Picker */}
+                    {/* Avatar Picker (3 cols on mobile, 6 cols on sm+) */}
                     <div>
                       <label className="block text-xs font-bold text-[#1E1A17] uppercase tracking-wider mb-1.5">
                         Pilih Avatar Karakter
                       </label>
-                      <div className="grid grid-cols-6 gap-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                         {AVATAR_OPTIONS.map(av => (
                           <button
                             key={av.id}
                             type="button"
                             onClick={() => setSelectedAvatar(av.id)}
-                            className={`p-1.5 rounded-[4px] text-lg flex flex-col items-center justify-center cursor-pointer border-[1.5px] ${
+                            className={`p-2 rounded-[4px] text-lg flex flex-col items-center justify-center cursor-pointer border-[1.5px] ${
                               selectedAvatar === av.id
                                 ? 'bg-[#E8DFC8] border-[#A62B1F]'
                                 : 'bg-[#F4EDE0] border-[#1E1A17] hover:bg-[#E8DFC8]'
@@ -406,7 +405,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="nama@email.com"
-                      className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                      className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17]"
                     />
                   </div>
                 </div>
@@ -424,12 +423,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder={isRegister ? 'Minimal 6 karakter' : 'Masukkan kata sandi'}
-                      className="w-full pl-9 pr-9 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                      className="w-full pl-9 pr-9 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17]"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-[#433D38] hover:text-[#1E1A17] cursor-pointer"
+                      className="absolute right-3 top-2.5 text-[#433D38] hover:text-[#1E1A17] cursor-pointer p-1"
                       title={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -451,17 +450,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
                         placeholder="Ketik ulang kata sandi"
-                        className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-sm font-semibold text-[#1E1A17]"
+                        className="w-full pl-9 pr-3 py-2 bg-[#F4EDE0] rounded-[4px] border-[1.5px] border-[#1E1A17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#23365A] text-base sm:text-sm font-semibold text-[#1E1A17]"
                       />
                     </div>
                   </div>
                 )}
 
-                {/* Submit Action (Tombol Indigo: Radius 4px, Tepi Bawah 3px Lebih Gelap, Geser 3px saat Ditekan) */}
+                {/* Submit Action */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-indigo w-full mt-2 py-3 text-sm"
+                  className="btn-indigo w-full mt-2 py-3 text-sm min-h-[46px]"
                 >
                   {loading ? (
                     <span>Menghubungkan ke server...</span>
@@ -480,7 +479,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
               </form>
 
               {/* Fast-Track Actions */}
-              <div className="mt-5 pt-4 border-t-[1.5px] border-[#1E1A17] space-y-2.5">
+              <div className="mt-4 pt-4 border-t-[1.5px] border-[#1E1A17] space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#433D38] font-bold">Uji Coba Cepat:</span>
                   <button
@@ -495,7 +494,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
                 <button
                   type="button"
                   onClick={handleGuestEntry}
-                  className="btn-outline-arang w-full py-2 px-3 text-xs"
+                  className="btn-outline-arang w-full py-2.5 px-3 text-xs min-h-[44px]"
                 >
                   <span>Mulai Langsung sebagai Tamu (Explore Mode)</span>
                   <ArrowRight size={13} className="ml-1.5" />
@@ -509,9 +508,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
       </div>
 
       {/* Clean Bottom Bar */}
-      <footer className="py-4 text-center text-xs text-[#433D38] border-t-[1.5px] border-[#1E1A17] bg-[#E8DFC8]">
+      <footer className="py-3 text-center text-xs text-[#433D38] border-t-[1.5px] border-[#1E1A17] bg-[#E8DFC8]">
         <p className="font-semibold">
-          BATAKGO • By kelompok Himatop
+          BATAKGO • Parsiajaran Hata Batak Interaktif &copy; 2026
         </p>
       </footer>
     </div>

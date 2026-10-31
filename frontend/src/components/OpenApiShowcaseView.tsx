@@ -45,32 +45,32 @@ export const OpenApiShowcaseView: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 font-body">
       {/* Banner */}
-      <div className="card-batak-dark bg-[#1E1A17] text-[#F4EDE0] p-6 sm:p-8 mb-8 relative overflow-hidden">
+      <div className="card-batak-dark bg-[#1E1A17] text-[#F4EDE0] p-4 sm:p-8 mb-4 sm:mb-8 relative overflow-hidden">
         <PitaTenun />
         <div className="relative z-10 mt-3">
-          <div className="inline-flex items-center gap-2 bg-[#A62B1F]/30 border border-[#A62B1F] px-3 py-1 rounded-[4px] text-xs font-bold text-[#D9A21B] uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-1.5 bg-[#A62B1F]/30 border border-[#A62B1F] px-2.5 py-0.5 rounded-[4px] text-[10px] sm:text-xs font-bold text-[#D9A21B] uppercase tracking-wider mb-2 sm:mb-3">
             <Globe className="w-3.5 h-3.5" /> Interconnected Web Ecosystem
           </div>
-          <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-[#F4EDE0]">
+          <h1 className="text-xl sm:text-3xl font-heading font-bold tracking-tight text-[#F4EDE0]">
             BATAKGO Open Cultural Knowledge API
           </h1>
-          <p className="text-[#F4EDE0]/80 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed font-body">
+          <p className="text-[#F4EDE0]/80 text-xs sm:text-base mt-1.5 sm:mt-2 max-w-2xl leading-relaxed font-body">
             Menjawab tema UINIC 8.0: <i>"Engineering Interconnected Web Solutions"</i>, BATAKGO tidak hanya menjadi platform edukasi, melainkan juga bertindak sebagai <b>Data Provider</b> budaya Batak pertama yang menyediakan RESTful API terbuka bagi ekosistem digital nasional.
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 sm:gap-3 mb-6 overflow-x-auto pb-1">
+      <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto pb-1 no-scrollbar">
         <button
           onClick={() => {
             setActiveEndpoint('dictionary');
             setParamInput('horas');
             setApiResponse(null);
           }}
-          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
+          className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-[4px] font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] shrink-0 ${
             activeEndpoint === 'dictionary'
               ? 'btn-secang'
               : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
@@ -86,7 +86,7 @@ export const OpenApiShowcaseView: React.FC = () => {
             setParamInput('saudara_laki_ibu');
             setApiResponse(null);
           }}
-          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
+          className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-[4px] font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] shrink-0 ${
             activeEndpoint === 'partuturan'
               ? 'btn-secang'
               : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
@@ -102,29 +102,29 @@ export const OpenApiShowcaseView: React.FC = () => {
             setParamInput('horas');
             setApiResponse(null);
           }}
-          className={`px-4 py-2.5 rounded-[4px] font-bold text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] ${
+          className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-[4px] font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer border-[1.5px] border-b-[3px] shrink-0 ${
             activeEndpoint === 'aksara'
               ? 'btn-secang'
               : 'border-[#1E1A17] bg-[#F4EDE0] text-[#1E1A17] hover:bg-[#EADBCE]'
           }`}
         >
           <Globe className="w-4 h-4" />
-          <span>Transliterasi Surat Batak API</span>
+          <span>Transliterasi Aksara API</span>
         </button>
       </div>
 
       {/* API Console Box */}
-      <div className="card-batak-dark bg-[#1E1A17] p-6 text-[#F4EDE0]">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-[#2A2420]">
-          <div className="flex items-center gap-2 font-mono text-sm bg-[#141210] px-4 py-2 rounded-[4px] border border-[#2A2420] text-[#D9A21B] w-full sm:w-auto overflow-x-auto">
+      <div className="card-batak-dark bg-[#1E1A17] p-4 sm:p-6 text-[#F4EDE0]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-[#2A2420]">
+          <div className="flex items-center gap-2 font-mono text-xs sm:text-sm bg-[#141210] px-3 sm:px-4 py-2 rounded-[4px] border border-[#2A2420] text-[#D9A21B] w-full sm:w-auto overflow-x-auto no-scrollbar">
             <span className="text-[#A62B1F] font-bold">GET</span>
-            <span className="text-[#F4EDE0]/80">{currentUrl.replace('GET ', '')}</span>
+            <span className="text-[#F4EDE0]/80 truncate">{currentUrl.replace('GET ', '')}</span>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={handleCopy}
-              className="px-3 py-1.5 rounded-[4px] border border-[#F4EDE0]/30 hover:border-[#F4EDE0] text-xs font-bold transition flex items-center gap-1.5 cursor-pointer text-[#F4EDE0]"
+              className="px-3 py-1.5 rounded-[4px] border border-[#F4EDE0]/30 hover:border-[#F4EDE0] text-xs font-bold transition flex items-center gap-1.5 cursor-pointer text-[#F4EDE0] flex-1 sm:flex-initial justify-center"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-[#D9A21B]" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Tersalin' : 'Copy URL'}</span>
@@ -132,7 +132,7 @@ export const OpenApiShowcaseView: React.FC = () => {
             <button
               onClick={handleExecuteApi}
               disabled={loading}
-              className="btn-indigo px-4 py-1.5 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ml-auto sm:ml-0 disabled:opacity-50"
+              className="btn-indigo px-4 py-1.5 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-initial justify-center disabled:opacity-50"
             >
               <Play className="w-3.5 h-3.5" />
               <span>{loading ? 'Mengirim...' : 'Uji Endpoint'}</span>
@@ -141,7 +141,7 @@ export const OpenApiShowcaseView: React.FC = () => {
         </div>
 
         {/* Param Editor */}
-        <div className="py-4 border-b border-[#2A2420] flex items-center gap-3">
+        <div className="py-3 sm:py-4 border-b border-[#2A2420] flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <label className="text-xs font-bold text-[#F4EDE0]/70 uppercase tracking-wider shrink-0">
             Parameter Query:
           </label>
@@ -150,20 +150,20 @@ export const OpenApiShowcaseView: React.FC = () => {
             value={paramInput}
             onChange={e => setParamInput(e.target.value)}
             placeholder="Masukkan nilai query..."
-            className="flex-1 bg-[#141210] border border-[#2A2420] rounded-[4px] px-3 py-1.5 text-sm text-[#F4EDE0] font-mono focus:outline-none focus:border-[#23365A]"
+            className="flex-1 bg-[#141210] border border-[#2A2420] rounded-[4px] px-3 py-1.5 text-base sm:text-sm text-[#F4EDE0] font-mono focus:outline-none focus:border-[#23365A]"
           />
         </div>
 
         {/* Response JSON Output */}
-        <div className="pt-4">
+        <div className="pt-3 sm:pt-4">
           <div className="flex items-center justify-between text-xs font-bold text-[#F4EDE0]/70 mb-2">
             <span>Response Payload (JSON)</span>
-            <span className="text-[#D9A21B] flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Status: 200 OK • Laravel 13 & MySQL
+            <span className="text-[#D9A21B] flex items-center gap-1 text-[11px] sm:text-xs">
+              <CheckCircle2 className="w-3 h-3" /> Status: 200 OK
             </span>
           </div>
 
-          <pre className="bg-[#141210] p-4 rounded-[4px] font-mono text-xs text-[#D9A21B] overflow-x-auto max-h-72 border border-[#2A2420] leading-relaxed">
+          <pre className="bg-[#141210] p-3 sm:p-4 rounded-[4px] font-mono text-[11px] sm:text-xs text-[#D9A21B] overflow-x-auto max-h-72 border border-[#2A2420] leading-relaxed">
             {loading ? (
               <span className="text-[#F4EDE0]/50 animate-pulse">Menghubungi endpoint Laravel API...</span>
             ) : apiResponse ? (

@@ -32,11 +32,39 @@
   --size-micro: 0.75rem;
 }
 
-body {
+html, body {
   background-color: var(--kapur);
   color: var(--arang);
   font-family: var(--font-body);
   line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Touch responsiveness helper */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Safe Area Inset Helpers for Phones */
+.safe-top {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+.safe-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Hide scrollbar utility for clean mobile horizontal carousels/tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @layer base {
